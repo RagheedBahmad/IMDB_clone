@@ -24,7 +24,7 @@
         }
 
         h1 {
-            padding-top: 15%;
+            padding-top: 10%;
             text-align: center;
             color: lightgrey;
             font-size: 5em;
@@ -38,6 +38,7 @@
             -webkit-user-select: none;
             -ms-user-select: none;
             position: absolute;
+            max-width: 20%;
             height: auto;
             z-index: -100;
             opacity: 50%;
@@ -145,7 +146,7 @@
             margin: 10px;
         }
 
-        input {
+        input, p {
             font-size: 16px;
             border: none;
             background: none;
@@ -174,6 +175,10 @@
          }
         input[type="text"], input[type="password"] {
             border: solid 1px white;
+        }
+        p {
+            padding: 2px;
+            margin:0;
         }
 
         .back {
@@ -367,13 +372,12 @@
             animation: slide-out-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
         }
         .shake-horizontal {
-            animation: shake-horizontal 20s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite both;
+            animation: shake-horizontal 30s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite both;
         }
 
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
-
         let loginForm = `<form action="/login" method="post" id="loginCred">
             <label><input type="text" placeholder="Email" id="email"></label>
             <label><input type="password" placeholder="Password" id="password"></label>
@@ -394,6 +398,14 @@
         </form>`;
 
         $(window).on("load", () => {
+            let posters = <%- JSON.stringify(posters)%>
+            $.each(posters, function(index, url) {
+                $("<img>", {
+                    id: `img${index + 1}`,
+                    src: "/posters/" + url.id + ".jpg",
+                    alt: `${url}`
+                }).appendTo('body');
+            });
             setTimeout(() => {
                 $.each(["img1", "img2", "img3", "img4", "img5"], (index, value) => {
                     $(`#${value}`).removeClass("slide-in-left-slow").addClass("shake-horizontal")
@@ -429,11 +441,7 @@
     </script>
 </head>
 <body>
-<img src="/img/download.png" alt="" id="img1" class="slide-in-left-slow">
-<img src="img/download.png" alt="" id="img2" class="slide-in-left-slow">
-<img src="img/download.png" alt="" id="img3" class="slide-in-left-slow">
-<img src="img/download.png" alt="" id="img4" class="slide-in-left-slow">
-<img src="img/download.png" alt="" id="img5" class="slide-in-left-slow">
+
 <div class="container">
     <h1>Welcome to IMMb</h1>
     <div id="buttons">
@@ -441,6 +449,8 @@
                 <a onclick="login()" id="login">Login</a>
                 <a onclick="signup()" id="signup">Signup</a>
         </div>
+        <hr style="width: 33%; padding: 0">
+        <p>or</p>
     <div class="auth">
         <a href="/auth/google" class="authLink"  id="google-auth">Signup using Google</a>
         <a href="/auth/facebook" class="authLink"  id="facebook-auth">Signup using Facebook</a>
