@@ -2,11 +2,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>IMMb</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MMDb</title>
     <style>
 
         html {
-            height:100%;
+            height: auto;
+        }
+
+        *, *:before, *:after {
+            box-sizing: border-box;
         }
 
         body {
@@ -17,18 +23,35 @@
             overflow: hidden;
             position: relative;
             min-height: 100vh;
+            max-width: 100%;
+            width:100%;
         }
+
+        /* For Webkit browsers */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* For Firefox */
+        body {
+            scrollbar-width: none;
+        }
+
+        /* For IE */
+        -ms-overflow-style: none;
 
         .container {
             position: relative;
         }
 
         h1 {
-            padding-top: 10%;
+            padding-top:80px;
             text-align: center;
             color: lightgrey;
             font-size: 5em;
             margin: 0;
+            position: sticky;
+            top: -80px;
         }
 
         img {
@@ -68,9 +91,22 @@
         form {
             padding: 0;
             margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .file-input {
+            visibility: hidden;
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
         }
 
-        a{
+        a, .custom-file-input{
             border-radius: 10%;
             position: relative;
             display: inline-block;
@@ -84,7 +120,10 @@
             margin-right: 20px;
             cursor: pointer;
         }
-        a:hover{
+        #google-auth {
+            margin-bottom: 20px
+        }
+        a:hover, .custom-file-input:hover{
             transition: 0.5s;
             background-color: #7f9eb9;
             color: #050801;
@@ -146,6 +185,11 @@
             margin: 10px;
         }
 
+        .rememberMe {
+            display:flex;
+            justify-content: center;
+        }
+
         input, p {
             font-size: 16px;
             border: none;
@@ -176,9 +220,13 @@
         input[type="text"], input[type="password"] {
             border: solid 1px white;
         }
-        p {
+        input[type="file"] {
+            display: none;
+        }
+        #or {
             padding: 2px;
             margin:0;
+            cursor: default;
         }
 
         .back {
@@ -234,7 +282,8 @@
                 transform: translateX(0);
                 opacity: 1;
             }
-        } @keyframes slide-in-left-slow {
+        }
+        @keyframes slide-in-left-slow {
             0% {
                 -webkit-transform: translateX(-100px);
                 transform: translateX(-100px);
@@ -375,37 +424,83 @@
             animation: shake-horizontal 30s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite both;
         }
 
+
+        @media only screen and (max-width: 600px) {
+            body, html {
+                overflow-x: hidden;
+                height:100%;
+            }
+            h1 {
+                padding-top:0;
+                margin-bottom: 100px;
+                top:60px;
+            }
+            img {
+                max-width: 33%;
+                height: auto;
+                display:flex;
+                opacity: 0.4;
+            }
+            #img1 {
+                top: 70px;
+                left: 10px;
+            }
+            #img2 {
+                top: 150px;
+                left: 210px;
+            }
+            #img3 {
+                top: 300px;
+                left: 30px;
+            }
+            #img4 {
+                top: 400px;
+                left: 210px;
+            }
+            #img5 {
+                top: 550px;
+                left: 60px;
+            }
+        }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
         let loginForm = `<form action="/login" method="post" id="loginCred">
-            <label><input type="text" placeholder="Email" id="email"></label>
-            <label><input type="password" placeholder="Password" id="password"></label>
+            <label><input type="text" placeholder="Email" name="email" id="email" required></label>
+            <label><input type="password" placeholder="Password" name="password" required></label>
+<label class="rememberMe"><input type="checkbox" value="lsRememberMe" id="rememberMe"><p>Remember me</p></label>
             <div class="back">
             <a onclick="animateReturn()"> &lt;Go Back</a>
-            <label><input type="submit" value="Log in"></label>
+            <label><input type="submit" value="Log in" onclick="lsRememberMe()"></label>
             </div>
+            <div id="error-message" style="color: red;"></div>
         </form>`;
 
-        let signupForm = `<form action="/signup" method="post" id="signupCred">
-            <label><input type="text" placeholder="Username" id="username"></label>
-            <label><input type="text" placeholder="Email" id="email"></label>
-            <label><input type="password" placeholder="Password" id="password"></label>
+        let signupForm = `<form action="/signup" method="post" id="signupCred" enctype="multipart/form-data">
+            <label><input type="text" placeholder="Username" name="username" required></label>
+            <label><input type="text" placeholder="Email" name="email" required></label>
+            <label><input type="password" placeholder="Password" name="password" required></label>
+            <label><input type="password" placeholder="Confirm Password" name="passwordConfirm" required></label>
+            <label class="custom-file-input">Upload Profile Picture<input type="file" placeholder="profile" name="profile" accept="image/*"></label>
             <div class="back">
                 <a onclick="animateReturn()"> &lt;Go Back</a>
                 <label><input type="submit" value="Sign up"></label>
             </div>
+<div        id="error-message" style="color: red;"></div>
         </form>`;
 
         $(window).on("load", () => {
+            setTimeout(function(){
+                $(window).scrollTop(0);
+            }, 10);
             let posters = <%- JSON.stringify(posters)%>
-            $.each(posters, function(index, url) {
-                $("<img>", {
-                    id: `img${index + 1}`,
-                    src: "/posters/" + url.id + ".jpg",
-                    alt: `${url}`
-                }).appendTo('body');
-            });
+                $.each(posters, function(index, url) {
+                    $("<img>", {
+                        id: `img${index + 1}`,
+                        src: "/posters/" + url.id + ".jpg",
+                        alt: `${url}`
+                    }).appendTo('body');
+                });
             setTimeout(() => {
                 $.each(["img1", "img2", "img3", "img4", "img5"], (index, value) => {
                     $(`#${value}`).removeClass("slide-in-left-slow").addClass("shake-horizontal")
@@ -413,12 +508,67 @@
             }, 2000)
         })
 
+        const rmCheck = $("#rememberMe")
+        const email = $("#email")
+        if (localStorage.checkbox && localStorage.checkbox !== "") {
+            rmCheck.prop('checked', true);
+            email.val(localStorage.username);
+        } else {
+            rmCheck.prop('checked', false);
+            email.val("");
+        }
+
+        function lsRememberMe() {
+            let rmCheck = $('#template').find("#rememberMe");
+            let email = $('#template').find("#email");
+            if (rmCheck.is(':checked') && email.val() !== "") {
+                console.log("should work");
+                localStorage.username = email.val();
+                // Store 'true' or 'false' as a string because localStorage can only store strings
+                localStorage.checkbox = rmCheck.is(':checked').toString();
+            } else {
+                localStorage.username = "";
+                // Store 'false' as a string for consistency
+                localStorage.checkbox = "false";
+            }
+        }
+
         function login() {
+            // lsRememberMe();
+            $('html, body').animate({ scrollTop: 100 }, 1500);
             $("#template").empty().append(loginForm)
+            let rmCheck = $('#template').find("#rememberMe");
+            let email = $('#template').find("#email");
+
+            if (localStorage.checkbox === "true") {
+                rmCheck.prop('checked', true);
+                email.val(localStorage.username);
+            } else {
+                rmCheck.prop('checked', false);
+                email.val("");
+            }
+            $("#loginCred").on("submit", function(event) {
+                event.preventDefault();
+                const formData = $(this).serialize();
+                $.ajax({
+                    url: '/login',
+                    type: 'POST',
+                    data: formData,
+                    success: function(res) {
+                        window.location.href = "dashboard/" + res.data.user.username;
+                    },
+                    error: function(response) {
+                        // Handle error
+                        // Display the error message from the response on your HTML page
+                        $('#error-message').text(response.message);
+                    }
+                });
+            })
             animate();
         }
 
         function signup() {
+            $('html, body').animate({ scrollTop: 200 }, 1500);
             $("#template").empty().append(signupForm);
             animate();
         }
@@ -426,31 +576,37 @@
         function animate() {
             $("#google-auth").removeClass("slide-in-bottom").addClass("slide-out-bottom")
             $("#facebook-auth").removeClass("slide-in-bottom").addClass("slide-out-bottom")
+            $("#breaker").removeClass("slide-in-bottom").addClass("slide-out-bottom")
             $("#login").removeClass("slide-in-left").addClass("slide-out-left")
             $("#signup").removeClass("slide-in-right").addClass("slide-out-right")
             $("#template").removeClass("slide-out-top").addClass("slide-in-top").removeClass("hidden")
         }
         function animateReturn() {
+            $('html, body').animate({ scrollTop: 0 }, 1500);
             $("#google-auth").removeClass("slide-out-bottom").addClass("slide-in-bottom")
             $("#facebook-auth").removeClass("slide-out-bottom").addClass("slide-in-bottom")
+            $("#breaker").removeClass("slide-out-bottom").addClass("slide-in-bottom")
             $("#login").removeClass("slide-out-left").addClass("slide-in-left")
             $("#signup").removeClass("slide-out-right").addClass("slide-in-right")
             $("#template").removeClass("slide-in-top").addClass("slide-out-top").addClass("hidden")
         }
+
 
     </script>
 </head>
 <body>
 
 <div class="container">
-    <h1>Welcome to IMMb</h1>
+    <h1>Welcome to MMDb</h1>
     <div id="buttons">
         <div class="login">
                 <a onclick="login()" id="login">Login</a>
                 <a onclick="signup()" id="signup">Signup</a>
         </div>
+        <div id="breaker">
         <hr style="width: 33%; padding: 0">
-        <p>or</p>
+        <p id="or">or</p>
+        </div>
     <div class="auth">
         <a href="/auth/google" class="authLink"  id="google-auth">Signup using Google</a>
         <a href="/auth/facebook" class="authLink"  id="facebook-auth">Signup using Facebook</a>
