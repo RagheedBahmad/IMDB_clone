@@ -2,24 +2,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!--    <link rel="apple-touch-icon" sizes="152x152" href="img/apple-touch-icon.png">-->
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+<!--    <link rel="manifest" href="img/site.webmanifest">-->
+<!--    <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">-->
+<!--    <meta name="msapplication-TileColor" content="#2b5797">-->
+    <meta name="theme-color" content="#ffffff">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id" content="660822408267-3841276aurp61khq91arj2k7k5j1ptsq.apps.googleusercontent.com">
 
     <title>MMDb</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-
         html {
             height: auto;
         }
 
         *, *:before, *:after {
+            -webkit-box-sizing: border-box;
             box-sizing: border-box;
         }
 
         body {
-            font-family: Gopher, sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #0F0F0F;
+            background-color: #000000;
             overflow: hidden;
             position: relative;
             min-height: 100vh;
@@ -51,6 +60,7 @@
             font-size: 5em;
             margin: 0;
             position: sticky;
+            background-color: transparent;
             top: -80px;
         }
 
@@ -91,7 +101,12 @@
         form {
             padding: 0;
             margin: 0;
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: column;
             flex-direction: column;
         }
         .file-input {
@@ -107,6 +122,7 @@
         }
 
         a, .custom-file-input{
+            background-color: transparent;
             border-radius: 10%;
             position: relative;
             display: inline-block;
@@ -114,23 +130,54 @@
             font-weight: bold;
             text-decoration: none;
             color: #7f9eb9;
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
             transition: 0.5s;
             overflow: hidden;
             margin-left: 20px;
             margin-right: 20px;
             cursor: pointer;
+            width: auto;
         }
         #google-auth {
             margin-bottom: 20px
         }
         a:hover, .custom-file-input:hover{
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
             transition: 0.5s;
             background-color: #7f9eb9;
             color: #050801;
+            -webkit-box-shadow: 0 0 5px #7f9eb9,
+            0 0 10px #7f9eb9,
+            0 0 20px #7f9eb9,
+            0 0 30px #7f9eb9;
             box-shadow: 0 0 5px #7f9eb9,
             0 0 10px #7f9eb9,
             0 0 20px #7f9eb9,
             0 0 30px #7f9eb9;
+            -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+        }
+
+        .g_id_signin {
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
+            transition: 0.5s;
+        }
+        .g_id_signin:hover{
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
+            transition: 0.5s;
+            background-color: #7f9eb9;
+            color: #050801;
+            -webkit-box-shadow: 0 -5px 6px 0 rgba(0, 90, 255, 1),
+            -5px 6px 0 rgba(213, 205, 0, 1),
+            0 5px 6px 0 rgba(255, 0, 0, 1),
+            5px 0 6px 0 rgba(22, 255, 0, 1);
+            box-shadow: 0 -5px 6px 0 rgba(0, 90, 255, 1),
+            -5px 0 6px 0 rgba(213, 205, 0, 1),
+            0 5px 6px 0 rgba(255, 0, 0, 1),
+            5px 0 6px 0 rgba(22, 255, 0, 1);
             -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
         }
         [disabled] {
@@ -142,6 +189,7 @@
             display: block;
             margin-bottom: 10px;
             color: #333;
+            width: auto;
         }
 
         #buttons{
@@ -154,13 +202,22 @@
         }
 
         .auth{
+            display:-webkit-box;
+            display:-ms-flexbox;
             display:flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: column;
             flex-direction: column;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
             align-items: center;
             padding-top: 30px;
         }
         .authLink {
             padding:10px;
+            width: -webkit-fit-content;
+            width: -moz-fit-content;
             width: fit-content;
         }
 
@@ -168,12 +225,19 @@
             opacity:0;
             cursor: default;
             pointer-events: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
             user-select: none;
         }
 
         .cred {
+            -webkit-box-align: center;
+            -ms-flex-align: center;
             align-items: center;
             text-align: center;
+            -webkit-transform-origin: -150px;
+            -ms-transform-origin: -150px;
             transform-origin: -150px;
         }
 
@@ -186,7 +250,11 @@
         }
 
         .rememberMe {
+            display:-webkit-box;
+            display:-ms-flexbox;
             display:flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
             justify-content: center;
         }
 
@@ -201,6 +269,8 @@
             font-weight: bold;
             text-decoration: none;
             color: #7f9eb9;
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
             transition: 0.5s;
             overflow: hidden;
             margin-left: 20px;
@@ -208,20 +278,29 @@
             cursor: pointer;
         }
         input[type="submit"]:hover {
-             transition: 0.5s;
-             background-color: #7f9eb9;
-             color: #050801;
-             box-shadow: 0 0 5px #7f9eb9,
-             0 0 10px #7f9eb9,
-             0 0 20px #7f9eb9,
-             0 0 30px #7f9eb9;
-             -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
-         }
-        input[type="text"], input[type="password"] {
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
+            transition: 0.5s;
+            background-color: #7f9eb9;
+            color: #050801;
+            -webkit-box-shadow: 0 0 5px #7f9eb9,
+            0 0 10px #7f9eb9,
+            0 0 20px #7f9eb9,
+            0 0 30px #7f9eb9;
+            box-shadow: 0 0 5px #7f9eb9,
+            0 0 10px #7f9eb9,
+            0 0 20px #7f9eb9,
+            0 0 30px #7f9eb9;
+            -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+        }
+        input[type="text"], input[type="password"], input[type="email"] {
             border: solid 1px white;
         }
         input[type="file"] {
             display: none;
+        }
+        input[type="checkbox"] {
+            margin: 0;
         }
         #or {
             padding: 2px;
@@ -230,9 +309,28 @@
         }
 
         .back {
+            display:-webkit-box;
+            display:-ms-flexbox;
             display:flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
             justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
             align-items: center;
+        }
+
+        @-webkit-keyframes slide-out-bottom {
+            0% {
+                -webkit-transform: translateY(0);
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateY(100px);
+                transform: translateY(100px);
+                opacity: 0;
+            }
         }
 
         @keyframes slide-out-bottom {
@@ -247,6 +345,18 @@
                 opacity: 0;
             }
         }
+        @-webkit-keyframes slide-in-bottom {
+            0% {
+                -webkit-transform: translateY(100px);
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateY(0);
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
         @keyframes slide-in-bottom {
             0% {
                 -webkit-transform: translateY(100px);
@@ -257,6 +367,18 @@
                 -webkit-transform: translateY(0);
                 transform: translateY(0);
                 opacity: 1;
+            }
+        }
+        @-webkit-keyframes slide-out-left {
+            0% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateX(-100px);
+                transform: translateX(-100px);
+                opacity: 0;
             }
         }
         @keyframes slide-out-left {
@@ -271,6 +393,18 @@
                 opacity: 0;
             }
         }
+        @-webkit-keyframes slide-in-left {
+            0% {
+                -webkit-transform: translateX(-100px);
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
         @keyframes slide-in-left {
             0% {
                 -webkit-transform: translateX(-100px);
@@ -281,6 +415,18 @@
                 -webkit-transform: translateX(0);
                 transform: translateX(0);
                 opacity: 1;
+            }
+        }
+        @-webkit-keyframes slide-in-left-slow {
+            0% {
+                -webkit-transform: translateX(-100px);
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 0.5;
             }
         }
         @keyframes slide-in-left-slow {
@@ -295,6 +441,18 @@
                 opacity: 0.5;
             }
         }
+        @-webkit-keyframes slide-out-right {
+            0% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateX(100px);
+                transform: translateX(100px);
+                opacity: 0;
+            }
+        }
         @keyframes slide-out-right {
             0% {
                 -webkit-transform: translateX(0);
@@ -307,6 +465,18 @@
                 opacity: 0;
             }
         }
+        @-webkit-keyframes slide-in-right {
+            0% {
+                -webkit-transform: translateX(100px);
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
         @keyframes slide-in-right {
             0% {
                 -webkit-transform: translateX(100px);
@@ -316,6 +486,18 @@
             100% {
                 -webkit-transform: translateX(0);
                 transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @-webkit-keyframes slide-in-top {
+            0% {
+                -webkit-transform: translateY(-225px);
+                transform: translateY(-225px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateY(-150px);
+                transform: translateY(-150px);
                 opacity: 1;
             }
         }
@@ -331,6 +513,18 @@
                 opacity: 1;
             }
         }
+        @-webkit-keyframes slide-out-top {
+            0% {
+                -webkit-transform: translateY(-150px);
+                transform: translateY(-150px);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateY(-225px);
+                transform: translateY(-225px);
+                opacity: 0;
+            }
+        }
         @keyframes slide-out-top {
             0% {
                 -webkit-transform: translateY(-150px);
@@ -341,6 +535,34 @@
                 -webkit-transform: translateY(-225px);
                 transform: translateY(-225px);
                 opacity: 0;
+            }
+        }
+        @-webkit-keyframes shake-horizontal {
+            0%,
+            100% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+            }
+            10%,
+            30%,
+            50%,
+            70% {
+                -webkit-transform: translateX(-10px);
+                transform: translateX(-10px);
+            }
+            20%,
+            40%,
+            60% {
+                -webkit-transform: translateX(10px);
+                transform: translateX(10px);
+            }
+            80% {
+                -webkit-transform: translateX(8px);
+                transform: translateX(8px);
+            }
+            90% {
+                -webkit-transform: translateX(-8px);
+                transform: translateX(-8px);
             }
         }
         @keyframes shake-horizontal {
@@ -373,54 +595,85 @@
         }
 
         .slide-out-bottom {
+            -webkit-animation: slide-out-bottom 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
             animation: slide-out-bottom 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
             cursor: default;
             pointer-events: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
             user-select: none;
         }
         .slide-in-bottom {
+            -webkit-animation: slide-in-bottom 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
             animation: slide-in-bottom 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
             cursor: pointer;
             pointer-events: auto;
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
             user-select: auto;
         }
         .slide-out-left {
+            -webkit-animation: slide-out-left 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             animation: slide-out-left 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             cursor: default;
             pointer-events: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
             user-select: none;
         }
         .slide-in-left {
+            -webkit-animation: slide-in-left 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             animation: slide-in-left 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             cursor: pointer;
             pointer-events: auto;
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
             user-select: auto;
         }
         .slide-in-left-slow {
+            -webkit-animation: slide-in-left-slow 2s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             animation: slide-in-left-slow 2s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             cursor: pointer;
             pointer-events: auto;
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
             user-select: auto;
         }
         .slide-out-right {
+            -webkit-animation: slide-out-right 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             animation: slide-out-right 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             cursor: default;
             pointer-events: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
             user-select: none;
         }
         .slide-in-right {
+            -webkit-animation: slide-in-right 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             animation: slide-in-right 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             cursor: pointer;
             pointer-events: auto;
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
             user-select: auto;
         }
         .slide-in-top {
+            -webkit-animation: slide-in-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
             animation: slide-in-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
         }
         .slide-out-top {
+            -webkit-animation: slide-out-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
             animation: slide-out-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
         }
         .shake-horizontal {
+            -webkit-animation: shake-horizontal 30s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite both;
             animation: shake-horizontal 30s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite both;
         }
 
@@ -436,8 +689,11 @@
                 top:60px;
             }
             img {
-                max-width: 33%;
+                max-width: 25%;
+                min-width: 20%;
                 height: auto;
+                display:-webkit-box;
+                display:-ms-flexbox;
                 display:flex;
                 opacity: 0.4;
             }
@@ -464,12 +720,15 @@
         }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
         let loginForm = `<form action="/login" method="post" id="loginCred">
             <label><input type="text" placeholder="Email" name="email" id="email" required></label>
             <label><input type="password" placeholder="Password" name="password" required></label>
-<label class="rememberMe"><input type="checkbox" value="lsRememberMe" id="rememberMe"><p>Remember me</p></label>
+            <label class="rememberMe"><input type="checkbox" value="lsRememberMe" id="rememberMe"><p>Remember me</p></label>
+            <label><a href="/forgot-password">Forgot Password?</a></label>
             <div class="back">
+
             <a onclick="animateReturn()"> &lt;Go Back</a>
             <label><input type="submit" value="Log in" onclick="lsRememberMe()"></label>
             </div>
@@ -478,7 +737,7 @@
 
         let signupForm = `<form action="/signup" method="post" id="signupCred" enctype="multipart/form-data">
             <label><input type="text" placeholder="Username" name="username" required></label>
-            <label><input type="text" placeholder="Email" name="email" required></label>
+            <label><input type="email" placeholder="Email" name="email" required></label>
             <label><input type="password" placeholder="Password" name="password" required></label>
             <label><input type="password" placeholder="Confirm Password" name="passwordConfirm" required></label>
             <label class="custom-file-input">Upload Profile Picture<input type="file" placeholder="profile" name="profile" accept="image/*"></label>
@@ -497,8 +756,8 @@
                 $.each(posters, function(index, url) {
                     $("<img>", {
                         id: `img${index + 1}`,
-                        src: "/posters/" + url.id + ".jpg",
-                        alt: `${url}`
+                        src: url.poster_path,
+                        alt: `${url.id}`
                     }).appendTo('body');
                 });
             setTimeout(() => {
@@ -507,6 +766,31 @@
                 })
             }, 2000)
         })
+
+        function handleCredentialResponse(response) {
+            // Send the ID token to your server with a fetch request
+            $.ajax({
+                url: '/auth/google',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ token: response.credential }),
+                success: function(res) {
+                    window.location.href = "/dashboard/" + res.data.user.username
+                },
+                error: function(xhr) {
+                    let error = $("#error-message")
+                    error.text(xhr.responseJSON.message)
+                    error.fadeIn();
+                    setTimeout(function() {
+                        error.fadeOut();
+                    }, 6000);
+                }
+            });
+        }
+
+        function checkResponseStatus(response) {
+            if (!response.ok) $('#error-message').text(response.message);
+        }
 
         const rmCheck = $("#rememberMe")
         const email = $("#email")
@@ -555,7 +839,7 @@
                     type: 'POST',
                     data: formData,
                     success: function(res) {
-                        window.location.href = "dashboard/" + res.data.user.username;
+                        window.location.href = "/dashboard/" + res.data.user.username;
                     },
                     error: function(response) {
                         // Handle error
@@ -570,6 +854,23 @@
         function signup() {
             $('html, body').animate({ scrollTop: 200 }, 1500);
             $("#template").empty().append(signupForm);
+            $("#signupCred").on("submit", function(event) {
+                event.preventDefault();
+                const formData = $(this).serialize();
+                $.ajax({
+                    url: '/signup',
+                    type: 'POST',
+                    data: formData,
+                    success: function(res) {
+                        window.location.href = "dashboard/" + res.data.user.username;
+                    },
+                    error: function(response) {
+                        // Handle error
+                        // Display the error message from the response on your HTML page
+                        $('#error-message').text(response.message);
+                    }
+                });
+            })
             animate();
         }
 
@@ -591,7 +892,9 @@
             $("#template").removeClass("slide-in-top").addClass("slide-out-top").addClass("hidden")
         }
 
-
+        function forgotPassword() {
+            window.location.href = '/forgot-password';
+        }
     </script>
 </head>
 <body>
@@ -608,8 +911,23 @@
         <p id="or">or</p>
         </div>
     <div class="auth">
-        <a href="/auth/google" class="authLink"  id="google-auth">Signup using Google</a>
+        <div id="g_id_onload"
+             data-client_id="<%= googleClientId%>"
+             data-callback="handleCredentialResponse"
+            data-auto_prompt="false">
+        </div>
+        <div id="google-auth"
+             class="g_id_signin"
+             data-type="standard"
+             data-size="large"
+             data-theme="filled_black"
+             data-text="sign_in_with"
+             data-shape="rectangular"
+             data-logo_alignment="left">
+        </div>
+
         <a href="/auth/facebook" class="authLink"  id="facebook-auth">Signup using Facebook</a>
+        <div id="error-message" style="color: red; margin-top: 30px;"></div>
     </div>
     </div>
     <div class="hidden cred" id="template">

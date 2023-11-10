@@ -18,13 +18,23 @@ const userSchema = new mongoose.Schema({
   profile: String,
   password: {
     type: String,
-    required: [true, "Please provide your password."],
+    required: [
+      function () {
+        return this.provider === "email";
+      },
+      "please enter your password",
+    ],
     minlength: 8,
     select: false,
   },
   passwordConfirm: {
     type: String,
-    required: [true, "Please confirm your password"],
+    required: [
+      function () {
+        return this.provider === "email";
+      },
+      "please confirm your password",
+    ],
     validate: {
       validator: function (el) {
         return el === this.password;
@@ -35,6 +45,12 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetExpires: Date,
   passwordResetToken: String,
+  provider: {
+    type: String,
+    required: true,
+    enum: ["email", "google", "facebook"],
+  },
+  providerID: Number,
 });
 
 userSchema.pre("save", async function (next) {

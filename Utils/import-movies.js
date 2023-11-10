@@ -12,14 +12,6 @@ const DB = process.env.DATABASE.replace(
 const fs = require("fs");
 const path = require("path");
 
-async function downloadImage(url, imageName) {
-  const response = await fetch(url);
-  const buffer = await response.arrayBuffer();
-  const filePath = path.join(__dirname, "./../public/posters/", imageName);
-  await fs.promises.writeFile(filePath, Buffer.from(buffer));
-  return filePath;
-}
-
 const client = new MongoClient(DB);
 client.connect();
 const database = client.db("IMDB-clone");
@@ -51,9 +43,7 @@ async function fetchData(page) {
       const posterPath = movie.poster_path;
       if (posterPath) {
         const baseImageUrl = "https://image.tmdb.org/t/p/w500";
-        const fullPosterUrl = baseImageUrl + posterPath;
-        const imageName = `${movie.id}.jpg`;
-        await downloadImage(fullPosterUrl, imageName);
+        movie.poster_path = baseImageUrl + posterPath;
       }
     }
     return movieData.results; // return this directly

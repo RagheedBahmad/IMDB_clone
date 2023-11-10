@@ -6,11 +6,18 @@ const User = require("./../models/userModel.js");
 const Movie = require("./../models/movieModel.js");
 const authController = require("./../controllers/authController");
 const path = require("path");
+const { google } = require("googleapis");
 
 // const authController = require("./../controllers/authController");
 
 // router.post("/signup", authController.signup);
 // router.post("/login", authController.login);
+
+const oauth2Client = new google.auth.OAuth2(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.REDIRECT_URI
+);
 
 const storage = multer.diskStorage({
   destination: "public/img/profiles",
@@ -22,33 +29,51 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
+  let top5Movies = await Movie.find(
+    {},
+    { id: 1, _id: 0, poster_path: 1, original_title: 1 }
+  )
+    .sort({ popularity: -1 })
+    .limit(5)
+    .exec();
   // Route handler logic for the GET request
-  res.render("dashboard");
+  res.render("dashboard", { top5Movies });
 });
 
 router.get("/login", (req, res) => {
   // Check if movies is defined and connected
-  Movie.aggregate([{ $sample: { size: 5 } }, { $project: { id: 1, _id: 0 } }])
+  Movie.aggregate([
+    { $sample: { size: 5 } },
+    { $project: { id: 1, _id: 0, poster_path: 1 } },
+  ])
     .exec()
     .then((posters) => {
-      res.render("login", { posters });
+      res.render("login", { posters, googleClientId: process.env.CLIENT_ID });
     })
     .catch((err) => {
       console.error("Error fetching posters:", err);
       res.send(err);
     });
 });
+router.get("/forgot-password", (req, res) => {
+  res.render("forgotPassword");
+});
 router.post("/signup", upload.single("profile"), authController.signup);
 router.post("/login", authController.login);
 router.get("/dashboard/:user?", authController.protect, async (req, res) => {
-  let top5Movies = await Movie.find().sort({ popularity: -1 }).limit(5).exec();
-  let Movies = { top5Movies };
+  let top5Movies = await Movie.find(
+    {},
+    { id: 1, _id: 0, poster_path: 1, original_title: 1 }
+  )
+    .sort({ popularity: -1 })
+    .limit(5)
+    .exec();
 
   if (req.params.user) {
-    if (req.user) res.render("dashboard", { Movies, user: req.user });
+    if (req.user) res.render("dashboard", { top5Movies, user: req.user });
   } else {
-    res.render("dashboard", { Movies });
+    res.render("dashboard", { top5Movies });
   }
 });
 
@@ -67,5 +92,53 @@ router.get("/movies/:movie", (req, res) => {
       }
     });
 });
+
+async function verify(token) {
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience:
+      "660822408267-3841276aurp61khq91arj2k7k5j1ptsq.apps.googleusercontent.com",
+  });
+  const payload = ticket.getPayload();
+  const userid = payload["sub"];
+  // If request specified a G Suite domain:
+  // const domain = payload['hd'];
+  return payload;
+}
+router.post("/auth/google", authController.googleAuth, (req, res) => {
+  res.user = req.data.user;
+  res.status(200).json({ user: req.user, message: "Authenticated" });
+});
+
+router.get("/oauth2/callback", async (req, res) => {
+  try {
+    const code = req.query.code;
+    const userInfo = await handleOAuthCallback(code);
+
+    if (userInfo.verified_email) {
+    }
+    // Use userInfo in your application logic
+
+    res.redirect(`/dashboard/${userInfo.name}`);
+  } catch (error) {
+    console.error("Error handling OAuth callback", error);
+    res.status(500).send("Authentication error");
+  }
+});
+
+async function handleOAuthCallback(code) {
+  // Exchange the code for tokens
+  const { tokens } = await oauth2Client.getToken(code);
+  oauth2Client.setCredentials(tokens);
+
+  // Now you can use oauth2Client to fetch the user's profile information
+  const oauth2 = google.oauth2({
+    auth: oauth2Client,
+    version: "v2",
+  });
+
+  const userInfoResponse = await oauth2.userinfo.get();
+  return userInfoResponse.data; // This will contain the user's profile information
+}
 
 module.exports = router;

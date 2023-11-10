@@ -5,6 +5,9 @@ const catchAsync = require("./../Utils/catchAsync");
 const jwt = require("jsonwebtoken");
 const AppError = require("./../Utils/appError");
 // const sendEmail = require('./../Utils/email');
+const { google } = require("googleapis");
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.CLIENT_ID + "");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -37,20 +40,28 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  const newUser = await User.create({
-    username: req.body.username,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-    profile: req.file.filename,
-  });
+  let user = await User.findOne({ googleId: req.body.email });
 
-  createSendToken(newUser, 201, res);
+  if (!user) {
+    const newUser = await User.create({
+      username: req.body.username,
+      email: req.body.email,
+      password: req.body.password,
+      passwordConfirm: req.body.passwordConfirm,
+      profile: req.file ? req.file.filename : "null",
+      provider: "email",
+      providerId: null,
+    });
+
+    createSendToken(newUser, 201, res);
+  } else {
+    return new AppError("User with this email already exists", 409);
+  }
 });
 
 exports.login = catchAsync(async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, provider } = req.body;
 
     // 1) Email and Password actually exist
     if (!email || !password) {
@@ -83,12 +94,6 @@ exports.login = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting Token and check if it exists
   let token;
-  // if (
-  //   req.headers.authorization &&
-  //   req.headers.authorization.startsWith("Bearer")
-  // ) {
-  //   token = req.headers.authorization.split(" ")[1];
-  // }
   if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
@@ -219,5 +224,30 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
   // 4) Log user in, send JWT
+  createSendToken(user, 200, res);
+});
+
+exports.googleAuth = catchAsync(async (req, res, next) => {
+  const { token } = req.body;
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience: process.env.CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+  });
+  const payload = ticket.getPayload();
+  console.log(payload);
+  // Find or create user in the database
+  let user = await User.findOne({ email: payload.email });
+  if (!user) {
+    // Create a new user record
+    user = await User.create({
+      username: payload.name,
+      email: payload.email,
+      googleId: payload.sub,
+      profile: payload.picture,
+      provider: "google",
+      // other user fields...
+    });
+  }
+
   createSendToken(user, 200, res);
 });

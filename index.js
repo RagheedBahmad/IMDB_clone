@@ -32,6 +32,10 @@ app.use(mongoSanitize());
 
 // Data sanitization against XSS
 app.use(xss());
+// app.use((req, res, next) => {
+//   res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups"); // Replace 'value' with the desired policy value
+//   next();
+// });
 
 const routes = require("./routes/routes");
 app.set("views", path.join(__dirname, "views"));

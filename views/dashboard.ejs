@@ -163,7 +163,7 @@
 <div id="image-carousel"></div>
 <div id="image-track" data-positionX="0" data-prev-percentage="0">
     <%for (let i = 0; i < 5; i++) {%>
-    <a href="/movies/<%= Movies.top5Movies[i].id%>" draggable="false"><img class = "image" src = "/posters/<%= (Movies.top5Movies[i].id)%>.jpg" alt="<%= Movies.top5Movies[i].original_title%>" draggable="false"></a>
+    <a href="/movies/<%= top5Movies[i].id%>" draggable="false"><img class = "image" src = "<%= (top5Movies[i].poster_path)%>" alt="<%= top5Movies[i].original_title%>" draggable="false"></a>
     <%}%>
 </div>
 </body>
