@@ -31,7 +31,7 @@
             background-color: #000000;
             overflow: hidden;
             position: relative;
-            min-height: 100vh;
+            min-height: 100%;
             max-width: 100%;
             width:100%;
         }
@@ -50,16 +50,17 @@
         -ms-overflow-style: none;
 
         .container {
+            min-height:100%;
             position: relative;
         }
 
         h1 {
-            padding-top:80px;
+            padding-top:60px;
             text-align: center;
             color: lightgrey;
             font-size: 5em;
-            margin: 0;
             position: sticky;
+            margin: 0;
             background-color: transparent;
             top: -80px;
         }
@@ -721,18 +722,39 @@
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
     <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId            : '1719506025230637',
+                cookie           : true,
+                xfbml            : true,
+                version          : 'v18.0'
+            });
+            FB.AppEvents.logPageView();
+        };
+
+        (function(d, s, id){
+            let js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
         let loginForm = `<form action="/login" method="post" id="loginCred">
             <label><input type="text" placeholder="Email" name="email" id="email" required></label>
             <label><input type="password" placeholder="Password" name="password" required></label>
             <label class="rememberMe"><input type="checkbox" value="lsRememberMe" id="rememberMe"><p>Remember me</p></label>
-            <label><a href="/forgot-password">Forgot Password?</a></label>
+            <label><a onclick="forgotPassword()">Forgot Password?</a></label>
             <div class="back">
-
             <a onclick="animateReturn()"> &lt;Go Back</a>
             <label><input type="submit" value="Log in" onclick="lsRememberMe()"></label>
             </div>
-            <div id="error-message" style="color: red;"></div>
+<div id="error-message" style="color: red;"></div>
         </form>`;
 
         let signupForm = `<form action="/signup" method="post" id="signupCred" enctype="multipart/form-data">
@@ -745,18 +767,44 @@
                 <a onclick="animateReturn()"> &lt;Go Back</a>
                 <label><input type="submit" value="Sign up"></label>
             </div>
-<div        id="error-message" style="color: red;"></div>
+<div id="error-message" style="color: red;"></div>
         </form>`;
 
+        let forgotPasswordForm = `<form action="/forgot-password" method="post" id="forgotPasswordCred">
+            <label><input type="email" placeholder="Email" name="email" required></label>
+                <div class="back">
+                <a onclick="animateReturnForgot()"> &lt;Go Back</a>
+                <label><input type="submit" value="Reset Password"></label>
+            </div>
+            <div id="error-message" style="color: red;"></div>
+            <div id="success-message" style="color: blue;"></div>
+        </form>`
+
+        function checkLoginState() {
+            FB.getLoginStatus(function(response) {
+                statusChangeCallback(response);
+            });
+        }
+
         $(window).on("load", () => {
-            setTimeout(function(){
-                $(window).scrollTop(0);
-            }, 10);
+            $("#template").empty()
+            FB.getLoginStatus(function(response) {
+                if (response.status === 'connected') {
+                    // Logged into your app and Facebook.
+                    console.log('Successfully logged in with Facebook');
+                    // TODO: Handle the case where the user is logged in.
+                } else {
+                    // The person is not logged into your app or we are unable to tell.
+                    console.log('Please log into this app.');
+                    // TODO: Handle the case where the user is not logged in.
+                }
+            });
             let posters = <%- JSON.stringify(posters)%>
                 $.each(posters, function(index, url) {
                     $("<img>", {
                         id: `img${index + 1}`,
                         src: url.poster_path,
+                        loading: "lazy",
                         alt: `${url.id}`
                     }).appendTo('body');
                 });
@@ -764,7 +812,8 @@
                 $.each(["img1", "img2", "img3", "img4", "img5"], (index, value) => {
                     $(`#${value}`).removeClass("slide-in-left-slow").addClass("shake-horizontal")
                 })
-            }, 2000)
+            }, 1000)
+            window.scroll(0, 0)
         })
 
         function handleCredentialResponse(response) {
@@ -786,6 +835,9 @@
                     }, 6000);
                 }
             });
+            setTimeout(function(){
+                $(window).scrollTop(0);
+            }, 400);
         }
 
         function checkResponseStatus(response) {
@@ -841,10 +893,10 @@
                     success: function(res) {
                         window.location.href = "/dashboard/" + res.data.user.username;
                     },
-                    error: function(response) {
+                    error: function(err) {
                         // Handle error
                         // Display the error message from the response on your HTML page
-                        $('#error-message').text(response.message);
+                        $('#error-message').text(err.message);
                     }
                 });
             })
@@ -867,11 +919,36 @@
                     error: function(response) {
                         // Handle error
                         // Display the error message from the response on your HTML page
-                        $('#error-message').text(response.message);
+                        $("#error-message").text(response.responseJSON.message);
                     }
                 });
             })
             animate();
+        }
+
+        function forgotPassword() {
+            $("#template").empty().append(forgotPasswordForm);
+            $("#forgotPasswordCred").on("submit", function(event) {
+                event.preventDefault();
+                const formData = $(this).serialize();
+                $.ajax({
+                    url: '/forgot-password',
+                    type: 'POST',
+                    data: formData,
+                    success: function(res) {
+                        $("#success-message").text(res.message)
+                    },
+                    error: function(response) {
+                        // Handle error
+                        // Display the error message from the response on your HTML page
+                        $('#error-message').text(response.message);
+                    }
+                });
+            })
+        }
+
+        function animateReturnForgot() {
+            $("#template").empty().append(loginForm);
         }
 
         function animate() {
@@ -891,14 +968,11 @@
             $("#signup").removeClass("slide-out-right").addClass("slide-in-right")
             $("#template").removeClass("slide-in-top").addClass("slide-out-top").addClass("hidden")
         }
-
-        function forgotPassword() {
-            window.location.href = '/forgot-password';
-        }
     </script>
 </head>
 <body>
-
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v18.0&appId=1719506025230637" nonce="pW6qAlOA"></script>
 <div class="container">
     <h1>Welcome to MMDb</h1>
     <div id="buttons">
@@ -926,8 +1000,8 @@
              data-logo_alignment="left">
         </div>
 
-        <a href="/auth/facebook" class="authLink"  id="facebook-auth">Signup using Facebook</a>
-        <div id="error-message" style="color: red; margin-top: 30px;"></div>
+        <div id="facebook-auth" class="fb-login-button" data-width="500" data-size="" data-button-type="" data-layout="" data-auto-logout-link="false" data-use-continue-as="true"></div>
+
     </div>
     </div>
     <div class="hidden cred" id="template">

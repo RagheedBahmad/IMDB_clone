@@ -56,55 +56,78 @@ async function importData(pages) {
     fetch = module.default;
   }
   let allMovies = [];
-  let Casts = [];
-  let Crews = [];
 
   for (let i = 1; i <= pages; i++) {
     const moviesForPage = await fetchData(i);
     allMovies = allMovies.concat(moviesForPage);
   }
+  let i = 1;
+  console.log(allMovies.length);
   for (const movie of allMovies) {
-    const response = await fetch(
-      `https://api.themoviedb.org/3/movie/${movie.id}?append_to_response=credits%2Cvideos%2Creviews%2Cimages&language=en-US&include_image_language=en,null`,
-      options
-    );
-    let updatedMovie = await response.json();
-    for (const castMember of updatedMovie.credits.cast) {
-      castMember.gender = castMember.gender == 2 ? "Male" : "Female";
-      await actors.updateOne(
-        { id: castMember.id },
-        { $set: castMember },
-        { upsert: true }
-      );
-      Casts.push(castMember.id);
-    }
-    for (const castMember of updatedMovie.credits.crew) {
-      await crew.updateOne(
-        { id: castMember.id },
-        { $set: castMember },
-        { upsert: true }
-      );
-      Crews.push(castMember.id);
-    }
-    updatedMovie.credits.cast = Casts;
-    updatedMovie.credits.crew = Crews;
-    const posterPath = updatedMovie.poster_path;
-    if (posterPath) {
-      const baseImageUrl = "https://image.tmdb.org/t/p/w500";
-      movie.poster_path = baseImageUrl + posterPath;
-    }
-
-    await movies
-      .updateOne(
-        { id: updatedMovie.id },
-        { $set: updatedMovie },
-        { upsert: true }
-      )
-      .then(() => {
-        console.log("Inserted " + updatedMovie.original_title);
-      });
+    await insertMovie(movie);
+    console.log(i + ": Inserted " + movie.original_title);
+    i++;
   }
+  console.log("Finished inserting movies");
 }
+
+const insertMovie = async function (movie) {
+  let Casts = [];
+  let Crews = [];
+  let response = await fetch(
+    `https://api.themoviedb.org/3/movie/${movie.id}?append_to_response=credits%2Cvideos%2Creviews%2Cimages&language=en-US&include_image_language=en,null`,
+    options
+  );
+  let updatedMovie = await response.json();
+  for (let castMember of updatedMovie.credits.cast) {
+    let character = castMember.character;
+    delete castMember.character;
+    castMember.gender = castMember.gender == 2 ? "Male" : "Female";
+    await actors.updateOne(
+      { id: castMember.id },
+      {
+        $set: castMember,
+        $unset: { character: "" },
+      },
+      { upsert: true }
+    );
+    Casts.push({ id: castMember.id, character: character });
+  }
+  for (let castMember of updatedMovie.credits.crew) {
+    await crew.updateOne(
+      { id: castMember.id },
+      { $set: castMember },
+      { upsert: true }
+    );
+    Crews.push(castMember.id);
+  }
+  updatedMovie.credits.cast = Casts;
+  updatedMovie.credits.crew = Crews;
+  let posterPath = updatedMovie.poster_path;
+  const baseImageUrl = "https://image.tmdb.org/t/p/w500";
+  if (posterPath) {
+    updatedMovie.poster_path = baseImageUrl + posterPath;
+  }
+
+  const prependBaseUrl = (imageArray) => {
+    return imageArray
+      ? imageArray.map((item) => ({
+          ...item,
+          file_path: baseImageUrl + item.file_path,
+        }))
+      : [];
+  };
+
+  updatedMovie.images.backdrops = prependBaseUrl(updatedMovie.images.backdrops);
+  updatedMovie.images.logos = prependBaseUrl(updatedMovie.images.logos);
+  updatedMovie.images.posters = prependBaseUrl(updatedMovie.images.posters);
+
+  await movies.updateOne(
+    { id: updatedMovie.id },
+    { $set: updatedMovie },
+    { upsert: true }
+  );
+};
 
 // DELETE ALL DATA FROM DB
 const deleteData = async (collection) => {
@@ -150,16 +173,22 @@ async function fetchGenres() {
     .catch((err) => console.error("error:" + err));
 }
 
-if (process.argv[2] === "--import") {
-  importData(process.argv[3] ? process.argv[3] : 1);
-} else if (process.argv[2] === "--delete") {
-  deleteData(movies);
-} else if (process.argv[2] === "--genres") {
-  fetchGenres();
-} else if (process.argv[2] === "--genresDelete") {
-  deleteData(genres);
-} else if (process.argv[2] === "--actors") {
-  fetchActors();
-} else if (process.argv[2] === "--actorsDelete") {
-  deleteData(actors);
+const updatePop = async () => {};
+
+switch (process.argv[2]) {
+  case "--import":
+    importData(process.argv[3] ? process.argv[3] : 1);
+    break;
+
+  case "--delete":
+    deleteData(movies);
+    break;
+
+  case "--updatePop":
+    updatePop();
+    break;
+
+  default:
+    console.log("Invalid command");
+    break;
 }

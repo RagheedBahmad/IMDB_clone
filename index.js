@@ -1,8 +1,8 @@
 const express = require("express");
+const https = require("https");
 const app = express();
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { MongoClient } = require("mongodb").MongoClient;
 const bodyParser = require("body-parser");
@@ -15,6 +15,32 @@ const xss = require("xss-clean");
 const path = require("path");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const passport = require("passport");
+const FacebookStrategy = require("passport-facebook").Strategy;
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_APPID,
+      clientSecret: process.env.FACEBOOK_APPSECRET,
+      callbackURL: "http://localhost:3000/auth/facebook/callback",
+    },
+    function (accessToken, refreshToken, profile, cb) {
+      let user = User.find(profile.email);
+
+      if (!user) {
+        User.create({
+          username: profile.name,
+          email: profile.email,
+          provider: "facebook",
+        }).then((err, user) => {
+          console.log("created user");
+          cb(err, user);
+        });
+      }
+    }
+  )
+);
 
 const corsOptions = {
   origin: "http://localhost:3000", // This should match the URL of your front-end app
@@ -32,12 +58,9 @@ app.use(mongoSanitize());
 
 // Data sanitization against XSS
 app.use(xss());
-// app.use((req, res, next) => {
-//   res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups"); // Replace 'value' with the desired policy value
-//   next();
-// });
 
 const routes = require("./routes/routes");
+const User = require("./models/userModel");
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));

@@ -7,11 +7,7 @@ const Movie = require("./../models/movieModel.js");
 const authController = require("./../controllers/authController");
 const path = require("path");
 const { google } = require("googleapis");
-
-// const authController = require("./../controllers/authController");
-
-// router.post("/signup", authController.signup);
-// router.post("/login", authController.login);
+const passport = require("passport");
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.CLIENT_ID,
@@ -29,6 +25,9 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+router.get("/privacy", (req, res) => {
+  res.render("privacyPolicy");
+});
 router.get("/", async (req, res) => {
   let top5Movies = await Movie.find(
     {},
@@ -140,5 +139,62 @@ async function handleOAuthCallback(code) {
   const userInfoResponse = await oauth2.userinfo.get();
   return userInfoResponse.data; // This will contain the user's profile information
 }
+
+router.post("/facebook/delete-user", (req, res) => {
+  const signedRequest = req.body.signed_request;
+  const [encodedSig, payload] = signedRequest.split(".");
+
+  // Your App Secret
+  const appSecret = process.env.FACEBOOK_APPSECRET;
+
+  // Decode and verify the signature
+  const expectedSig = crypto
+    .createHmac("sha256", appSecret)
+    .update(payload)
+    .digest("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "");
+  if (encodedSig !== expectedSig) {
+    return res.status(403).send("Invalid request signature");
+  }
+
+  // Decode the payload
+  const decodedPayload = JSON.parse(Buffer.from(payload, "base64").toString());
+  const userId = decodedPayload.user_id;
+
+  User.deleteOne(userId);
+
+  res.send({
+    url: "URL_TO_YOUR_CONFIRMATION_PAGE",
+    confirmation_code: "CONFIRMATION_CODE",
+  });
+});
+router.post("/facebook/delete-user-guide", (req, res) => {
+  res.render("delete-user-guide");
+});
+
+router.get("/auth/facebook", passport.authenticate("facebook"), (req, res) => {
+  console.log("reached auth/facebook");
+});
+
+router.get(
+  "/auth/facebook/callback",
+  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  function (req, res) {
+    console.log(res);
+    // Successful authentication, redirect home.
+    res.redirect(`/dashboard/${res.profile.name}`);
+  }
+);
+
+router.post(
+  "/forgot-password",
+  authController.forgotPassword,
+  (req, res) => {}
+);
+router.get("/forgot-password/:token", authController.validateEmailToken);
+
+router.post("/resetPassword", authController.resetPassword);
 
 module.exports = router;
