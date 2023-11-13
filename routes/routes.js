@@ -197,4 +197,9 @@ router.get("/forgot-password/:token", authController.validateEmailToken);
 
 router.post("/resetPassword", authController.resetPassword);
 
+router.get("/profile/:user", authController.protect, async (req, res) => {
+  let user = await User.findOne({});
+  res.render("user");
+});
+
 module.exports = router;

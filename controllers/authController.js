@@ -163,7 +163,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     "host"
   )}/forgot-password/${resetToken}`;
 
-  const message = `Forgot your password? click this link to reset your password : ${resetURL}.\nIf you didn't forget your password, please ignore this email`;
+  const message = `Forgot your password? click this link to reset your password : ${resetURL}\nIf you didn't forget your password, please ignore this email`;
 
   try {
     await sendEmail({
