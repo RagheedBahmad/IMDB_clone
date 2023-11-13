@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+const baseURL = "https://image.tmdb.org/t/p/w500";
+
 const movieSchema = new mongoose.Schema({
   adult: {
     type: Boolean,

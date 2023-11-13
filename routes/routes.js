@@ -48,6 +48,7 @@ router.get("/login", (req, res) => {
   ])
     .exec()
     .then((posters) => {
+      console.log(posters);
       res.render("login", { posters, googleClientId: process.env.CLIENT_ID });
     })
     .catch((err) => {
@@ -81,24 +82,14 @@ router.get("/dashboard/:user?", authController.protect, async (req, res) => {
   }
 });
 
-router.get("/movies/:movie", (req, res) => {
-  let id = req.params;
-  let movie = Movie.findById(id);
-  Movie.find()
-    .sort({ popularity: -1 })
-    .limit(5)
-    .exec()
-    .then((movies) => {
-      if (req.cookies.jwt) {
-        res.render("movie", {
-          movie: movies,
-          user: req.user,
-          isAuthenticated: true,
-        });
-      } else {
-        res.render("movie", { movie: movies, isAuthenticated: false });
-      }
-    });
+router.get("/movies/:movie", async (req, res) => {
+  let id = req.params.movie;
+  let movie = await Movie.findOne({ id: id }).exec();
+  if (req.cookies.jwt) {
+    res.render("movie", { movie, user: req.user });
+  } else {
+    res.render("movie", { movie });
+  }
 });
 
 async function verify(token) {
