@@ -61,16 +61,28 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 exports.login = catchAsync(async (req, res, next) => {
+  console.log("logging in");
   try {
-    const { email, password, provider } = req.body;
+    let user;
+    console.log(req.body);
+    const { email, password } = req.body;
 
     // 1) Email and Password actually exist
     if (!email || !password) {
       return next(new AppError("Please provide email and password", 400));
     }
-    // 2) Check if user exists & password is correct
-    const user = await User.findOne({ email }).select("+password");
 
+    // 2) Check if user exists & password is correct
+    user = await User.findOne({ email }).select("+password");
+    let provider = user.provider;
+    if (provider === "google") {
+      return next(
+        new AppError(
+          "This account is signed up using google, please link your account or continue with google.",
+          501
+        )
+      );
+    }
     if (!user || !(await user.correctPassword(password, user.password))) {
       return next(new AppError("Incorrect email or password.", 401));
     }
@@ -194,7 +206,6 @@ exports.validateEmailToken = catchAsync(async (req, res, next) => {
 
   // 2) Set new password if user and token hasn't expired
   if (!user) {
-    console.log("asdasdasd");
     return next(new AppError("Token invalid or expired", 400));
   } else {
     console.log(user);
@@ -213,9 +224,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   }
   ////////////////////////////////////////////////////////////////////////
   // I ADDED THIS FEATURE SO IT MIGHT BE BUGGY WHICH I THINK IT IS
-  if (await user.correctPassword(req.body.password, user.password)) {
-    return next(new AppError("New password cannot be old password"), 401);
-  }
+  // if (await user.correctPassword(req.body.password, user.password)) {
+  //   return next(new AppError("New password cannot be old password"), 401);
+  // }
   ////////////////////////////////////////////////////////////////////////
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
@@ -252,21 +263,25 @@ exports.googleAuth = catchAsync(async (req, res, next) => {
   });
   const payload = ticket.getPayload();
   // Find or create user in the database
-  let user = await User.findOne({ email: payload.email });
+  let user = await User.findOne({ providerID: payload.sub });
   if (!user) {
+    console.log("didnt find user");
+    console.log(payload.sub);
     // Create a new user record
     user = await User.create({
       username: payload.name,
       email: payload.email,
-      googleId: payload.sub,
       profile: payload.picture,
       provider: "google",
+      providerID: payload.sub,
       // other user fields...
     });
   }
 
   createSendToken(user, 200, res);
 });
+
+exports.linkGoogleAccount = catchAsync(async (req, res, next) => {});
 
 exports.deleteFacebookUser = catchAsync(async (userId) => {
   User.deleteOne({ userId });

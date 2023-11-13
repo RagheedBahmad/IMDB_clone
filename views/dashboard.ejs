@@ -31,7 +31,7 @@
         position: absolute;
         left:25%;
         width:fit-content;
-        transform: translate(0, -90%);
+        transform: translate(0, -80%);
         user-select: none; /* -- Prevent image highlighting -- */
     }
 
@@ -103,7 +103,9 @@
     }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<%- include('partials/header') %>
 <script>
+
     /* -- Had to add extra lines for touch events -- */
     $(window).on("load", () => {
         let car = $("#image-carousel");
@@ -135,7 +137,7 @@
             const trackHTML = document.getElementById("image-track")
             trackHTML.animate(
                 {
-                    transform: `translate(${nextPercentage}%, -90%)`
+                    transform: `translate(${nextPercentage}%, -80%)`
                 },
                 { duration: 1200, fill: "forwards" }
             );

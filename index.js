@@ -17,6 +17,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
+const importMovies = require("./Utils/import-movies.js");
 
 passport.use(
   new FacebookStrategy(
@@ -85,7 +86,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => {
+  .then(async () => {
     console.log("Connected to database.");
     const server = app.listen(PORT, () => {
       console.log(`App running on port ${PORT}`);

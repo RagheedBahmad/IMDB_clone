@@ -37,7 +37,7 @@ router.get("/", async (req, res) => {
     .limit(5)
     .exec();
   // Route handler logic for the GET request
-  res.render("dashboard", { top5Movies });
+  res.render("dashboard", { top5Movies, isAuthenticated: false });
 });
 
 router.get("/login", (req, res) => {
@@ -70,9 +70,14 @@ router.get("/dashboard/:user?", authController.protect, async (req, res) => {
     .exec();
 
   if (req.params.user) {
-    if (req.user) res.render("dashboard", { top5Movies, user: req.user });
+    if (req.user)
+      res.render("dashboard", {
+        top5Movies,
+        user: req.user,
+        isAuthenticated: true,
+      });
   } else {
-    res.render("dashboard", { top5Movies });
+    res.render("dashboard", { top5Movies, isAuthenticated: false });
   }
 });
 
@@ -85,9 +90,13 @@ router.get("/movies/:movie", (req, res) => {
     .exec()
     .then((movies) => {
       if (req.cookies.jwt) {
-        res.render("movie", { movie: movies, user: req.user });
+        res.render("movie", {
+          movie: movies,
+          user: req.user,
+          isAuthenticated: true,
+        });
       } else {
-        res.render("movie", { movie: movies });
+        res.render("movie", { movie: movies, isAuthenticated: false });
       }
     });
 });
@@ -120,7 +129,6 @@ router.get("/oauth2/callback", async (req, res) => {
 
     res.redirect(`/dashboard/${userInfo.name}`);
   } catch (error) {
-    console.error("Error handling OAuth callback", error);
     res.status(500).send("Authentication error");
   }
 });
@@ -174,15 +182,16 @@ router.post("/facebook/delete-user-guide", (req, res) => {
   res.render("delete-user-guide");
 });
 
-router.get("/auth/facebook", passport.authenticate("facebook"), (req, res) => {
-  console.log("reached auth/facebook");
-});
+router.get(
+  "/auth/facebook",
+  passport.authenticate("facebook"),
+  (req, res) => {}
+);
 
 router.get(
   "/auth/facebook/callback",
   passport.authenticate("facebook", { failureRedirect: "/login" }),
   function (req, res) {
-    console.log(res);
     // Successful authentication, redirect home.
     res.redirect(`/dashboard/${res.profile.name}`);
   }

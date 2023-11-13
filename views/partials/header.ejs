@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website Title</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #121212; /* Dark background */
+        color: white; /* Light text */
+    }
+
+    .site-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #1a1a1a; /* Slightly lighter dark shade for header */
+        padding: 10px 20px;
+    }
+
+    .header-logo a {
+        color: white;
+        text-decoration: none;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    .header-nav ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+    }
+
+    .header-nav ul li {
+        margin: 0 10px;
+    }
+
+    .header-nav ul li a {
+        color: white;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .header-nav ul li a:hover {
+        color: #7f9eb9; /* Highlight color */
+    }
+
+    .header-auth a {
+        color: white;
+        text-decoration: none;
+        margin-left: 10px;
+        padding: 5px 10px;
+        border: 1px solid white;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .header-auth a:hover {
+        background-color: white;
+        color: #121212;
+    }
+
+    .login-button {
+        background-color: transparent;
+    }
+
+    .signup-button {
+        background-color: #7f9eb9;
+    }
+
+    .profile-button {
+        background-color: green;
+    }
+</style>
+<body>
+<header class="site-header">
+    <div class="header-logo">
+        <a href="/"><img src="/img/MMDb logo cropped and keyed.png" width="150.66" height="53" alt="logo"></a>
+    </div>
+    <nav class="header-nav">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    <div class="header-auth">
+        <% if (isAuthenticated) { %>
+            <a href="/profile" class="profile-button">Profile</a>
+        <% } else { %>
+            <a href="/login" class="login-button">Login</a>
+            <a href="/signup" class="signup-button">Sign Up</a>
+        <% } %>
+    </div>
+</header>
+
+</body>
+</html>

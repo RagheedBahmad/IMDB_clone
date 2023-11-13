@@ -173,7 +173,32 @@ async function fetchGenres() {
     .catch((err) => console.error("error:" + err));
 }
 
-const updatePop = async () => {};
+const updatePop = async () => {
+  const movies = database.collection("Movies");
+  if (!fetch) {
+    const module = await import("node-fetch");
+    fetch = module.default;
+  }
+  let pages = (await movies.countDocuments()) / 20;
+  for (let i = 1; i < pages; i++) {
+    let result = await fetch(
+      `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${i}`,
+      options
+    );
+    result = await result.json();
+    console.log(result);
+    await update(result.results);
+  }
+};
+
+async function update(movies) {
+  for (const movie of movies) {
+    let movieDB = await movies.findOne({ id: movie.id });
+    if (movie.popularity !== movieDB.popularity) {
+      movieDB.popularity = movie.popularity;
+    }
+  }
+}
 
 switch (process.argv[2]) {
   case "--import":

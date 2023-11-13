@@ -3,8 +3,8 @@
 <html lang="en">
 <head>
 <!--    <link rel="apple-touch-icon" sizes="152x152" href="img/apple-touch-icon.png">-->
-    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./../public/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./../public/img/favicon-16x16.png">
 <!--    <link rel="manifest" href="img/site.webmanifest">-->
 <!--    <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">-->
 <!--    <meta name="msapplication-TileColor" content="#2b5797">-->
@@ -727,23 +727,23 @@
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
-        window.fbAsyncInit = function() {
-            FB.init({
-                appId            : '1719506025230637',
-                cookie           : true,
-                xfbml            : true,
-                version          : 'v18.0'
-            });
-            FB.AppEvents.logPageView();
-        };
-
-        (function(d, s, id){
-            let js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) {return;}
-            js = d.createElement(s); js.id = id;
-            js.src = "https://connect.facebook.net/en_US/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
+        // window.fbAsyncInit = function() {
+        //     FB.init({
+        //         appId            : '1719506025230637',
+        //         cookie           : true,
+        //         xfbml            : true,
+        //         version          : 'v18.0'
+        //     });
+        //     FB.AppEvents.logPageView();
+        // };
+        //
+        // (function(d, s, id){
+        //     let js, fjs = d.getElementsByTagName(s)[0];
+        //     if (d.getElementById(id)) {return;}
+        //     js = d.createElement(s); js.id = id;
+        //     js.src = "https://connect.facebook.net/en_US/sdk.js";
+        //     fjs.parentNode.insertBefore(js, fjs);
+        // }(document, 'script', 'facebook-jssdk'));
 
         let loginForm = `<form action="/login" method="post" id="loginCred">
             <label><input type="text" placeholder="Email" name="email" id="email" required></label>
@@ -780,25 +780,25 @@
             <div id="success-message" style="color: blue;"></div>
         </form>`
 
-        function checkLoginState() {
-            FB.getLoginStatus(function(response) {
-                statusChangeCallback(response);
-            });
-        }
+        // function checkLoginState() {
+        //     FB.getLoginStatus(function(response) {
+        //         statusChangeCallback(response);
+        //     });
+        // }
 
         $(window).on("load", () => {
             $("#template").empty()
-            FB.getLoginStatus(function(response) {
-                if (response.status === 'connected') {
-                    // Logged into your app and Facebook.
-                    console.log('Successfully logged in with Facebook');
-                    // TODO: Handle the case where the user is logged in.
-                } else {
-                    // The person is not logged into your app or we are unable to tell.
-                    console.log('Please log into this app.');
-                    // TODO: Handle the case where the user is not logged in.
-                }
-            });
+            // FB.getLoginStatus(function(response) {
+            //     if (response.status === 'connected') {
+            //         // Logged into your app and Facebook.
+            //         console.log('Successfully logged in with Facebook');
+            //         // TODO: Handle the case where the user is logged in.
+            //     } else {
+            //         // The person is not logged into your app or we are unable to tell.
+            //         console.log('Please log into this app.');
+            //         // TODO: Handle the case where the user is not logged in.
+            //     }
+            // });
             let posters = <%- JSON.stringify(posters)%>
                 $.each(posters, function(index, url) {
                     $("<img>", {
@@ -813,7 +813,6 @@
                     $(`#${value}`).removeClass("slide-in-left-slow").addClass("shake-horizontal")
                 })
             }, 1000)
-            window.scroll(0, 0)
         })
 
         function handleCredentialResponse(response) {
@@ -896,7 +895,7 @@
                     error: function(err) {
                         // Handle error
                         // Display the error message from the response on your HTML page
-                        $('#error-message').text(err.message);
+                        $('#error-message').text(err.responseJSON.message);
                     }
                 });
             })

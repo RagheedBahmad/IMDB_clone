@@ -50,18 +50,20 @@ const userSchema = new mongoose.Schema({
     required: true,
     enum: ["email", "google", "facebook"],
   },
-  providerID: Number,
+  providerID: { type: String, default: null },
 });
 
 userSchema.pre("save", async function (next) {
-  //This middleware only runs if password is modified
-  if (!this.isModified("password")) return next();
+  if (this.password) {
+    //This middleware only runs if password is modified
+    if (!this.isModified("password")) return next();
 
-  //Hash the password with cost 12
-  this.password = await bcrypt.hash(this.password, 12);
+    //Hash the password with cost 12
+    this.password = await bcrypt.hash(this.password, 12);
 
-  //Delete password confirmation
-  this.passwordConfirm = undefined;
+    //Delete password confirmation
+    this.passwordConfirm = undefined;
+  }
   next();
 });
 
