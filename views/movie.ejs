@@ -1,0 +1,181 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@100;200;400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <style>
+        body{
+            font-family: 'Barlow',sans-serif;
+            background-color: black;
+            color: white !important;
+            -webkit-font-smoothing: antialiased;
+        }
+        #fade{
+            background: linear-gradient(0deg,black, 80%, transparent);
+        }
+        #trailer{
+            /* background-image: url("<%= movie.backdrop_path %>");
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center; */
+
+            background-color: darkblue;
+        }
+        * {
+        box-sizing: border-box;
+        }
+
+        nav {
+        position: relative;
+        padding-bottom: 12px;
+        }
+        nav .line {
+        height: 2px;
+        position: absolute;
+        bottom: 0;
+        margin: 10px 0 0 0;
+        background: #ff1847;
+        }
+        nav ul {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        display: flex;
+        }
+        nav ul li {
+        margin: 0 40px 0 0;
+        opacity: 0.4;
+        transition: all 0.4s ease;
+        }
+        nav ul li:hover {
+        opacity: 0.7;
+        }
+        nav ul li.active {
+        opacity: 1;
+        }
+        nav ul li:last-child {
+        margin-right: 0;
+        }
+        nav ul li a {
+        text-decoration: none;
+        color: #fff;
+        text-transform: uppercase;
+        display: block;
+        font-weight: 400;
+        letter-spacing: 0.2em;
+        font-size: 20px;
+        }
+
+        /* body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        } */
+
+    </style>
+</head>
+<body>
+    <div id="trailer" style="height: 500px;">
+        <div id="fade" style=" padding: 100px;">
+            <div class="d-flex flex-row">
+                <div>
+                    <img  style="height: 350px;" src="<%= movie.poster_path %>" alt="<%= movie.original_title %>">
+                </div>
+                <div class="my-auto mx-3" style="border-left: 1px solid white; height: 300px;"></div>
+                <div class="my-auto fs-6" style="width: 550px;">
+                    <div style="font-weight: 100;" ><%= movie.release_date.toDateString().split(' ').slice(1).join(' ') %></div>
+                    <div style=" font-weight: 500;" class="fs-1 mb-5 "><%= movie.original_title %></div>
+                    
+                    <div style="font-weight: 200;" ><%= movie.overview %></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <nav>
+            <ul class="justify-content-evenly">
+                <li class="active"><a href="#info">Info</a></li>
+                <li><a href="#reviews">Reviews</a></li>
+                <li><a href="#other">Other</a></li>
+            </ul>
+        </nav>
+        
+        <div style="height: 1000px;" class="tabs">
+            <div class="active" id="info">Hello 1</div>
+            <div id="reviews" style="display: none;">Hello 23324</div>
+            <div id="other" style="display: none;">hello 234</div>
+        </div>
+    </div>
+</body>
+<script>
+    $(document).ready(function() {
+        var nav = $('nav');
+        var line = $('<div />').addClass('line');
+
+        line.appendTo(nav);
+
+        var active = nav.find('.active');
+        var pos = 0;
+        var wid = 0;
+
+        if(active.length) {
+        pos = active.position().left;
+        wid = active.width();
+        line.css({
+            left: pos,
+            width: wid
+        });
+        }
+
+        nav.find('ul li a').click(function(e) {
+        e.preventDefault();
+        if(!$(this).parent().hasClass('active') && !nav.hasClass('animate')) {
+            
+            nav.addClass('animate');
+
+            var _this = $(this);
+            nav.find('ul li').removeClass('active');
+
+            var position = _this.parent().position();
+            var width = _this.parent().width();
+
+            if(position.left >= pos) {
+            line.animate({
+                width: ((position.left - pos) + width)
+            }, 300, function() {
+                line.animate({
+                width: width,
+                left: position.left
+                }, 150, function() {
+                nav.removeClass('animate');
+                });
+                _this.parent().addClass('active');
+            });
+            } else {
+            line.animate({
+                left: position.left,
+                width: ((pos - position.left) + wid)
+            }, 300, function() {
+                line.animate({
+                width: width
+                }, 150, function() {
+                nav.removeClass('animate');
+                });
+                _this.parent().addClass('active');
+            });
+            }
+
+            pos = position.left;
+            wid = width;
+        }
+        });
+    });
+</script>
+</html>
