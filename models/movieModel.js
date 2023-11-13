@@ -11,7 +11,6 @@ const movieSchema = new mongoose.Schema({
   backdrop_path: {
     type: String,
     trim: true,
-    get: v =>`${baseURL}${v}`,
   },
   genre_ids: [
     {
@@ -43,7 +42,6 @@ const movieSchema = new mongoose.Schema({
   poster_path: {
     type: String,
     trim: true,
-    get: v =>`${baseURL}${v}`,
   },
   release_date: {
     type: Date,
