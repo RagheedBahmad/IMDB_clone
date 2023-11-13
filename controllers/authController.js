@@ -7,6 +7,7 @@ const AppError = require("./../Utils/appError");
 // const sendEmail = require('./../Utils/email');
 const { google } = require("googleapis");
 const { OAuth2Client } = require("google-auth-library");
+const sendEmail = require("../Utils/email");
 const client = new OAuth2Client(process.env.CLIENT_ID + "");
 
 const signToken = (id) => {
@@ -148,9 +149,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 3) Send it to the user's email
   const resetURL = `${req.protocol}://${req.get(
     "host"
-  )}/api/v1/users/resetPassword/${resetToken}`;
+  )}/forgot-password/${resetToken}`;
 
-  const message = `Forgot your password? Submit a Patch request with your new password and passwordConfirm to : ${resetURL}.\nIf you didn't forget your password, please ignore this email`;
+  const message = `Forgot your password? click this link to reset your password : ${resetURL}.\nIf you didn't forget your password, please ignore this email`;
 
   try {
     await sendEmail({
@@ -161,7 +162,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
       status: "success",
-      message: "Token sent to email.",
+      message: "Token sent to email.\n(check spam or junk folders)",
+      user: user.username,
     });
   } catch (err) {
     user.passwordResetToken = undefined;
@@ -177,7 +179,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.resetPassword = catchAsync(async (req, res, next) => {
+exports.validateEmailToken = catchAsync(async (req, res, next) => {
+  console.log("entered validateEmailToken");
   // 1) get user based on token
   const hashedToken = crypto
     .createHash("sha256")
@@ -187,13 +190,27 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
-  }).select("+password");
+  });
 
   // 2) Set new password if user and token hasn't expired
   if (!user) {
-    return next(new AppError("Token in invalid or expired", 400));
+    console.log("asdasdasd");
+    return next(new AppError("Token invalid or expired", 400));
+  } else {
+    console.log(user);
+    res.render("passwordReset", { user });
   }
+});
 
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  console.log("entered resetpassword");
+  console.log(req.body);
+  let user = await User.findOne({ _id: req.body.userID }).select("+password");
+  console.log(user);
+  if (req.body.password !== req.body.passwordConfirm) {
+    console.log("error");
+    return next(new AppError("Passwords do not match", 501));
+  }
   ////////////////////////////////////////////////////////////////////////
   // I ADDED THIS FEATURE SO IT MIGHT BE BUGGY WHICH I THINK IT IS
   if (await user.correctPassword(req.body.password, user.password)) {
@@ -234,7 +251,6 @@ exports.googleAuth = catchAsync(async (req, res, next) => {
     audience: process.env.CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
   });
   const payload = ticket.getPayload();
-  console.log(payload);
   // Find or create user in the database
   let user = await User.findOne({ email: payload.email });
   if (!user) {
@@ -250,4 +266,8 @@ exports.googleAuth = catchAsync(async (req, res, next) => {
   }
 
   createSendToken(user, 200, res);
+});
+
+exports.deleteFacebookUser = catchAsync(async (userId) => {
+  User.deleteOne({ userId });
 });
