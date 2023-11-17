@@ -16,14 +16,15 @@ const oauth2Client = new google.auth.OAuth2(
 );
 
 const storage = multer.diskStorage({
-  destination: "public/img/profiles",
+  destination: function (req, file, cb) {
+    cb(null, "./public/img/profiles"); // Ensure this path exists
+  },
   filename: function (req, file, cb) {
-    const username = req.body.username;
-    const fileExtension = path.extname(file.originalname);
-    cb(null, `${username}${fileExtension}`);
+    let filename = req.body.username + path.extname(file.originalname);
+    cb(null, filename);
   },
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
 router.get("/privacy", (req, res) => {
   res.render("privacyPolicy");
@@ -31,7 +32,7 @@ router.get("/privacy", (req, res) => {
 router.get("/", async (req, res) => {
   let top5Movies = await Movie.find(
     {},
-    { id: 1, _id: 0, poster_path: 1, original_title: 1 }
+    { id: 1, _id: 0, poster_path: 1, original_title: 1, overview: 1 }
   )
     .sort({ popularity: -1 })
     .limit(5)
@@ -48,7 +49,6 @@ router.get("/login", (req, res) => {
   ])
     .exec()
     .then((posters) => {
-      console.log(posters);
       res.render("login", { posters, googleClientId: process.env.CLIENT_ID });
     })
     .catch((err) => {
@@ -64,7 +64,7 @@ router.post("/login", authController.login);
 router.get("/dashboard/:user?", authController.protect, async (req, res) => {
   let top5Movies = await Movie.find(
     {},
-    { id: 1, _id: 0, poster_path: 1, original_title: 1 }
+    { id: 1, _id: 0, poster_path: 1, original_title: 1, overview: 1 }
   )
     .sort({ popularity: -1 })
     .limit(5)
@@ -198,8 +198,7 @@ router.get("/forgot-password/:token", authController.validateEmailToken);
 router.post("/resetPassword", authController.resetPassword);
 
 router.get("/profile/:user", authController.protect, async (req, res) => {
-  let user = await User.findOne({});
-  res.render("user");
+  res.render("user", { user: req.user });
 });
 
 module.exports = router;

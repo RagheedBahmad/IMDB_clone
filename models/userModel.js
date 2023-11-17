@@ -50,7 +50,22 @@ const userSchema = new mongoose.Schema({
     required: true,
     enum: ["email", "google", "facebook"],
   },
-  providerID: { type: String, default: null },
+  providerID: {
+    type: String,
+    required: [
+      function () {
+        return this.provider !== "email";
+      },
+    ],
+  },
+  dateWhenJoined: { type: Date, required: true },
+  reviews: [
+    {
+      movieID: { type: Number, required: true },
+      review: { type: String, required: true },
+      rating: { type: Number, required: true, max: 5 },
+    },
+  ],
 });
 
 userSchema.pre("save", async function (next) {

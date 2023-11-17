@@ -3,8 +3,8 @@
 <html lang="en">
 <head>
 <!--    <link rel="apple-touch-icon" sizes="152x152" href="img/apple-touch-icon.png">-->
-    <link rel="icon" type="image/png" sizes="32x32" href="./../public/img/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./../public/img/favicon-16x16.png">
+<!--    <link rel="icon" type="image/png" sizes="32x32" href="./../public/img/favicon-32x32.png">-->
+<!--    <link rel="icon" type="image/png" sizes="16x16" href="./../public/img/favicon-16x16.png">-->
 <!--    <link rel="manifest" href="img/site.webmanifest">-->
 <!--    <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">-->
 <!--    <meta name="msapplication-TileColor" content="#2b5797">-->
@@ -62,7 +62,7 @@
             position: sticky;
             margin: 0;
             background-color: transparent;
-            top: -80px;
+            top: -60px;
         }
 
         img {
@@ -97,6 +97,9 @@
         #img5 {
             top: -100px;
             left: 600px;
+        }
+        .loading {
+            position: relative;
         }
 
         form {
@@ -143,7 +146,7 @@
         #google-auth {
             margin-bottom: 20px
         }
-        a:hover, .custom-file-input:hover{
+        a:hover, .custom-file-input:hover {
             -webkit-transition: 0.5s;
             -o-transition: 0.5s;
             transition: 0.5s;
@@ -244,6 +247,8 @@
 
         #signupCred {
             z-index:-2;
+            display: flex;
+            align-items: center;
         }
 
         label, input {
@@ -685,9 +690,10 @@
                 height:100%;
             }
             h1 {
-                padding-top:0;
+                font-size: 2em;
+                padding-top:20px;
                 margin-bottom: 100px;
-                top:60px;
+                top:20px;
             }
             img {
                 max-width: 25%;
@@ -723,29 +729,31 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-    <script>
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-        // window.fbAsyncInit = function() {
-        //     FB.init({
-        //         appId            : '1719506025230637',
-        //         cookie           : true,
-        //         xfbml            : true,
-        //         version          : 'v18.0'
-        //     });
-        //     FB.AppEvents.logPageView();
-        // };
-        //
-        // (function(d, s, id){
-        //     let js, fjs = d.getElementsByTagName(s)[0];
-        //     if (d.getElementById(id)) {return;}
-        //     js = d.createElement(s); js.id = id;
-        //     js.src = "https://connect.facebook.net/en_US/sdk.js";
-        //     fjs.parentNode.insertBefore(js, fjs);
-        // }(document, 'script', 'facebook-jssdk'));
+</head>
+<body>
+<script>
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    // window.fbAsyncInit = function() {
+    //     FB.init({
+    //         appId            : '1719506025230637',
+    //         cookie           : true,
+    //         xfbml            : true,
+    //         version          : 'v18.0'
+    //     });
+    //     FB.AppEvents.logPageView();
+    // };
+    //
+    // (function(d, s, id){
+    //     let js, fjs = d.getElementsByTagName(s)[0];
+    //     if (d.getElementById(id)) {return;}
+    //     js = d.createElement(s); js.id = id;
+    //     js.src = "https://connect.facebook.net/en_US/sdk.js";
+    //     fjs.parentNode.insertBefore(js, fjs);
+    // }(document, 'script', 'facebook-jssdk'));
 
-        let loginForm = `<form action="/login" method="post" id="loginCred">
+    let loginForm = `<form action="/login" method="post" id="loginCred">
             <label><input type="text" placeholder="Email" name="email" id="email" required></label>
             <label><input type="password" placeholder="Password" name="password" required></label>
             <label class="rememberMe"><input type="checkbox" value="lsRememberMe" id="rememberMe"><p>Remember me</p></label>
@@ -755,22 +763,24 @@
             <label><input type="submit" value="Log in" onclick="lsRememberMe()"></label>
             </div>
 <div id="error-message" style="color: red;"></div>
+<img src="/img/Infinity-1s-94px.png" id="loginLoadingImage" style="display: none;" class="loading">
         </form>`;
 
-        let signupForm = `<form action="/signup" method="post" id="signupCred" enctype="multipart/form-data">
+    let signupForm = `<form action="/signup" method="post" id="signupCred" enctype="multipart/form-data">
             <label><input type="text" placeholder="Username" name="username" required></label>
             <label><input type="email" placeholder="Email" name="email" required></label>
             <label><input type="password" placeholder="Password" name="password" required></label>
             <label><input type="password" placeholder="Confirm Password" name="passwordConfirm" required></label>
-            <label class="custom-file-input">Upload Profile Picture<input type="file" placeholder="profile" name="profile" accept="image/*"></label>
+            <div><label class="custom-file-input">Upload Profile Picture<input type="file" placeholder="profile" id="profile" name="profile" accept="image/*"></label></div>
             <div class="back">
                 <a onclick="animateReturn()"> &lt;Go Back</a>
                 <label><input type="submit" value="Sign up"></label>
             </div>
 <div id="error-message" style="color: red;"></div>
+<img src="/img/Infinity-1s-94px.png" id="signupLoadingImage" style="display: none;" class="loading">
         </form>`;
 
-        let forgotPasswordForm = `<form action="/forgot-password" method="post" id="forgotPasswordCred">
+    let forgotPasswordForm = `<form action="/forgot-password" method="post" id="forgotPasswordCred">
             <label><input type="email" placeholder="Email" name="email" required></label>
                 <div class="back">
                 <a onclick="animateReturnForgot()"> &lt;Go Back</a>
@@ -780,196 +790,196 @@
             <div id="success-message" style="color: blue;"></div>
         </form>`
 
-        // function checkLoginState() {
-        //     FB.getLoginStatus(function(response) {
-        //         statusChangeCallback(response);
-        //     });
-        // }
+    // function checkLoginState() {
+    //     FB.getLoginStatus(function(response) {
+    //         statusChangeCallback(response);
+    //     });
+    // }
 
-        $(window).on("load", () => {
-            $("#template").empty()
-            // FB.getLoginStatus(function(response) {
-            //     if (response.status === 'connected') {
-            //         // Logged into your app and Facebook.
-            //         console.log('Successfully logged in with Facebook');
-            //         // TODO: Handle the case where the user is logged in.
-            //     } else {
-            //         // The person is not logged into your app or we are unable to tell.
-            //         console.log('Please log into this app.');
-            //         // TODO: Handle the case where the user is not logged in.
-            //     }
-            // });
-            let posters = <%- JSON.stringify(posters)%>
-                $.each(posters, function(index, url) {
-                    $("<img>", {
-                        id: `img${index + 1}`,
-                        src: url.poster_path,
-                        loading: "lazy",
-                        alt: `${url.id}`
-                    }).appendTo('body');
-                });
-            setTimeout(() => {
-                $.each(["img1", "img2", "img3", "img4", "img5"], (index, value) => {
-                    $(`#${value}`).removeClass("slide-in-left-slow").addClass("shake-horizontal")
-                })
-            }, 1000)
-        })
-
-        function handleCredentialResponse(response) {
-            // Send the ID token to your server with a fetch request
-            $.ajax({
-                url: '/auth/google',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ token: response.credential }),
-                success: function(res) {
-                    window.location.href = "/dashboard/" + res.data.user.username
-                },
-                error: function(xhr) {
-                    let error = $("#error-message")
-                    error.text(xhr.responseJSON.message)
-                    error.fadeIn();
-                    setTimeout(function() {
-                        error.fadeOut();
-                    }, 6000);
-                }
+    $(window).on("load", () => {
+        $("#template").empty()
+        // FB.getLoginStatus(function(response) {
+        //     if (response.status === 'connected') {
+        //         // Logged into your app and Facebook.
+        //         console.log('Successfully logged in with Facebook');
+        //         // TODO: Handle the case where the user is logged in.
+        //     } else {
+        //         // The person is not logged into your app or we are unable to tell.
+        //         console.log('Please log into this app.');
+        //         // TODO: Handle the case where the user is not logged in.
+        //     }
+        // });
+        let posters = <%- JSON.stringify(posters)%>
+            $.each(posters, function(index, url) {
+                $("<img>", {
+                    id: `img${index + 1}`,
+                    src: url.poster_path,
+                    loading: "lazy",
+                    alt: `${url.id}`
+                }).appendTo('body');
             });
-            setTimeout(function(){
-                $(window).scrollTop(0);
-            }, 400);
-        }
+        setTimeout(() => {
+            $.each(["img1", "img2", "img3", "img4", "img5"], (index, value) => {
+                $(`#${value}`).removeClass("slide-in-left-slow").addClass("shake-horizontal")
+            })
+        }, 1000)
+    })
 
-        function checkResponseStatus(response) {
-            if (!response.ok) $('#error-message').text(response.message);
-        }
+    function handleCredentialResponse(response) {
+        // Send the ID token to your server with a fetch request
+        $.ajax({
+            url: '/auth/google',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ token: response.credential }),
+            success: function(res) {
+                window.location.href = "/dashboard/" + res.data.user.username
+            },
+            error: function(xhr) {
+                let error = $("#error-message")
+                error.text(xhr.responseJSON.message)
+                error.fadeIn();
+                setTimeout(function() {
+                    error.fadeOut();
+                }, 6000);
+            }
+        });
+        setTimeout(function(){
+            $(window).scrollTop(0);
+        }, 400);
+    }
 
-        const rmCheck = $("#rememberMe")
-        const email = $("#email")
-        if (localStorage.checkbox && localStorage.checkbox !== "") {
+    function checkResponseStatus(response) {
+        if (!response.ok) $('#error-message').text(response.message);
+    }
+
+    const rmCheck = $("#rememberMe")
+    const email = $("#email")
+    if (localStorage.checkbox && localStorage.checkbox !== "") {
+        rmCheck.prop('checked', true);
+        email.val(localStorage.username);
+    } else {
+        rmCheck.prop('checked', false);
+        email.val("");
+    }
+
+    function lsRememberMe() {
+        let rmCheck = $('#template').find("#rememberMe");
+        let email = $('#template').find("#email");
+        if (rmCheck.is(':checked') && email.val() !== "") {
+            console.log("should work");
+            localStorage.username = email.val();
+            // Store 'true' or 'false' as a string because localStorage can only store strings
+            localStorage.checkbox = rmCheck.is(':checked').toString();
+        } else {
+            localStorage.username = "";
+            // Store 'false' as a string for consistency
+            localStorage.checkbox = "false";
+        }
+    }
+
+    function login() {
+        // lsRememberMe();
+        $('html, body').animate({ scrollTop: 100 }, 1500);
+        $("#template").empty().append(loginForm)
+        let rmCheck = $('#template').find("#rememberMe");
+        let email = $('#template').find("#email");
+
+        if (localStorage.checkbox === "true") {
             rmCheck.prop('checked', true);
             email.val(localStorage.username);
         } else {
             rmCheck.prop('checked', false);
             email.val("");
         }
+        $("#loginCred").on("submit", function(event) {
+            $('#loginLoadingImage').show();
+            event.preventDefault();
+            const formData = $(this).serialize();
+            $.ajax({
+                url: '/login',
+                type: 'POST',
+                data: formData,
+                success: function(res) {
+                    window.location.href = "/dashboard/" + res.data.user.username;
+                },
+                error: function(err) {
+                    $('#loginLoadingImage').hide();
+                    $('#error-message').text(err.responseJSON.message);
+                }
+            });
+        })
+        animate();
+    }
 
-        function lsRememberMe() {
-            let rmCheck = $('#template').find("#rememberMe");
-            let email = $('#template').find("#email");
-            if (rmCheck.is(':checked') && email.val() !== "") {
-                console.log("should work");
-                localStorage.username = email.val();
-                // Store 'true' or 'false' as a string because localStorage can only store strings
-                localStorage.checkbox = rmCheck.is(':checked').toString();
-            } else {
-                localStorage.username = "";
-                // Store 'false' as a string for consistency
-                localStorage.checkbox = "false";
-            }
-        }
+    function signup() {
+        $('html, body').animate({ scrollTop: 200 }, 1500);
+        $("#template").empty().append(signupForm);
+        $("#signupCred").on("submit", function(event) {
+            $('#signupLoadingImage').show();
+            event.preventDefault();
+            const formData = new FormData(this);
+            $.ajax({
+                url: '/signup',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(res) {
+                    window.location.href = "dashboard/" + res.data.user.username;
+                },
+                error: function(response) {
+                    $('#signupLoadingImage').hide();
+                    $("#error-message").text(response.responseJSON.message);
+                }
+            });
+        })
+        animate();
+    }
 
-        function login() {
-            // lsRememberMe();
-            $('html, body').animate({ scrollTop: 100 }, 1500);
-            $("#template").empty().append(loginForm)
-            let rmCheck = $('#template').find("#rememberMe");
-            let email = $('#template').find("#email");
+    function forgotPassword() {
+        $("#template").empty().append(forgotPasswordForm);
+        $("#forgotPasswordCred").on("submit", function(event) {
+            event.preventDefault();
+            const formData = $(this).serialize();
+            $.ajax({
+                url: '/forgot-password',
+                type: 'POST',
+                data: formData,
+                success: function(res) {
+                    $("#success-message").text(res.message)
+                },
+                error: function(response) {
+                    // Handle error
+                    // Display the error message from the response on your HTML page
+                    $('#error-message').text(response.message);
+                }
+            });
+        })
+    }
 
-            if (localStorage.checkbox === "true") {
-                rmCheck.prop('checked', true);
-                email.val(localStorage.username);
-            } else {
-                rmCheck.prop('checked', false);
-                email.val("");
-            }
-            $("#loginCred").on("submit", function(event) {
-                event.preventDefault();
-                const formData = $(this).serialize();
-                $.ajax({
-                    url: '/login',
-                    type: 'POST',
-                    data: formData,
-                    success: function(res) {
-                        window.location.href = "/dashboard/" + res.data.user.username;
-                    },
-                    error: function(err) {
-                        // Handle error
-                        // Display the error message from the response on your HTML page
-                        $('#error-message').text(err.responseJSON.message);
-                    }
-                });
-            })
-            animate();
-        }
+    function animateReturnForgot() {
+        $("#template").empty().append(loginForm);
+    }
 
-        function signup() {
-            $('html, body').animate({ scrollTop: 200 }, 1500);
-            $("#template").empty().append(signupForm);
-            $("#signupCred").on("submit", function(event) {
-                event.preventDefault();
-                const formData = $(this).serialize();
-                $.ajax({
-                    url: '/signup',
-                    type: 'POST',
-                    data: formData,
-                    success: function(res) {
-                        window.location.href = "dashboard/" + res.data.user.username;
-                    },
-                    error: function(response) {
-                        // Handle error
-                        // Display the error message from the response on your HTML page
-                        $("#error-message").text(response.responseJSON.message);
-                    }
-                });
-            })
-            animate();
-        }
-
-        function forgotPassword() {
-            $("#template").empty().append(forgotPasswordForm);
-            $("#forgotPasswordCred").on("submit", function(event) {
-                event.preventDefault();
-                const formData = $(this).serialize();
-                $.ajax({
-                    url: '/forgot-password',
-                    type: 'POST',
-                    data: formData,
-                    success: function(res) {
-                        $("#success-message").text(res.message)
-                    },
-                    error: function(response) {
-                        // Handle error
-                        // Display the error message from the response on your HTML page
-                        $('#error-message').text(response.message);
-                    }
-                });
-            })
-        }
-
-        function animateReturnForgot() {
-            $("#template").empty().append(loginForm);
-        }
-
-        function animate() {
-            $("#google-auth").removeClass("slide-in-bottom").addClass("slide-out-bottom")
-            $("#facebook-auth").removeClass("slide-in-bottom").addClass("slide-out-bottom")
-            $("#breaker").removeClass("slide-in-bottom").addClass("slide-out-bottom")
-            $("#login").removeClass("slide-in-left").addClass("slide-out-left")
-            $("#signup").removeClass("slide-in-right").addClass("slide-out-right")
-            $("#template").removeClass("slide-out-top").addClass("slide-in-top").removeClass("hidden")
-        }
-        function animateReturn() {
-            $('html, body').animate({ scrollTop: 0 }, 1500);
-            $("#google-auth").removeClass("slide-out-bottom").addClass("slide-in-bottom")
-            $("#facebook-auth").removeClass("slide-out-bottom").addClass("slide-in-bottom")
-            $("#breaker").removeClass("slide-out-bottom").addClass("slide-in-bottom")
-            $("#login").removeClass("slide-out-left").addClass("slide-in-left")
-            $("#signup").removeClass("slide-out-right").addClass("slide-in-right")
-            $("#template").removeClass("slide-in-top").addClass("slide-out-top").addClass("hidden")
-        }
-    </script>
-</head>
-<body>
+    function animate() {
+        $("#google-auth").removeClass("slide-in-bottom").addClass("slide-out-bottom")
+        $("#facebook-auth").removeClass("slide-in-bottom").addClass("slide-out-bottom")
+        $("#breaker").removeClass("slide-in-bottom").addClass("slide-out-bottom")
+        $("#login").removeClass("slide-in-left").addClass("slide-out-left")
+        $("#signup").removeClass("slide-in-right").addClass("slide-out-right")
+        $("#template").removeClass("slide-out-top").addClass("slide-in-top").removeClass("hidden")
+    }
+    function animateReturn() {
+        $('html, body').animate({ scrollTop: 0 }, 1500);
+        $("#google-auth").removeClass("slide-out-bottom").addClass("slide-in-bottom")
+        $("#facebook-auth").removeClass("slide-out-bottom").addClass("slide-in-bottom")
+        $("#breaker").removeClass("slide-out-bottom").addClass("slide-in-bottom")
+        $("#login").removeClass("slide-out-left").addClass("slide-in-left")
+        $("#signup").removeClass("slide-out-right").addClass("slide-in-right")
+        $("#template").removeClass("slide-in-top").addClass("slide-out-top").addClass("hidden")
+    }
+</script>
 <div id="fb-root"></div>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v18.0&appId=1719506025230637" nonce="pW6qAlOA"></script>
 <div class="container">

@@ -174,31 +174,82 @@ async function fetchGenres() {
 }
 
 const updatePop = async () => {
-  const movies = database.collection("Movies");
   if (!fetch) {
     const module = await import("node-fetch");
     fetch = module.default;
   }
-  let pages = (await movies.countDocuments()) / 20;
-  for (let i = 1; i < pages; i++) {
+  let movieList = await movies.find({}).toArray();
+  for (const movie of movieList) {
     let result = await fetch(
-      `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${i}`,
+      `https://api.themoviedb.org/3/movie/${movie.id}?language=en-US`,
       options
     );
     result = await result.json();
-    console.log(result);
-    await update(result.results);
-  }
-};
 
-async function update(movies) {
-  for (const movie of movies) {
-    let movieDB = await movies.findOne({ id: movie.id });
-    if (movie.popularity !== movieDB.popularity) {
-      movieDB.popularity = movie.popularity;
+    if (movie.popularity !== result.popularity) {
+      await movies.updateOne(
+        { id: movie.id },
+        { $set: { popularity: result.popularity } }
+      );
+      console.log(
+        `Updated ${movie.original_title}'s popularity from ${movie.popularity} to ${result.popularity}`
+      );
+    } else {
+      console.log(`${movie.original_title}'s popularity didn't change`);
     }
   }
-}
+  // let pages = Math.ceil((await movies.countDocuments()) / 20);
+  // for (let i = 1; i <= pages; i++) {
+  //   let result = await fetch(
+  //     `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${i}`,
+  //     options
+  //   );
+  //   result = await result.json();
+  //   await update(result.results);
+  //   console.log("updated page " + i);
+  // }
+};
+
+// async function update(movieList) {
+//   for (const movie of movieList) {
+//     let movieDB = await movies.findOne({ id: movie.id });
+//     if (movieDB && movie.popularity !== movieDB.popularity) {
+//       let oldPop = movieDB.popularity;
+//       await movies.updateOne(
+//         { id: movieDB.id },
+//         { $set: { popularity: movie.popularity } }
+//       );
+//       console.log(
+//         `Updated ${movieDB.original_title}'s popularity from ${oldPop} to ${movie.popularity}`
+//       );
+//     } else if (!movieDB) {
+//       await movies.insertOne(movie);
+//       console.log("inserted new movie: " + movie.original_title);
+//     }
+//   }
+// }
+
+const updatePost = async () => {
+  if (!fetch) {
+    const module = await import("node-fetch");
+    fetch = module.default;
+  }
+  let movieList = await movies.find({}).toArray();
+  for (const movie of movieList) {
+    if (!movie.poster_path.startsWith("https://image.tmdb.org/t/p/w500")) {
+      await movies.updateOne(
+        { id: movie.id },
+        {
+          $set: {
+            poster_path: "https://image.tmdb.org/t/p/w500" + movie.poster_path,
+          },
+        }
+      );
+      console.log(movie.poster_path);
+    }
+  }
+  console.log("finished");
+};
 
 switch (process.argv[2]) {
   case "--import":
@@ -211,6 +262,10 @@ switch (process.argv[2]) {
 
   case "--updatePop":
     updatePop();
+    break;
+
+  case "--updatePost":
+    updatePost();
     break;
 
   default:

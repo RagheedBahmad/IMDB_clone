@@ -9,6 +9,7 @@ const { google } = require("googleapis");
 const { OAuth2Client } = require("google-auth-library");
 const sendEmail = require("../Utils/email");
 const client = new OAuth2Client(process.env.CLIENT_ID + "");
+const fs = require("fs");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -41,22 +42,32 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  let user = await User.findOne({ googleId: req.body.email });
-
+  console.log("signing up");
+  let profilePath;
+  if (req.file) profilePath = "/img/profiles/" + req.file.filename;
+  let user = await User.findOne({ email: req.body.email });
+  console.log(user);
   if (!user) {
+    let timestamp = Date.now();
+    let date = new Date(timestamp);
     const newUser = await User.create({
       username: req.body.username,
       email: req.body.email,
       password: req.body.password,
       passwordConfirm: req.body.passwordConfirm,
-      profile: req.file ? req.file.filename : "null",
+      profile: req.file ? profilePath : "null",
       provider: "email",
       providerId: null,
+      dateWhenJoined: date,
     });
 
     createSendToken(newUser, 201, res);
   } else {
-    return new AppError("User with this email already exists", 409);
+    if (req.file)
+      fs.unlink("./public/img/profiles/" + req.file.filename, (err) => {
+        if (err) console.log(err);
+      });
+    return next(new AppError("User with this email already exists", 409));
   }
 });
 
@@ -105,6 +116,8 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
+  let username = req.params.user;
+
   // 1) Getting Token and check if it exists
   let token;
   if (req.cookies.jwt) {
@@ -124,6 +137,13 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (!currentUser) {
     return next(
       new AppError("The user belonging to the token no longer exists", 401)
+    );
+  }
+
+  if (currentUser.username !== username) {
+    return next(
+      new AppError("You do not have permission to access this page"),
+      401
     );
   }
 
