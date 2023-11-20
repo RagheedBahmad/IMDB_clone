@@ -55,23 +55,25 @@ async function importData(pages) {
     const module = await import("node-fetch");
     fetch = module.default;
   }
-  let allMovies = [];
-
-  for (let i = 1; i <= pages; i++) {
-    const moviesForPage = await fetchData(i);
-    allMovies = allMovies.concat(moviesForPage);
-  }
+  // let allMovies = [];
+  let movieList = await movies.find({}).toArray();
+  // for (let i = 1; i <= pages; i++) {
+  //   const moviesForPage = await fetchData(i);
+  //   allMovies = allMovies.concat(moviesForPage);
+  // }
   let i = 1;
-  console.log(allMovies.length);
-  for (const movie of allMovies) {
+  console.log(movieList.length);
+  for (const movie of movieList) {
     await insertMovie(movie);
     console.log(i + ": Inserted " + movie.original_title);
     i++;
   }
   console.log("Finished inserting movies");
+  process.exit();
 }
 
 const insertMovie = async function (movie) {
+  const baseImageUrl = "https://image.tmdb.org/t/p/w500";
   let Casts = [];
   let Crews = [];
   let response = await fetch(
@@ -83,20 +85,31 @@ const insertMovie = async function (movie) {
     let character = castMember.character;
     delete castMember.character;
     castMember.gender = castMember.gender == 2 ? "Male" : "Female";
+    castMember.profile_path = baseImageUrl + castMember.profile_path;
+
     await actors.updateOne(
       { id: castMember.id },
       {
         $set: castMember,
         $unset: { character: "" },
+        $addToSet: {
+          actedIn: updatedMovie.id,
+        },
       },
       { upsert: true }
     );
     Casts.push({ id: castMember.id, character: character });
   }
   for (let castMember of updatedMovie.credits.crew) {
+    castMember.profile_path = baseImageUrl + castMember.profile_path;
     await crew.updateOne(
       { id: castMember.id },
-      { $set: castMember },
+      {
+        $set: castMember,
+        $addToSet: {
+          workedOn: updatedMovie.id, // Replace with your field name and the value to add
+        },
+      },
       { upsert: true }
     );
     Crews.push(castMember.id);
@@ -104,7 +117,7 @@ const insertMovie = async function (movie) {
   updatedMovie.credits.cast = Casts;
   updatedMovie.credits.crew = Crews;
   let posterPath = updatedMovie.poster_path;
-  const baseImageUrl = "https://image.tmdb.org/t/p/w500";
+
   if (posterPath) {
     updatedMovie.poster_path = baseImageUrl + posterPath;
   }
@@ -251,6 +264,22 @@ const updatePost = async () => {
   console.log("finished");
 };
 
+async function resetCredit() {
+  let actorList = await actors.find({}).toArray();
+  let crewList = await crew.find({}).toArray();
+  console.log("finished fetching data");
+  for (let actor of actorList) {
+    await actors.updateOne({ id: actor.id }, { $unset: { actedIn: "" } });
+    console.log("deleted " + actor.id);
+  }
+  console.log("finished actors");
+  for (let crews of crewList) {
+    await crew.updateOne({ id: crews.id }, { $unset: { workedOn: "" } });
+    console.log("deleted " + crews.id);
+  }
+  console.log("finished resetting");
+}
+
 switch (process.argv[2]) {
   case "--import":
     importData(process.argv[3] ? process.argv[3] : 1);
@@ -266,6 +295,10 @@ switch (process.argv[2]) {
 
   case "--updatePost":
     updatePost();
+    break;
+
+  case "--resetCredit":
+    resetCredit();
     break;
 
   default:

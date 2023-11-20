@@ -763,7 +763,7 @@
             <label><input type="submit" value="Log in" onclick="lsRememberMe()"></label>
             </div>
 <div id="error-message" style="color: red;"></div>
-<img src="/img/Infinity-1s-94px.png" id="loginLoadingImage" style="display: none;" class="loading">
+<div><img src="/img/Infinity-1s-94px.png" id="loginLoadingImage" style="display: none;" class="loading"></div>
         </form>`;
 
     let signupForm = `<form action="/signup" method="post" id="signupCred" enctype="multipart/form-data">
@@ -777,7 +777,7 @@
                 <label><input type="submit" value="Sign up"></label>
             </div>
 <div id="error-message" style="color: red;"></div>
-<img src="/img/Infinity-1s-94px.png" id="signupLoadingImage" style="display: none;" class="loading">
+<div><img src="/img/Infinity-1s-94px.png" id="signupLoadingImage" style="display: none;" class="loading"></div>
         </form>`;
 
     let forgotPasswordForm = `<form action="/forgot-password" method="post" id="forgotPasswordCred">
@@ -826,6 +826,7 @@
     })
 
     function handleCredentialResponse(response) {
+        $('#homePageLoadingImage').show();
         // Send the ID token to your server with a fetch request
         $.ajax({
             url: '/auth/google',
@@ -835,13 +836,9 @@
             success: function(res) {
                 window.location.href = "/dashboard/" + res.data.user.username
             },
-            error: function(xhr) {
-                let error = $("#error-message")
-                error.text(xhr.responseJSON.message)
-                error.fadeIn();
-                setTimeout(function() {
-                    error.fadeOut();
-                }, 6000);
+            error: function(err) {
+                $('#homePageLoadingImage').hide();
+                $('#error-message').text(err.responseJSON.message);
             }
         });
         setTimeout(function(){
@@ -968,6 +965,7 @@
         $("#breaker").removeClass("slide-in-bottom").addClass("slide-out-bottom")
         $("#login").removeClass("slide-in-left").addClass("slide-out-left")
         $("#signup").removeClass("slide-in-right").addClass("slide-out-right")
+        $("#error-message").empty()
         $("#template").removeClass("slide-out-top").addClass("slide-in-top").removeClass("hidden")
     }
     function animateReturn() {
@@ -977,6 +975,7 @@
         $("#breaker").removeClass("slide-out-bottom").addClass("slide-in-bottom")
         $("#login").removeClass("slide-out-left").addClass("slide-in-left")
         $("#signup").removeClass("slide-out-right").addClass("slide-in-right")
+        $("#error-message").empty()
         $("#template").removeClass("slide-in-top").addClass("slide-out-top").addClass("hidden")
     }
 </script>
@@ -1010,7 +1009,8 @@
         </div>
 
         <div id="facebook-auth" class="fb-login-button" data-width="500" data-size="" data-button-type="" data-layout="" data-auto-logout-link="false" data-use-continue-as="true"></div>
-
+        <div id="error-message" style="color: red; margin-top: 10px;"></div>
+        <img src="/img/Infinity-1s-94px.png" id="homePageLoadingImage" style="display: none;" class="loading">
     </div>
     </div>
     <div class="hidden cred" id="template">
