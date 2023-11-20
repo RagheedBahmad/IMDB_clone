@@ -116,7 +116,7 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-  let username = req.params.user;
+  let username = req.params.user ? req.params.user : null;
 
   // 1) Getting Token and check if it exists
   let token;
@@ -140,7 +140,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
-  if (currentUser.username !== username) {
+  if (username && currentUser.username !== username) {
     return next(
       new AppError("You do not have permission to access this page"),
       401
@@ -283,10 +283,12 @@ exports.googleAuth = catchAsync(async (req, res, next) => {
   });
   const payload = ticket.getPayload();
   // Find or create user in the database
-  let user = await User.findOne({ providerID: payload.sub });
+  let user = await User.findOne({ email: payload.email });
   if (!user) {
     console.log("didnt find user");
     console.log(payload.sub);
+    let timestamp = Date.now();
+    let date = new Date(timestamp);
     // Create a new user record
     user = await User.create({
       username: payload.name,
@@ -294,8 +296,11 @@ exports.googleAuth = catchAsync(async (req, res, next) => {
       profile: payload.picture,
       provider: "google",
       providerID: payload.sub,
+      dateWhenJoined: date,
       // other user fields...
     });
+  } else {
+    return next(new AppError("User with this email already exists", 409));
   }
 
   createSendToken(user, 200, res);
