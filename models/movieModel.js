@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const baseURL = "https://image.tmdb.org/t/p/w500";
+base_Url = "https://image.tmdb.org/t/p/w500"
 
 const movieSchema = new mongoose.Schema({
   adult: {
@@ -61,6 +61,49 @@ const movieSchema = new mongoose.Schema({
   },
   vote_count: {
     type: Number,
+  },
+  reviews: {
+    page: {
+      type: Number,
+    },
+    results: [
+      {
+        author: {
+          type: String,
+        },
+        author_details: {
+          name: {
+            type: String,
+          },
+          username: {
+            type: String,
+          },
+          avatar_path: {
+            type: String,
+            get: v => base_Url+v,
+          },
+          rating: {
+            type: Number,
+          },
+        },
+        content: {
+          type: String,
+        },
+        created_at: {
+          type: Date,
+        },
+        id: {
+          type: String,
+        },
+        updated_at: {
+          type: Date,
+        },
+        url: {
+          type: String,
+        },
+      },
+    ],
+    // ... other review-related fields ...
   },
 });
 

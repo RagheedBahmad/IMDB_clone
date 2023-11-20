@@ -17,7 +17,11 @@
             -webkit-font-smoothing: antialiased;
         }
         #fade{
-            background: linear-gradient(0deg,black, 80%, transparent);
+            background: linear-gradient(0deg,black, 50%, rgba(0,0,0,0.1));
+            position: absolute;
+            z-index: 2;
+            width: 100%;
+            height: 500px ;
         }
         #trailer{
             /* background-image: url("<%= movie.backdrop_path %>");
@@ -25,44 +29,45 @@
             background-size: contain;
             background-position: center; */
 
-            background-color: darkblue;
+            background-color: rgb(60, 5, 52) ;
         }
         * {
         box-sizing: border-box;
         }
 
-        nav {
+        .body-2 nav {
         position: relative;
         padding-bottom: 12px;
         }
-        nav .line {
+        .body-2 nav .line {
         height: 2px;
         position: absolute;
         bottom: 0;
         margin: 10px 0 0 0;
-        background: #ff1847;
+        /* background: #ff1847; */
+        background: #7f9eb9;
         }
-        nav ul {
+        .body-2 nav ul {
         padding: 0;
         margin: 0;
         list-style: none;
         display: flex;
         }
-        nav ul li {
+        .body-2 nav ul li {
         margin: 0 40px 0 0;
         opacity: 0.4;
         transition: all 0.4s ease;
         }
-        nav ul li:hover {
+        .body-2 nav ul li:hover {
         opacity: 0.7;
         }
-        nav ul li.active {
+        .body-2 nav ul li.active {
         opacity: 1;
         }
-        nav ul li:last-child {
+        .body-2 nav ul li:last-child {
         margin-right: 0;
         }
-        nav ul li a {
+        .body-2 nav ul li a {
         text-decoration: none;
         color: #fff;
         text-transform: uppercase;
@@ -78,10 +83,107 @@
         align-items: center;
         min-height: 100vh;
         } */
+        iframe {
+            position: relative;
+            z-index: 1;
+            transform: translate(0, -20%);
+            width: 100%;
+            height: 500px;
+            pointer-events: none;
+        }
+        #trailer{
+            position: relative;
+        }
+        .vid-back {
+            overflow: hidden;
+            width: 100%;
+            height: 500px;
+        }
+        @media (min-aspect-ratio: 16/9) {
+        iframe {
+            /* height = 100 * (9 / 16) = 56.25 */
+            height: 56.25vw;
+        }
+        }
+        @media (max-aspect-ratio: 16/9) {
+        iframe {
+            /* width = 100 / (9 / 16) = 177.777777 */
+            width: 177.78vh;
+        }
+        }
+
+        .review-list {
+            list-style: none;
+            padding: 0;
+            font-weight: 200;
+        }
+
+        .review-list li {
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .review-list h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .review-list .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .review-list .user-info img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .review-list p {
+            margin: 5px 0;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        form input,
+        form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        form button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #45a049;
+        }
 
     </style>
 </head>
+<script>let movie = <%- JSON.stringify(movie)%>;</script>
+<%- include('partials/header') %>
 <body>
+    <div id="head-container">
     <div id="trailer" style="height: 500px;">
         <div id="fade" style=" padding: 100px;">
             <div class="d-flex flex-row">
@@ -97,25 +199,95 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div>
-        <nav>
-            <ul class="justify-content-evenly">
-                <li class="active"><a href="#info">Info</a></li>
-                <li><a href="#reviews">Reviews</a></li>
-                <li><a href="#other">Other</a></li>
-            </ul>
-        </nav>
-        
-        <div style="height: 1000px;" class="tabs">
-            <div class="active" id="info">Hello 1</div>
-            <div id="reviews" style="display: none;">Hello 23324</div>
-            <div id="other" style="display: none;">hello 234</div>
+        <div class="vid-back">
+            <iframe id="vid" src="" frameborder="0" allowfullscreen></iframe>
         </div>
     </div>
+    <div class="body-2">
+        <nav>
+          <ul class="justify-content-evenly">
+            <li class="active"><a href="#info">Info</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#other">Other</a></li>
+          </ul>
+        </nav>
+      
+        <div style="height: 500px;" class="tabs">
+          <div class="active" id="info">
+
+            <h2>Movie Info</h2>
+            <p><strong>Title:</strong> <%= movie.original_title %></p>
+            <p><strong>Release Date:</strong> <%= new Date(movie.release_date).toLocaleDateString() %></p>
+
+          </div>
+        
+      
+            <div id="reviews" style="display: none;">
+            
+            <% if (movie.reviews && movie.reviews.results.length > 0) { %>
+                <ul class="review-list">
+                <% movie.reviews.results.forEach(review => { %>
+                    <li>
+                    <div class="user-info">
+                        <img src="<%= review.author_details.avatar_path %>" alt="<%= review.author_details.name || 'User Avatar' %>">
+                        <h3><%= review.author %></h3>
+                    </div>
+                    <p>Rating: <%= review.author_details.rating %></p>
+                    <p><%= review.content %></p>
+                    <p>Added on: <%= new Date(review.created_at).toLocaleDateString() %></p>
+                    </li>
+                <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No reviews available for this movie.</p>
+            <% } %>
+        
+            <% if (isAuthenticated) { %>
+                <h3>Add Your Review</h3>
+                <form action="/movies/<%= movie.id %>/reviews" method="POST">
+                <label for="rating">Rating:</label>
+                <input type="number" name="rating" min="1" max="5" required>
+        
+                <label for="title">Short Title:</label>
+                <input type="text" name="title" required>
+        
+                <label for="content">Review:</label>
+                <textarea name="content" rows="4" maxlength="500" required></textarea>
+        
+                <button type="submit">Submit Review</button>
+                </form>
+            <% } else { %>
+                <p>Login to add a review.</p>
+            <% } %>
+            </div>
+        
+            <div id="other" style="display: none;">
+                <h2>Other Content</h2>
+            </div>
+        </div>
+    </div>      
+</div>
 </body>
 <script>
     $(document).ready(function() {
+
+        var trailerKey = getTrailerKey(movie.videos.results);
+
+        var youtubeBaseUrl = 'https://www.youtube.com/embed/';
+        var youtubeUrl = youtubeBaseUrl + trailerKey + '?autoplay=1'+ "&mute=1" +"&start=10";
+
+        $('#vid').attr('src', youtubeUrl)
+
+        function getTrailerKey(videos) {
+            for (var i = 0; i < videos.length; i++) {
+                if (videos[i].type === 'Trailer') {
+                    return videos[i].key;
+                }
+            }
+
+            return 'DEFAULT_VIDEO_KEY';
+        }
+
         var nav = $('nav');
         var line = $('<div />').addClass('line');
 
@@ -175,6 +347,16 @@
             pos = position.left;
             wid = width;
         }
+        });
+
+        $('nav ul li a').click(function(e) {
+            e.preventDefault(); 
+
+            var targetId = $(this).attr('href');
+            $('.tabs > div').hide();
+            $('nav ul li').removeClass('active');
+            $(this).parent().addClass('active');
+            $(targetId).show();
         });
     });
 </script>

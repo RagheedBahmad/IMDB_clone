@@ -82,13 +82,13 @@ router.get("/dashboard/:user?", authController.protect, async (req, res) => {
   }
 });
 
-router.get("/movies/:movie", async (req, res) => {
+router.get("/movies/:movie",authController.protect, async (req, res) => {
   let id = req.params.movie;
   let movie = await Movie.findOne({ id: id }).exec();
-  if (req.cookies.jwt) {
-    res.render("movie", { movie, user: req.user });
+  if (req.user) {
+    res.render("movie", { movie, user: req.user,isAuthenticated: true});
   } else {
-    res.render("movie", { movie });
+    res.render("movie", { movie,isAuthenticated:false });
   }
 });
 
