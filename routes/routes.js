@@ -82,13 +82,13 @@ router.get("/dashboard/:user?", authController.protect, async (req, res) => {
   }
 });
 
-router.get("/movies/:movie",authController.protect, async (req, res) => {
+router.get("/movies/:movie", authController.protect, async (req, res) => {
   let id = req.params.movie;
   let movie = await Movie.findOne({ id: id }).exec();
   if (req.user) {
-    res.render("movie", { movie, user: req.user,isAuthenticated: true});
+    res.render("movie", { movie, user: req.user, isAuthenticated: true });
   } else {
-    res.render("movie", { movie,isAuthenticated:false });
+    res.render("movie", { movie, isAuthenticated: false });
   }
 });
 
@@ -138,55 +138,6 @@ async function handleOAuthCallback(code) {
   const userInfoResponse = await oauth2.userinfo.get();
   return userInfoResponse.data; // This will contain the user's profile information
 }
-
-router.post("/facebook/delete-user", (req, res) => {
-  const signedRequest = req.body.signed_request;
-  const [encodedSig, payload] = signedRequest.split(".");
-
-  // Your App Secret
-  const appSecret = process.env.FACEBOOK_APPSECRET;
-
-  // Decode and verify the signature
-  const expectedSig = crypto
-    .createHmac("sha256", appSecret)
-    .update(payload)
-    .digest("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=/g, "");
-  if (encodedSig !== expectedSig) {
-    return res.status(403).send("Invalid request signature");
-  }
-
-  // Decode the payload
-  const decodedPayload = JSON.parse(Buffer.from(payload, "base64").toString());
-  const userId = decodedPayload.user_id;
-
-  User.deleteOne(userId);
-
-  res.send({
-    url: "URL_TO_YOUR_CONFIRMATION_PAGE",
-    confirmation_code: "CONFIRMATION_CODE",
-  });
-});
-router.post("/facebook/delete-user-guide", (req, res) => {
-  res.render("delete-user-guide");
-});
-
-router.get(
-  "/auth/facebook",
-  passport.authenticate("facebook"),
-  (req, res) => {}
-);
-
-router.get(
-  "/auth/facebook/callback",
-  passport.authenticate("facebook", { failureRedirect: "/login" }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    res.redirect(`/dashboard/${res.profile.name}`);
-  }
-);
 
 router.post(
   "/forgot-password",

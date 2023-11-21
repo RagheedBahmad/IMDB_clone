@@ -728,30 +728,12 @@
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 </head>
 <body>
 <script>
     if ('scrollRestoration' in history) {
         history.scrollRestoration = 'manual';
     }
-    // window.fbAsyncInit = function() {
-    //     FB.init({
-    //         appId            : '1719506025230637',
-    //         cookie           : true,
-    //         xfbml            : true,
-    //         version          : 'v18.0'
-    //     });
-    //     FB.AppEvents.logPageView();
-    // };
-    //
-    // (function(d, s, id){
-    //     let js, fjs = d.getElementsByTagName(s)[0];
-    //     if (d.getElementById(id)) {return;}
-    //     js = d.createElement(s); js.id = id;
-    //     js.src = "https://connect.facebook.net/en_US/sdk.js";
-    //     fjs.parentNode.insertBefore(js, fjs);
-    // }(document, 'script', 'facebook-jssdk'));
 
     let loginForm = `<form action="/login" method="post" id="loginCred">
             <label><input type="text" placeholder="Email" name="email" id="email" required></label>
@@ -762,8 +744,8 @@
             <a onclick="animateReturn()"> &lt;Go Back</a>
             <label><input type="submit" value="Log in" onclick="lsRememberMe()"></label>
             </div>
-<div id="error-message" style="color: red;"></div>
 <div><img src="/img/Infinity-1s-94px.png" id="loginLoadingImage" style="display: none;" class="loading"></div>
+<div id="Lerror-message" style="color: red;"></div>
         </form>`;
 
     let signupForm = `<form action="/signup" method="post" id="signupCred" enctype="multipart/form-data">
@@ -776,8 +758,8 @@
                 <a onclick="animateReturn()"> &lt;Go Back</a>
                 <label><input type="submit" value="Sign up"></label>
             </div>
-<div id="error-message" style="color: red;"></div>
-<div><img src="/img/Infinity-1s-94px.png" id="signupLoadingImage" style="display: none;" class="loading"></div>
+<div><img src="/img/Infinity-1s-94px.png" id="signupLoadingImage" style="display: none; min-height: 94px; min-width: 94px;" class="loading"></div>
+<div id="Serror-message" style="color: red;"></div>
         </form>`;
 
     let forgotPasswordForm = `<form action="/forgot-password" method="post" id="forgotPasswordCred">
@@ -798,23 +780,12 @@
 
     $(window).on("load", () => {
         $("#template").empty()
-        // FB.getLoginStatus(function(response) {
-        //     if (response.status === 'connected') {
-        //         // Logged into your app and Facebook.
-        //         console.log('Successfully logged in with Facebook');
-        //         // TODO: Handle the case where the user is logged in.
-        //     } else {
-        //         // The person is not logged into your app or we are unable to tell.
-        //         console.log('Please log into this app.');
-        //         // TODO: Handle the case where the user is not logged in.
-        //     }
-        // });
         let posters = <%- JSON.stringify(posters)%>
             $.each(posters, function(index, url) {
                 $("<img>", {
                     id: `img${index + 1}`,
                     src: url.poster_path,
-                    loading: "lazy",
+                    // loading: "lazy",
                     alt: `${url.id}`
                 }).appendTo('body');
             });
@@ -1007,9 +978,7 @@
              data-shape="rectangular"
              data-logo_alignment="left">
         </div>
-
-        <div id="facebook-auth" class="fb-login-button" data-width="500" data-size="" data-button-type="" data-layout="" data-auto-logout-link="false" data-use-continue-as="true"></div>
-        <div id="error-message" style="color: red; margin-top: 10px;"></div>
+        <div id="Herror-message" style="color: red; margin-top: 10px;"></div>
         <img src="/img/Infinity-1s-94px.png" id="homePageLoadingImage" style="display: none;" class="loading">
     </div>
     </div>
