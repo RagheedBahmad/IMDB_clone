@@ -9,7 +9,7 @@ const DB = process.env.DATABASE.replace(
   "<PASSWORD>",
   process.env.DATABASE_PASSWORD
 );
-const fs = require("fs");
+let fs = require("fs");
 const path = require("path");
 
 const client = new MongoClient(DB);
@@ -19,6 +19,7 @@ const movies = database.collection("Movies");
 const actors = database.collection("Actors");
 const genres = database.collection("Genres");
 const crew = database.collection("Crew");
+const test = database.collection("test");
 movies.createIndex({ id: 1 }, { unique: true });
 // IMPORT DATA INTO DB
 

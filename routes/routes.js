@@ -37,8 +37,13 @@ router.get("/", async (req, res) => {
     .sort({ popularity: -1 })
     .limit(5)
     .exec();
+  let random3Movies = await Movie.aggregate([{ $sample: { size: 3 } }]).exec();
   // Route handler logic for the GET request
-  res.render("dashboard", { top5Movies, isAuthenticated: false });
+  res.render("dashboard", {
+    top5Movies,
+    random3Movies,
+    isAuthenticated: false,
+  });
 });
 
 router.get("/login", (req, res) => {
@@ -71,14 +76,21 @@ router.get("/dashboard", authController.protect, async (req, res) => {
     .limit(5)
     .exec();
 
+  let random3Movies = await Movie.aggregate([{ $sample: { size: 3 } }]).exec();
+
   if (req.user) {
     res.render("dashboard", {
       top5Movies,
+      random3Movies,
       user: req.user,
       isAuthenticated: true,
     });
   } else {
-    res.render("dashboard", { top5Movies, isAuthenticated: false });
+    res.render("dashboard", {
+      top5Movies,
+      random3Movies,
+      isAuthenticated: false,
+    });
   }
 });
 

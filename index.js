@@ -16,31 +16,6 @@ const path = require("path");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const passport = require("passport");
-const FacebookStrategy = require("passport-facebook").Strategy;
-
-passport.use(
-  new FacebookStrategy(
-    {
-      clientID: process.env.FACEBOOK_APPID,
-      clientSecret: process.env.FACEBOOK_APPSECRET,
-      callbackURL: "http://localhost:3000/auth/facebook/callback",
-    },
-    function (accessToken, refreshToken, profile, cb) {
-      let user = User.find(profile.email);
-
-      if (!user) {
-        User.create({
-          username: profile.name,
-          email: profile.email,
-          provider: "facebook",
-        }).then((err, user) => {
-          console.log("created user");
-          cb(err, user);
-        });
-      }
-    }
-  )
-);
 
 const corsOptions = {
   origin: "http://localhost:3000", // This should match the URL of your front-end app

@@ -8,12 +8,15 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
     <!-- Add Slick Theme CSS (optional) for default styling -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
 
     <title>MMDb</title>
 </head>
 
 <style>
     body {
+        color: #7f9eb9;
         height: 100vh;
         width: 100vw;
         background-color: black;
@@ -21,10 +24,32 @@
         overflow-x: hidden;
     }
 
+    p {
+        font-size: 1vw;
+    }
+
+    h2 {
+        font-size: 2vw;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .card {
+        display: flex;
+        width: 25%;
+        background-color: #0a0a0a;
+        z-index: 0;
+        padding: 10px;
+    }
+
     #head-container {
         width:100%;
         display:flex;
         flex-direction: row;
+        justify-content: center;
+        align-items: center;
     }
 
     #image-carousel {
@@ -69,9 +94,14 @@
         max-height: 200px;
     }
 
-    /*#movie-overview {*/
-    /*    width =*/
-    /*}*/
+    #randomMovies {
+        margin: 30px auto auto;
+        padding-bottom: 50px;
+        width: 80%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
 
     .slide-out-left {
         -webkit-animation: slide-out-left 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
@@ -178,6 +208,38 @@
         }
     }
 
+    @media screen and (max-width: 640px) {
+        body {
+            font-size: unset;
+        }
+
+        p {
+            font-size: unset;
+        }
+
+        #head-container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #image-carousel {
+            width:70%;
+        }
+        #movie-info {
+            width:90%;
+        }
+
+        #randomMovies {
+            display:flex;
+            flex-direction: column;
+        }
+
+        .card {
+            width: 80%;
+            margin-bottom: 20px;
+        }
+    }
+
 </style>
 <script>let top5Movies = <%- JSON.stringify(top5Movies) %>;</script>
 <%- include('partials/header') %>
@@ -187,15 +249,19 @@
         let i = currentImage.getAttribute('data-id');
         $("#movie-title").text("#" + (i*1 + 1)  + " " + top5Movies[i].original_title)
         $("#movie-overview").text(top5Movies[i].overview)
+        $("#movie-blur").attr("src", top5Movies[i].poster_path)
     }
 
-
+    function copy(id) {
+        navigator.clipboard.writeText(`${window.location.origin}/movies/${id}`);
+    }
 
     $(window).on("load", () => {
         let movieInfo = $("#movie-info")
         let imageTrack = $(".image-track");
         $("#movie-title").text(`#1 ${top5Movies[0].original_title}`)
         $("#movie-overview").text(top5Movies[0].overview)
+        $("#movie-blur").attr("src", top5Movies[0].poster_path)
         movieInfo.addClass('slide-in-right');
         imageTrack.on("beforeChange", function(event, slick, currentSlide) {
             movieInfo.removeClass('slide-in-right');
@@ -209,7 +275,7 @@
     })
 </script>
 <body>
-<div id="head-container">
+<div id="head-container" style="height: 300px;">
 <div id="image-carousel">
 <div class="image-track" data-positionX="0" data-prev-percentage="0">
     <%for (let i = 0; i < 5; i++) {%>
@@ -224,8 +290,22 @@
 </div>
 
 </div>
-<hr style="width: 60%; margin-top: 30px">
-
+<hr style="width: 60%; margin: 70px auto;color: white; ">
+<div style="text-align: center;"><h3>3 Featured Movies</h3></div>
+<div id="randomMovies">
+    <%for (let i = 0; i < 3; i++) {%>
+        <div class="card">
+            <a href="/movies/<%= random3Movies[i].id%>"><img class="card-img-top" src="<%= (random3Movies[i].poster_path)%>" alt="Card image cap"  style="z-index: 1;"></a>
+            <img class="card-img-top" src="<%= (random3Movies[i].poster_path)%>" alt="Card image cap" style="filter:blur(70px); z-index: -2; position: absolute; width: 50%; height: auto; top:15%; left: 10%;">
+            <div class="card-body">
+                <a href="/movies/<%= random3Movies[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%= random3Movies[i].original_title%></h5></a>
+                <a href="/movies/<%= random3Movies[i].id%>"><p class="card-text" style="color: #7f9eb9"><%= random3Movies[i].tagline%></p></a>
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                <button type="button" class="btn btn-secondary btn-sm"  style="margin: 5px;" onclick="copy(<%= random3Movies[i].id%>)" id="id">Copy</button></div>
+        </div>
+    <%}%>
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
