@@ -115,19 +115,20 @@
     <div class="header-logo">
         <a href="/"><img src="/img/MMDb logo cropped and keyed.png" width="150.66" height="53" loading="lazy" alt="logo"></a>
     </div>
-    <nav class="header-nav">
+    <div class="header-nav">
         <ul>
-            <li><a href="#home" class="hover">Home</a></li>
-            <li><a href="#about" class="hover">About</a></li>
+            <li><a href="/dashboard" class="hover">Home</a></li>
+            <li><a href="/about" class="hover">About</a></li>
             <li><a href="#services" class="hover">Services</a></li>
             <li><a href="#contact" class="hover">Contact</a></li>
         </ul>
-    </nav>
+    </div>
     <div class="header-auth">
         <% if (isAuthenticated) { %>
             <a href="/profile" class="hover"><span><%= user.username%></span></a>
             <a href="/profile"><img src="<%= user.profile !== 'null' ? user.profile : '/img/defaultProfile.jpg' %>" alt="profile" width="60px" height="60px" loading="lazy" /></a>
-        <% } else { %>
+            <a href="/signout" class="hover">Signout</a>
+    <% } else { %>
             <a href="/login" class="login-button">Login</a>
 
         <% } %>

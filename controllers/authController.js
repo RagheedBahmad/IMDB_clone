@@ -115,6 +115,14 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 });
 
+exports.signout = catchAsync(async (req, res, next) => {
+  res.cookie("jwt", null, {
+    expires: new Date(Date.now() - 1000),
+    httpOnly: true,
+  });
+  res.redirect("/dashboard");
+});
+
 exports.protect = catchAsync(async (req, res, next) => {
   let username = req.params.user ? req.params.user : null;
 
@@ -125,9 +133,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   if (!token) {
-    return next(
-      new AppError("You are not Logged In, Please Login to gain access", 401)
-    );
+    return next();
   }
   // 2) Verification of token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
@@ -300,14 +306,10 @@ exports.googleAuth = catchAsync(async (req, res, next) => {
       // other user fields...
     });
   } else {
-    return next(new AppError("User with this email already exists", 409));
+    res.user = user;
   }
 
   createSendToken(user, 200, res);
 });
 
 exports.linkGoogleAccount = catchAsync(async (req, res, next) => {});
-
-exports.deleteFacebookUser = catchAsync(async (userId) => {
-  User.deleteOne({ userId });
-});

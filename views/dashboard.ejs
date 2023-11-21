@@ -3,7 +3,6 @@
 <html lang="en">
 
 <head>
-    <meta name="facebook-domain-verification" content="esn75apwrq83qj9q4j8e6819a7b09e" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Add in the head of your HTML -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
@@ -47,12 +46,14 @@
     }
 
     .slick-slide > a > img {
+        width:100%;
         opacity: 0.75;
         transform: scale(.75);
         transition: transform .3s cubic-bezier(.4,0,.2,1);
     }
 
     .slick-center > a > img {
+        width:100%;
         -moz-transform: scale(1.08);
         -ms-transform: scale(1.08);
         -o-transform: scale(1.08);
@@ -163,8 +164,18 @@
     }
 
 
-    @media screen and (max-width: 724px) {
+    @media screen and (max-width: 1000px) {
+        #head-container {
+            flex-direction: column;
+            align-items: center;
+        }
 
+        #image-carousel {
+            width:70%;
+        }
+        #movie-info {
+            width:90%;
+        }
     }
 
 </style>
@@ -174,7 +185,6 @@
     function displayInfo(event, slick, currentSlide) {
         let currentImage = slick.$slides.get(currentSlide).querySelector('img');
         let i = currentImage.getAttribute('data-id');
-        console.log(top5Movies[i])
         $("#movie-title").text("#" + (i*1 + 1)  + " " + top5Movies[i].original_title)
         $("#movie-overview").text(top5Movies[i].overview)
     }
@@ -232,25 +242,30 @@
             autoplaySpeed: 6000,
             responsive: [
                 {
-                    breakpoint: 768,
+                    breakpoint: 1024,
                     settings: {
-                        arrows: false,
-                        centerMode: true,
-                        centerPadding: '40px',
-                        slidesToShow: 3
+                        slidesToShow: 3,
+                        slidesToScroll: 3,
+                        infinite: true,
+                        dots: true
+                    }
+                },
+                {
+                    breakpoint: 600,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 2
                     }
                 },
                 {
                     breakpoint: 480,
                     settings: {
-                        arrows: false,
-                        centerMode: true,
-                        centerPadding: '40px',
-                        slidesToShow: 1
+                        slidesToShow: 1,
+                        slidesToScroll: 1
                     }
                 }
             ]
-    });
+        });
     });
 </script>
 </body>

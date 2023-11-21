@@ -192,6 +192,8 @@ const updatePop = async () => {
     fetch = module.default;
   }
   let movieList = await movies.find({}).toArray();
+  const count = movieList.length;
+  let i = 1;
   for (const movie of movieList) {
     let result = await fetch(
       `https://api.themoviedb.org/3/movie/${movie.id}?language=en-US`,
@@ -205,11 +207,14 @@ const updatePop = async () => {
         { $set: { popularity: result.popularity } }
       );
       console.log(
-        `Updated ${movie.original_title}'s popularity from ${movie.popularity} to ${result.popularity}`
+        `${i}/${count}: Updated ${movie.original_title}'s popularity from ${movie.popularity} to ${result.popularity}`
       );
     } else {
-      console.log(`${movie.original_title}'s popularity didn't change`);
+      console.log(
+        `${i}/${count}: ${movie.original_title}'s popularity didn't change`
+      );
     }
+    i++;
   }
   // let pages = Math.ceil((await movies.countDocuments()) / 20);
   // for (let i = 1; i <= pages; i++) {
@@ -221,6 +226,7 @@ const updatePop = async () => {
   //   await update(result.results);
   //   console.log("updated page " + i);
   // }
+  process.exit(1);
 };
 
 // async function update(movieList) {

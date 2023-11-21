@@ -61,7 +61,8 @@ router.get("/forgot-password", (req, res) => {
 });
 router.post("/signup", upload.single("profile"), authController.signup);
 router.post("/login", authController.login);
-router.get("/dashboard/:user?", authController.protect, async (req, res) => {
+router.get("/signout", authController.signout);
+router.get("/dashboard", authController.protect, async (req, res) => {
   let top5Movies = await Movie.find(
     {},
     { id: 1, _id: 0, poster_path: 1, original_title: 1, overview: 1 }
@@ -70,13 +71,12 @@ router.get("/dashboard/:user?", authController.protect, async (req, res) => {
     .limit(5)
     .exec();
 
-  if (req.params.user) {
-    if (req.user)
-      res.render("dashboard", {
-        top5Movies,
-        user: req.user,
-        isAuthenticated: true,
-      });
+  if (req.user) {
+    res.render("dashboard", {
+      top5Movies,
+      user: req.user,
+      isAuthenticated: true,
+    });
   } else {
     res.render("dashboard", { top5Movies, isAuthenticated: false });
   }
@@ -105,7 +105,6 @@ async function verify(token) {
   return payload;
 }
 router.post("/auth/google", authController.googleAuth, (req, res) => {
-  res.user = req.data.user;
   res.status(200).json({ user: req.user, message: "Authenticated" });
 });
 

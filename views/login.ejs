@@ -805,11 +805,11 @@
             contentType: 'application/json',
             data: JSON.stringify({ token: response.credential }),
             success: function(res) {
-                window.location.href = "/dashboard/" + res.data.user.username
+                window.location.href = "/dashboard"
             },
             error: function(err) {
                 $('#homePageLoadingImage').hide();
-                $('#error-message').text(err.responseJSON.message);
+                $('#Herror-message').text(err.responseJSON.message);
             }
         });
         setTimeout(function(){
@@ -868,12 +868,12 @@
                 url: '/login',
                 type: 'POST',
                 data: formData,
-                success: function(res) {
-                    window.location.href = "/dashboard/" + res.data.user.username;
+                success: function(res, status, xhr) {
+                    window.location.href = "/dashboard";
                 },
                 error: function(err) {
                     $('#loginLoadingImage').hide();
-                    $('#error-message').text(err.responseJSON.message);
+                    $('#Lerror-message').text(err.responseJSON.message);
                 }
             });
         })
@@ -894,11 +894,11 @@
                 contentType: false,
                 processData: false,
                 success: function(res) {
-                    window.location.href = "dashboard/" + res.data.user.username;
+                    window.location.href = "/dashboard";
                 },
                 error: function(response) {
                     $('#signupLoadingImage').hide();
-                    $("#error-message").text(response.responseJSON.message);
+                    $("#Serror-message").text(response.responseJSON.message);
                 }
             });
         })
@@ -936,7 +936,7 @@
         $("#breaker").removeClass("slide-in-bottom").addClass("slide-out-bottom")
         $("#login").removeClass("slide-in-left").addClass("slide-out-left")
         $("#signup").removeClass("slide-in-right").addClass("slide-out-right")
-        $("#error-message").empty()
+        $("#Herror-message").empty()
         $("#template").removeClass("slide-out-top").addClass("slide-in-top").removeClass("hidden")
     }
     function animateReturn() {
@@ -946,7 +946,7 @@
         $("#breaker").removeClass("slide-out-bottom").addClass("slide-in-bottom")
         $("#login").removeClass("slide-out-left").addClass("slide-in-left")
         $("#signup").removeClass("slide-out-right").addClass("slide-in-right")
-        $("#error-message").empty()
+        $("#Herror-message").empty()
         $("#template").removeClass("slide-in-top").addClass("slide-out-top").addClass("hidden")
     }
 </script>
