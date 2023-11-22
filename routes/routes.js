@@ -5,9 +5,15 @@ const bcrypt = require("bcrypt");
 const User = require("./../models/userModel.js");
 const Movie = require("./../models/movieModel.js");
 const authController = require("./../controllers/authController");
+const movieController = require("./../controllers/movieController");
 const path = require("path");
 const { google } = require("googleapis");
 const passport = require("passport");
+let top5Movies;
+async function get5() {
+  top5Movies = await movieController.top5();
+}
+get5();
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.CLIENT_ID,
@@ -17,7 +23,7 @@ const oauth2Client = new google.auth.OAuth2(
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/img/profiles"); // Ensure this path exists
+    cb(null, "./public/img/profiles");
   },
   filename: function (req, file, cb) {
     let filename = req.body.username + path.extname(file.originalname);
@@ -30,15 +36,7 @@ router.get("/privacy", (req, res) => {
   res.render("privacyPolicy");
 });
 router.get("/", async (req, res) => {
-  let top5Movies = await Movie.find(
-    {},
-    { id: 1, _id: 0, poster_path: 1, original_title: 1, overview: 1 }
-  )
-    .sort({ popularity: -1 })
-    .limit(5)
-    .exec();
-  let random3Movies = await Movie.aggregate([{ $sample: { size: 3 } }]).exec();
-  // Route handler logic for the GET request
+  let random3Movies = await movieController.random(3);
   res.render("dashboard", {
     top5Movies,
     random3Movies,
@@ -46,20 +44,9 @@ router.get("/", async (req, res) => {
   });
 });
 
-router.get("/login", (req, res) => {
-  // Check if movies is defined and connected
-  Movie.aggregate([
-    { $sample: { size: 5 } },
-    { $project: { id: 1, _id: 0, poster_path: 1 } },
-  ])
-    .exec()
-    .then((posters) => {
-      res.render("login", { posters, googleClientId: process.env.CLIENT_ID });
-    })
-    .catch((err) => {
-      console.error("Error fetching posters:", err);
-      res.send(err);
-    });
+router.get("/login", async (req, res) => {
+  let posters = await movieController.random(5);
+  res.render("login", { posters, googleClientId: process.env.CLIENT_ID });
 });
 router.get("/forgot-password", (req, res) => {
   res.render("forgotPassword");
@@ -68,30 +55,15 @@ router.post("/signup", upload.single("profile"), authController.signup);
 router.post("/login", authController.login);
 router.get("/signout", authController.signout);
 router.get("/dashboard", authController.protect, async (req, res) => {
-  let top5Movies = await Movie.find(
-    {},
-    { id: 1, _id: 0, poster_path: 1, original_title: 1, overview: 1 }
-  )
-    .sort({ popularity: -1 })
-    .limit(5)
-    .exec();
-
-  let random3Movies = await Movie.aggregate([{ $sample: { size: 3 } }]).exec();
-
-  if (req.user) {
-    res.render("dashboard", {
-      top5Movies,
-      random3Movies,
-      user: req.user,
-      isAuthenticated: true,
-    });
-  } else {
-    res.render("dashboard", {
-      top5Movies,
-      random3Movies,
-      isAuthenticated: false,
-    });
-  }
+  let random3Movies = await movieController.random(3);
+  let recentMovies = await movieController.recent(5);
+  res.render("dashboard", {
+    top5Movies,
+    random3Movies,
+    recentMovies,
+    user: req.user ? req.user : null,
+    isAuthenticated: !!req.user,
+  });
 });
 
 router.get("/movies/:movie", authController.protect, async (req, res) => {

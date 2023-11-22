@@ -250,10 +250,6 @@ const updatePop = async () => {
 // }
 
 const updatePost = async () => {
-  if (!fetch) {
-    const module = await import("node-fetch");
-    fetch = module.default;
-  }
   let movieList = await movies.find({}).toArray();
   for (const movie of movieList) {
     if (!movie.poster_path.startsWith("https://image.tmdb.org/t/p/w500")) {
@@ -287,6 +283,27 @@ async function resetCredit() {
   console.log("finished resetting");
 }
 
+async function upcoming() {
+  if (!fetch) {
+    const module = await import("node-fetch");
+    fetch = module.default;
+  }
+  let result = await fetch(
+    `https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1`,
+    options
+  );
+  result = await result.json();
+  let upcomingMovies = result.results;
+  let i = 1;
+  console.log(upcomingMovies.length);
+  for (const movie of upcomingMovies) {
+    await insertMovie(movie);
+    console.log(i + ": Inserted " + movie.original_title);
+    i++;
+  }
+  process.exit(1);
+}
+
 switch (process.argv[2]) {
   case "--import":
     importData(process.argv[3] ? process.argv[3] : 1);
@@ -306,6 +323,10 @@ switch (process.argv[2]) {
 
   case "--resetCredit":
     resetCredit();
+    break;
+
+  case "--upcoming":
+    upcoming();
     break;
 
   default:

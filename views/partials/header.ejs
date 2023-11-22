@@ -76,6 +76,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        margin-right:10px;
     }
 
     .header-auth a {
@@ -97,11 +98,15 @@
         background-color: #1f1f1f;
     }
 
-    @media screen and (max-width: 724px) {
+    @media screen and (max-width: 640px) {
         body {
             overflow-x: hidden;
         }
         .header-logo {
+            display: none;
+        }
+
+        #about, #services {
             display: none;
         }
     }
@@ -118,9 +123,9 @@
     <div class="header-nav">
         <ul>
             <li><a href="/dashboard" class="hover">Home</a></li>
-            <li><a href="/about" class="hover">About</a></li>
-            <li><a href="#services" class="hover">Services</a></li>
-            <li><a href="#contact" class="hover">Contact</a></li>
+            <li id="about"><a href="/about" class="hover">About</a></li>
+            <li id="services"><a href="#services" class="hover">Services</a></li>
+            <li><a href="#socials" class="hover">Contact</a></li>
         </ul>
     </div>
     <div class="header-auth">

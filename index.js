@@ -16,6 +16,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const passport = require("passport");
+let top5Movies;
 
 const corsOptions = {
   origin: "http://localhost:3000", // This should match the URL of your front-end app
@@ -36,6 +37,7 @@ app.use(xss());
 
 const routes = require("./routes/routes");
 const User = require("./models/userModel");
+const movieController = require("./controllers/movieController");
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));

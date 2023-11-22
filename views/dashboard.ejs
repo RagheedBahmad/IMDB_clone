@@ -15,6 +15,10 @@
 </head>
 
 <style>
+    html {
+        scroll-behavior: smooth;
+    }
+
     body {
         color: #7f9eb9;
         height: 100vh;
@@ -24,16 +28,18 @@
         overflow-x: hidden;
     }
 
-    p {
-        font-size: 1vw;
-    }
-
     h2 {
-        font-size: 2vw;
+        font-size: 3vw;
     }
 
     a {
         text-decoration: none;
+    }
+
+    hr {
+        width: 60%;
+        margin: 20px auto;
+        color: white;
     }
 
     .card {
@@ -50,6 +56,7 @@
         flex-direction: row;
         justify-content: center;
         align-items: center;
+        min-height: 300px;
     }
 
     #image-carousel {
@@ -66,7 +73,8 @@
     }
 
     .image {
-        width: 150px;
+        /*width: 150px;*/
+        width: 20vw;
         height: auto;
     }
 
@@ -91,7 +99,6 @@
         margin-left:20px;
         padding: 20px;
         max-width: 500px;
-        max-height: 200px;
     }
 
     #randomMovies {
@@ -102,6 +109,21 @@
         flex-direction: row;
         justify-content: space-between;
     }
+
+    #recent {
+        display:flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    #recent > div, #randomMovies > div {
+        transition: transform 0.2s ease-in-out;
+    }
+
+    #recent > div:hover, #randomMovies > div:hover {
+        transform: scale(1.1);
+    }
+
 
     .slide-out-left {
         -webkit-animation: slide-out-left 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
@@ -114,6 +136,14 @@
     .slide-out-bck-center {
         -webkit-animation: slide-out-bck-center 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
         animation: slide-out-bck-center 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
+    }
+    .scale-up-center {
+        -webkit-animation: scale-up-center 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+        animation: scale-up-center 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+    }
+    .scale-down-center {
+        -webkit-animation: scale-down-center 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+        animation: scale-down-center 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
     }
 
     @-webkit-keyframes slide-out-left {
@@ -192,18 +222,63 @@
             scale: 0.5;
         }
     }
+    @-webkit-keyframes scale-up-center {
+        0% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+        }
+        100% {
+            -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+        }
+    }
+    @keyframes scale-up-center {
+        0% {
+            -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+        }
+        100% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+        }
+    }
+    @-webkit-keyframes scale-down-center {
+        0% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+        }
+        100% {
+            -webkit-transform: scale(0.9);
+            transform: scale(0.9);
+        }
+    }
+    @keyframes scale-down-center {
+        0% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+        }
+        100% {
+            -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+        }
+    }
+
+
 
 
     @media screen and (max-width: 1000px) {
         #head-container {
             flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
         }
 
         #image-carousel {
             width:70%;
+            min-height:250px;
         }
         #movie-info {
+            margin-top: 15px;
             width:90%;
         }
     }
@@ -217,14 +292,28 @@
             font-size: unset;
         }
 
+        span {
+            font-size: 3vw;
+        }
+
+        h2 {
+            font-size: 4vw;
+        }
+
         #head-container {
             flex-direction: column;
             align-items: center;
+            min-height: 400px;
         }
 
         #image-carousel {
-            width:70%;
+            width:100%;
         }
+
+        .image-track {
+            width:60%;
+        }
+
         #movie-info {
             width:90%;
         }
@@ -232,11 +321,12 @@
         #randomMovies {
             display:flex;
             flex-direction: column;
+
         }
 
         .card {
             width: 80%;
-            margin-bottom: 20px;
+            margin: auto auto 20px;
         }
     }
 
@@ -275,7 +365,7 @@
     })
 </script>
 <body>
-<div id="head-container" style="height: 300px;">
+<div id="head-container">
 <div id="image-carousel">
 <div class="image-track" data-positionX="0" data-prev-percentage="0">
     <%for (let i = 0; i < 5; i++) {%>
@@ -285,18 +375,18 @@
 </div>
 
 <div id="movie-info">
-    <h2 id="movie-title"></h2>
+    <h2 id="movie-title" style="font-weight: bold;"></h2>
     <span id="movie-overview"></span>
 </div>
 
 </div>
-<hr style="width: 60%; margin: 70px auto;color: white; ">
-<div style="text-align: center;"><h3>3 Featured Movies</h3></div>
+<hr>
+<div style="text-align: center; margin-top: 10px; margin-bottom: 10px;"><h2>Featured Movies</h2></div>
 <div id="randomMovies">
     <%for (let i = 0; i < 3; i++) {%>
         <div class="card">
             <a href="/movies/<%= random3Movies[i].id%>"><img class="card-img-top" src="<%= (random3Movies[i].poster_path)%>" alt="Card image cap"  style="z-index: 1;"></a>
-            <img class="card-img-top" src="<%= (random3Movies[i].poster_path)%>" alt="Card image cap" style="filter:blur(70px); z-index: -2; position: absolute; width: 50%; height: auto; top:15%; left: 10%;">
+            <img class="card-img-top" src="<%= (random3Movies[i].poster_path)%>" alt="Card image cap" style="filter:blur(50px); z-index: -2; position: absolute; width: 80%; height: auto; top:10%; left: 10%;">
             <div class="card-body">
                 <a href="/movies/<%= random3Movies[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%= random3Movies[i].original_title%></h5></a>
                 <a href="/movies/<%= random3Movies[i].id%>"><p class="card-text" style="color: #7f9eb9"><%= random3Movies[i].tagline%></p></a>
@@ -306,6 +396,21 @@
         </div>
     <%}%>
 </div>
+<hr>
+<div style="text-align: center; margin-top: 10px; margin-bottom: 10px;"><h2>Upcoming Movies</h2></div>
+<div id="recent">
+    <%for (let i = 0; i < 5; i++) {%>
+    <div class="card" style="width: 15%; margin: 10px;">
+            <a href="/movies/<%= recentMovies[i].id%>"><img class="card-img-top" src="<%= (recentMovies[i].poster_path)%>" alt="Card image cap"  style="z-index: 1;"></a>
+    <img class="card-img-top" src="<%= (recentMovies[i].poster_path)%>" alt="Card image cap" style="filter:blur(50px); z-index: -2; position: absolute; width: 80%; height: auto; top:10%; left: 10%;">
+    <div class="card-body">
+        <a href="/movies/<%= recentMovies[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%= recentMovies[i].original_title%></h5></a>
+    </div>
+        <p style="font-weight: bold;">Releases on: <br> <%= recentMovies[i].release_date%></p>
+    </div>
+        <%}%>
+    </div>
+<hr>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -349,4 +454,5 @@
     });
 </script>
 </body>
+<%- include('partials/footer') %>
 </html>
