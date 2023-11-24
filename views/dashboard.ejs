@@ -53,6 +53,7 @@
     #head-container {
         width:100%;
         display:flex;
+        flex-wrap: wrap;
         flex-direction: row;
         justify-content: center;
         align-items: center;
@@ -84,6 +85,10 @@
         opacity: 0.7;
         border: none;
         z-index: 3;
+        border-radius: 3px;
+        transition: transform .3s cubic-bezier(.4,0,.2,1);
+    }.watchlist-btn:hover {
+        background-color: lightgray;
     }
 
     .slick-slide > a > img {
@@ -103,10 +108,53 @@
         transform: scale(1.08);
     }
 
+    .watchListhover {
+        background-color: transparent;
+        border: none;
+        position: relative;
+        color: #7f9eb9;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        display: inline-block; /* Ensure proper alignment */
+        padding: 5px; /* Add some padding */
+    }
+
+    .watchListhover:hover {
+        -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+        transition: 0.3s ease-in;
+    }
+
+
+    .watchListhover::before {
+        content: '';
+        background: linear-gradient(to top, rgba(173, 216, 230, 0.10), rgba(173, 216, 230, 0));
+        position: absolute;
+        left: 0;
+        bottom: 3px;
+        width: 100%;
+        height: 2px;
+
+        transition: all .3s ease-in-out;
+    }
+
+    .watchListhover:hover::before {
+        -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+        bottom: 0;
+        height: 100%;
+    }
+
+
     #movie-info {
         margin-left:20px;
         padding: 20px;
         max-width: 500px;
+    }
+
+    #watchlist-div {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     #randomMovies {
@@ -341,17 +389,29 @@
 </style>
 <script>
     let top10Movies = <%- JSON.stringify(top10Movies) %>;
-    let user = <%- JSON.stringify(user) %>;
-    let watchlist = <%- JSON.stringify(watchlist) %>;
+    <% if(isAuthenticated) {%>
+        let user = <%- JSON.stringify(user) %>;
+        let watchlist = <%- JSON.stringify(watchlist) %>
+    <%}%>
 </script>
 <%- include('partials/header') %>
 <script>
     function displayInfo(event, slick, currentSlide) {
         let currentImage = slick.$slides.get(currentSlide).querySelector('img');
+        let watchlistbtn = $(".watchListhover");
         let i = currentImage.getAttribute('data-id');
         $("#movie-title").text("#" + (i*1 + 1)  + " " + top10Movies[i].original_title)
         $("#movie-overview").text(top10Movies[i].overview)
         $("#movie-blur").attr("src", top10Movies[i].poster_path)
+        watchlistbtn.data("movie", top10Movies[i].id)
+        if (typeof watchlist !== 'undefined' && watchlist.includes(top10Movies[i].id)) {
+            watchlistbtn.html("Remove from Watchlist")
+            watchlistbtn.addClass("remove")
+            watchlistbtn.removeClass("watch")
+        } else {
+            watchlistbtn.html("Add To Watchlist")
+        }
+
     }
 
     function copy(id) {
@@ -359,36 +419,72 @@
     }
 
     $(window).on("load", () => {
-        console.log(watchlist)
         let movieInfo = $("#movie-info")
         let imageTrack = $(".image-track");
+        let watchlistbtn = $(".watchListhover");
         $("#movie-title").text(`#1 ${top10Movies[0].original_title}`)
         $("#movie-overview").text(top10Movies[0].overview)
         $("#movie-blur").attr("src", top10Movies[0].poster_path)
+        watchlistbtn.data("movie", top10Movies[0].id)
+        if (typeof watchlist !== 'undefined' && watchlist.includes(top10Movies[0].id)) {
+            watchlistbtn.html("Remove from Watchlist")
+            watchlistbtn.addClass("remove")
+            watchlistbtn.removeClass("watch")
+        } else {
+            watchlistbtn.html("Add To Watchlist")
+        }
         movieInfo.addClass('slide-in-right');
+        watchlistbtn.addClass('slide-in-right');
         imageTrack.on("beforeChange", function(event, slick, currentSlide) {
             movieInfo.removeClass('slide-in-right');
+            watchlistbtn.removeClass('slide-in-right');
+            watchlistbtn.addClass('slide-out-bck-center');
             movieInfo.addClass('slide-out-bck-center');
         });
         imageTrack.on('afterChange', function(event, slick, currentSlide) {
         movieInfo.removeClass('slide-out-bck-center');
+        watchlistbtn.removeClass('slide-out-bck-center');
         displayInfo(event, slick, currentSlide)
+        watchlistbtn.addClass('slide-in-right');
         movieInfo.addClass('slide-in-right');
         });
         $('.watchlist-btn').each(function() {
             if (watchlist.includes($(this).data("movie") * 1)) {
-                $(this).html("&#10003;")
-                $(this).prop('disabled', true);
+                $(this).html("x")
+                $(this).removeClass("watch")
+                $(this).addClass("remove")
             }
+        });
+        $(document).on("click", ".remove", function(event) {
+            event.stopPropagation();
+            let button = $(this);
+            button.prop("disabled", true);
+            let movieID = button.data('movie') * 1;
+            $.ajax({
+                url: '/remove-watchlist',
+                type: 'POST',
+                data: { user, movieID },
+                success: function(response) {
+                    console.log("removed movie from watchlist")
+                    button.removeClass("remove");
+                    button.addClass("watch");
+                    let text = button.hasClass("watchListhover")? "Add To Watchlist" : "+";
+                    button.html(text)
+                    watchlist = watchlist.filter(id => id !== movieID)
+                    button.prop("disabled", false);
+                },
+                error: function() {
+                    console.log("Error removing movie from watchlist")
+                    button.prop("disabled", false);
+                }
+            });
         })
-        $(".watchlist-btn").on("click", function() {
-            $(this).html("&#10003;")
-            let movieID = $(this).data('movie');
+        $(document).on("click", ".watch", function(event) {
+            event.stopPropagation();
+            let button = $(this);
+            button.prop("disabled", true);
+            let movieID = button.data('movie');
             movieID = movieID * 1;
-            let button = $(this); // To use inside the AJAX callbacks
-
-            // Disable the button immediately to prevent multiple clicks
-            button.prop('disabled', true);
 
             // Perform the AJAX request
             $.ajax({
@@ -397,11 +493,16 @@
                 data: { user, movieID },
                 success: function(response) {
                     console.log("added movie to watchlist")
+                    let text = button.hasClass("watchListhover")? "Remove From Watchlist" : "x";
+                    button.html(text)
+                    button.addClass("remove")
+                    button.removeClass("watch")
+                    watchlist.push(movieID);
+                    button.prop("disabled", false);
                 },
                 error: function() {
-                    // Handle error, re-enable the button for retry
-                    button.prop('disabled', false)
                     console.log("Error adding movie to watchlist")
+                    button.prop("disabled", false);
                 }
             });
         });
@@ -414,7 +515,6 @@
 <div class="image-track" data-positionX="0" data-prev-percentage="0">
     <%for (let i = 0; i < top10Movies.length; i++) {%>
     <div>
-        <% if(isAuthenticated) {%><button class="watchlist-btn" data-movie="<%= top10Movies[i].id %>">+</button> <%}%>
         <a href="/movies/<%= top10Movies[i].id%>"><img class = "image" src = "<%= (top10Movies[i].poster_path)%>" alt="<%= top10Movies[i].original_title%>" draggable="false" data-id="<%= i%>"></a>
     </div>
     <%}%>
@@ -424,14 +524,18 @@
 <div id="movie-info">
     <h2 id="movie-title" style="font-weight: bold;"></h2>
     <span id="movie-overview"></span>
+
 </div>
+    <div id="watchlist-div" style="margin-top: 40px;">
+    <% if(isAuthenticated) {%><button class="watch watchListhover" data-movie="" style="color: gray">Add To Watchlist</button> <%}%>
+    </div>
 </div>
 <hr>
 <div style="text-align: center; margin-top: 10px; margin-bottom: 10px;"><h2>Featured Movies</h2></div>
 <div id="randomMovies">
     <%for (let i = 0; i < random3Movies.length; i++) {%>
         <div class="card">
-            <% if(isAuthenticated) {%><button class="watchlist-btn" data-movie="">+</button> <%}%>
+            <% if(isAuthenticated) {%><button class="watch watchlist-btn" data-movie="<%= random3Movies[i].id%>">+</button> <%}%>
             <a href="/movies/<%= random3Movies[i].id%>"><img class="card-img-top" src="<%= (random3Movies[i].poster_path)%>" alt="Card image cap"  style="z-index: 1;"></a>
             <img class="card-img-top" src="<%= (random3Movies[i].poster_path)%>" alt="Card image cap" style="filter:blur(50px); z-index: -2; position: absolute; width: 80%; height: auto; top:10%; left: 10%;">
             <div class="card-body">
@@ -448,14 +552,17 @@
 <div id="recent">
     <%for (let i = 0; i < 5; i++) {%>
     <div class="card" style="width: 15%; margin: 10px;">
-        <% if(isAuthenticated) {%><button class="watchlist-btn" data-movie="<%= recentMovies[i].id %>">+</button> <%}%>
+        <% if(isAuthenticated) {%><button class="watch watchlist-btn" data-movie="<%= recentMovies[i].id %>">+</button> <%}%>
             <a href="/movies/<%= recentMovies[i].id%>"><img class="card-img-top" src="<%= (recentMovies[i].poster_path)%>" alt="Card image cap"  style="z-index: 1;"></a>
     <img class="card-img-top" src="<%= (recentMovies[i].poster_path)%>" alt="Card image cap" style="filter:blur(50px); z-index: -2; position: absolute; width: 80%; height: auto; top:10%; left: 10%;">
     <div class="card-body">
         <a href="/movies/<%= recentMovies[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%= recentMovies[i].original_title%></h5></a>
     </div>
         <p style="font-weight: bold;">Releases on: <br> <%= recentMovies[i].release_date%></p>
+            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                <button type="button" class="btn btn-secondary btn-sm"  style="margin: 5px;" onclick="copy(<%= recentMovies[i].id%>)" id="id">Copy</button></div>
     </div>
+
         <%}%>
     </div>
 <hr>

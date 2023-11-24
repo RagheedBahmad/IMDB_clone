@@ -71,6 +71,11 @@ router.get("/dashboard", authController.protect, async (req, res) => {
 });
 
 router.post("/watchlist", userController.addWatchlist, (req, res) => {});
+router.post(
+  "/remove-watchlist",
+  userController.removeWatchlist,
+  (req, res) => {}
+);
 
 router.get("/movies/:movie", authController.protect, async (req, res) => {
   let id = req.params.movie;

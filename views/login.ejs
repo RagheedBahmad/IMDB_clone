@@ -881,6 +881,7 @@
     }
 
     function signup() {
+        $("#Serror-message").text("")
         $('html, body').animate({ scrollTop: 200 }, 1500);
         $("#template").empty().append(signupForm);
         $("#signupCred").on("submit", function(event) {

@@ -59,6 +59,8 @@ exports.signup = catchAsync(async (req, res, next) => {
       provider: "email",
       providerId: null,
       dateWhenJoined: date,
+      reviews: [],
+      watchlist: [],
     });
 
     createSendToken(newUser, 201, res);
@@ -85,6 +87,9 @@ exports.login = catchAsync(async (req, res, next) => {
 
     // 2) Check if user exists & password is correct
     user = await User.findOne({ email }).select("+password");
+    if (!user || !(await user.correctPassword(password, user.password))) {
+      return next(new AppError("Incorrect email or password.", 401));
+    }
     let provider = user.provider;
     if (provider === "google") {
       return next(
@@ -93,9 +98,6 @@ exports.login = catchAsync(async (req, res, next) => {
           501
         )
       );
-    }
-    if (!user || !(await user.correctPassword(password, user.password))) {
-      return next(new AppError("Incorrect email or password.", 401));
     }
 
     // 3) If everything is ok, send token to client
@@ -106,11 +108,6 @@ exports.login = catchAsync(async (req, res, next) => {
       res
         .status(error.statusCode)
         .send({ status: error.status, message: error.message });
-    } else {
-      // If it's not an operational error, consider it a 500 server error
-      res
-        .status(500)
-        .send({ status: "error", message: "Something went wrong!" });
     }
   }
 });
