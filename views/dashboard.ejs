@@ -78,6 +78,14 @@
         height: auto;
     }
 
+    .watchlist-btn {
+        position:absolute;
+        background-color: gray;
+        opacity: 0.7;
+        border: none;
+        z-index: 3;
+    }
+
     .slick-slide > a > img {
         width:100%;
         opacity: 0.75;
@@ -331,15 +339,19 @@
     }
 
 </style>
-<script>let top5Movies = <%- JSON.stringify(top5Movies) %>;</script>
+<script>
+    let top10Movies = <%- JSON.stringify(top10Movies) %>;
+    let user = <%- JSON.stringify(user) %>;
+    let watchlist = <%- JSON.stringify(watchlist) %>;
+</script>
 <%- include('partials/header') %>
 <script>
     function displayInfo(event, slick, currentSlide) {
         let currentImage = slick.$slides.get(currentSlide).querySelector('img');
         let i = currentImage.getAttribute('data-id');
-        $("#movie-title").text("#" + (i*1 + 1)  + " " + top5Movies[i].original_title)
-        $("#movie-overview").text(top5Movies[i].overview)
-        $("#movie-blur").attr("src", top5Movies[i].poster_path)
+        $("#movie-title").text("#" + (i*1 + 1)  + " " + top10Movies[i].original_title)
+        $("#movie-overview").text(top10Movies[i].overview)
+        $("#movie-blur").attr("src", top10Movies[i].poster_path)
     }
 
     function copy(id) {
@@ -347,11 +359,12 @@
     }
 
     $(window).on("load", () => {
+        console.log(watchlist)
         let movieInfo = $("#movie-info")
         let imageTrack = $(".image-track");
-        $("#movie-title").text(`#1 ${top5Movies[0].original_title}`)
-        $("#movie-overview").text(top5Movies[0].overview)
-        $("#movie-blur").attr("src", top5Movies[0].poster_path)
+        $("#movie-title").text(`#1 ${top10Movies[0].original_title}`)
+        $("#movie-overview").text(top10Movies[0].overview)
+        $("#movie-blur").attr("src", top10Movies[0].poster_path)
         movieInfo.addClass('slide-in-right');
         imageTrack.on("beforeChange", function(event, slick, currentSlide) {
             movieInfo.removeClass('slide-in-right');
@@ -362,14 +375,48 @@
         displayInfo(event, slick, currentSlide)
         movieInfo.addClass('slide-in-right');
         });
+        $('.watchlist-btn').each(function() {
+            if (watchlist.includes($(this).data("movie") * 1)) {
+                $(this).html("&#10003;")
+                $(this).prop('disabled', true);
+            }
+        })
+        $(".watchlist-btn").on("click", function() {
+            $(this).html("&#10003;")
+            let movieID = $(this).data('movie');
+            movieID = movieID * 1;
+            let button = $(this); // To use inside the AJAX callbacks
+
+            // Disable the button immediately to prevent multiple clicks
+            button.prop('disabled', true);
+
+            // Perform the AJAX request
+            $.ajax({
+                url: '/watchlist',
+                type: 'POST',
+                data: { user, movieID },
+                success: function(response) {
+                    console.log("added movie to watchlist")
+                },
+                error: function() {
+                    // Handle error, re-enable the button for retry
+                    button.prop('disabled', false)
+                    console.log("Error adding movie to watchlist")
+                }
+            });
+        });
     })
 </script>
 <body>
+<div style="text-align: center; margin-top: 10px; margin-bottom: 10px;"><h2>Top Movies</h2></div>
 <div id="head-container">
 <div id="image-carousel">
 <div class="image-track" data-positionX="0" data-prev-percentage="0">
-    <%for (let i = 0; i < 5; i++) {%>
-    <div><a href="/movies/<%= top5Movies[i].id%>"><img class = "image" src = "<%= (top5Movies[i].poster_path)%>" alt="<%= top5Movies[i].original_title%>" draggable="false" data-id="<%= i%>"></a></div>
+    <%for (let i = 0; i < top10Movies.length; i++) {%>
+    <div>
+        <% if(isAuthenticated) {%><button class="watchlist-btn" data-movie="<%= top10Movies[i].id %>">+</button> <%}%>
+        <a href="/movies/<%= top10Movies[i].id%>"><img class = "image" src = "<%= (top10Movies[i].poster_path)%>" alt="<%= top10Movies[i].original_title%>" draggable="false" data-id="<%= i%>"></a>
+    </div>
     <%}%>
 </div>
 </div>
@@ -378,13 +425,13 @@
     <h2 id="movie-title" style="font-weight: bold;"></h2>
     <span id="movie-overview"></span>
 </div>
-
 </div>
 <hr>
 <div style="text-align: center; margin-top: 10px; margin-bottom: 10px;"><h2>Featured Movies</h2></div>
 <div id="randomMovies">
-    <%for (let i = 0; i < 3; i++) {%>
+    <%for (let i = 0; i < random3Movies.length; i++) {%>
         <div class="card">
+            <% if(isAuthenticated) {%><button class="watchlist-btn" data-movie="">+</button> <%}%>
             <a href="/movies/<%= random3Movies[i].id%>"><img class="card-img-top" src="<%= (random3Movies[i].poster_path)%>" alt="Card image cap"  style="z-index: 1;"></a>
             <img class="card-img-top" src="<%= (random3Movies[i].poster_path)%>" alt="Card image cap" style="filter:blur(50px); z-index: -2; position: absolute; width: 80%; height: auto; top:10%; left: 10%;">
             <div class="card-body">
@@ -401,6 +448,7 @@
 <div id="recent">
     <%for (let i = 0; i < 5; i++) {%>
     <div class="card" style="width: 15%; margin: 10px;">
+        <% if(isAuthenticated) {%><button class="watchlist-btn" data-movie="<%= recentMovies[i].id %>">+</button> <%}%>
             <a href="/movies/<%= recentMovies[i].id%>"><img class="card-img-top" src="<%= (recentMovies[i].poster_path)%>" alt="Card image cap"  style="z-index: 1;"></a>
     <img class="card-img-top" src="<%= (recentMovies[i].poster_path)%>" alt="Card image cap" style="filter:blur(50px); z-index: -2; position: absolute; width: 80%; height: auto; top:10%; left: 10%;">
     <div class="card-body">

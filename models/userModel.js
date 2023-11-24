@@ -66,6 +66,7 @@ const userSchema = new mongoose.Schema({
       rating: { type: Number, required: true, max: 5 },
     },
   ],
+  watchlist: [Number],
 });
 
 userSchema.pre("save", async function (next) {

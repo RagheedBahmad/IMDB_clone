@@ -1,13 +1,20 @@
 const Movie = require("./../models/movieModel.js");
 const catchAsync = require("./../Utils/catchAsync");
 
-async function top5() {
+async function top(x) {
   return await Movie.find(
     {},
-    { id: 1, _id: 0, poster_path: 1, original_title: 1, overview: 1 }
+    {
+      id: 1,
+      _id: 0,
+      poster_path: 1,
+      original_title: 1,
+      overview: 1,
+      credits: 1,
+    }
   )
     .sort({ popularity: -1 })
-    .limit(5)
+    .limit(x)
     .exec();
 }
 
@@ -23,5 +30,5 @@ async function recent(x) {
 }
 
 module.exports.random = random;
-module.exports.top5 = top5;
+module.exports.top = top;
 module.exports.recent = recent;

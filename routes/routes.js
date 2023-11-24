@@ -6,14 +6,15 @@ const User = require("./../models/userModel.js");
 const Movie = require("./../models/movieModel.js");
 const authController = require("./../controllers/authController");
 const movieController = require("./../controllers/movieController");
+const userController = require("./../controllers/userController");
 const path = require("path");
 const { google } = require("googleapis");
 const passport = require("passport");
-let top5Movies;
-async function get5() {
-  top5Movies = await movieController.top5();
+let top10Movies;
+async function getPopular() {
+  top10Movies = await movieController.top(10);
 }
-get5();
+getPopular();
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.CLIENT_ID,
@@ -37,9 +38,11 @@ router.get("/privacy", (req, res) => {
 });
 router.get("/", async (req, res) => {
   let random3Movies = await movieController.random(3);
+  let recentMovies = await movieController.recent(5);
   res.render("dashboard", {
-    top5Movies,
+    top10Movies,
     random3Movies,
+    recentMovies,
     isAuthenticated: false,
   });
 });
@@ -58,13 +61,16 @@ router.get("/dashboard", authController.protect, async (req, res) => {
   let random3Movies = await movieController.random(3);
   let recentMovies = await movieController.recent(5);
   res.render("dashboard", {
-    top5Movies,
+    top10Movies,
     random3Movies,
     recentMovies,
     user: req.user ? req.user : null,
+    watchlist: req.user ? req.user.watchlist : null,
     isAuthenticated: !!req.user,
   });
 });
+
+router.post("/watchlist", userController.addWatchlist, (req, res) => {});
 
 router.get("/movies/:movie", authController.protect, async (req, res) => {
   let id = req.params.movie;
