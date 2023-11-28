@@ -146,4 +146,8 @@ router.get("/profile/:user", authController.protect, async (req, res) => {
   res.render("user", { user: req.user });
 });
 
+// router.post("/search", movieController.search, (req, res) => {
+//   res.render();
+// });
+
 module.exports = router;

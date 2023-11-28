@@ -46,6 +46,7 @@
         transition: color 0.3s ease;
         display: inline-block; /* Ensure proper alignment */
         padding: 5px; /* Add some padding */
+        top: 5px;
     }
 
     .hover:hover {
@@ -90,6 +91,24 @@
         color: lightblue;
     }
 
+    #form-div {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 2;
+    }
+
+    #form {
+        width: 100%;
+    }
+
+    #query {
+        padding-left: 10px;
+        color: lightblue;
+        border-radius:10px;
+        border: 1px solid lightblue;
+        background-color: transparent;
+    }
+
     .login-button {
         background-color: transparent;
     }
@@ -98,6 +117,26 @@
         background-color: #1f1f1f;
     }
 
+    @media screen and (max-width: 1000px) {
+        body {
+            overflow-x: hidden;
+        }
+        .header-logo {
+            display: none;
+        }
+
+        #about, #services {
+            display: none;
+        }
+        #form {
+            width: 100%;
+            margin-left: 10px;
+            margin-right:10px
+        }
+        #query {
+            width:85%;
+        }
+    }
     @media screen and (max-width: 640px) {
         body {
             overflow-x: hidden;
@@ -127,6 +166,16 @@
             <li id="services"><a href="#services" class="hover">Services</a></li>
             <li><a href="#socials" class="hover">Contact</a></li>
         </ul>
+    </div>
+    <div id="form-div">
+        <form role="search" id="form" action="/search" method="post">
+            <input type="search" id="query" name="q" placeholder="Search..." aria-label="Search through site content">
+            <button id="searchButton" style="all: unset; margin-left: 10px; width: 44px; height: 44px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+            </button>
+        </form>
     </div>
     <div class="header-auth">
         <% if (isAuthenticated) { %>

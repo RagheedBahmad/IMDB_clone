@@ -172,6 +172,11 @@
         justify-content: center;
     }
 
+    #recent > div {
+        width: 15%;
+        margin: 10px;
+    }
+
     #recent > div, #randomMovies > div {
         transition: transform 0.2s ease-in-out;
     }
@@ -337,6 +342,16 @@
             margin-top: 15px;
             width:90%;
         }
+
+        #recent {
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        #recent > div {
+            flex-basis: calc(30% - 10px); /* Two cards per row, adjust for margin */
+            margin: 20px;
+        }
     }
 
     @media screen and (max-width: 640px) {
@@ -362,8 +377,26 @@
             min-height: 400px;
         }
 
+        #recent {
+            margin-top: 40px;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        #recent > div {
+            flex-basis: calc(70% - 10px); /* Two cards per row, adjust for margin */
+            width: 65%;
+            margin: auto auto 30px;
+        }
+
+        #recent > div:hover, #randomMovies > div:hover {
+            transform: scale(1.08);
+        }
+
         #image-carousel {
             width:100%;
+            min-height: unset;
+            height: unset;
         }
 
         .image-track {
@@ -377,7 +410,6 @@
         #randomMovies {
             display:flex;
             flex-direction: column;
-
         }
 
         .card {
@@ -450,7 +482,7 @@
         });
         $('.watchlist-btn').each(function() {
             if (watchlist.includes($(this).data("movie") * 1)) {
-                $(this).html("x")
+                $(this).html("&cross;")
                 $(this).removeClass("watch")
                 $(this).addClass("remove")
             }
@@ -493,7 +525,7 @@
                 data: { user, movieID },
                 success: function(response) {
                     console.log("added movie to watchlist")
-                    let text = button.hasClass("watchListhover")? "Remove From Watchlist" : "x";
+                    let text = button.hasClass("watchListhover")? "Remove From Watchlist" : "&cross;";
                     button.html(text)
                     button.addClass("remove")
                     button.removeClass("watch")
@@ -551,7 +583,7 @@
 <div style="text-align: center; margin-top: 10px; margin-bottom: 10px;"><h2>Upcoming Movies</h2></div>
 <div id="recent">
     <%for (let i = 0; i < 5; i++) {%>
-    <div class="card" style="width: 15%; margin: 10px;">
+    <div class="card">
         <% if(isAuthenticated) {%><button class="watch watchlist-btn" data-movie="<%= recentMovies[i].id %>">+</button> <%}%>
             <a href="/movies/<%= recentMovies[i].id%>"><img class="card-img-top" src="<%= (recentMovies[i].poster_path)%>" alt="Card image cap"  style="z-index: 1;"></a>
     <img class="card-img-top" src="<%= (recentMovies[i].poster_path)%>" alt="Card image cap" style="filter:blur(50px); z-index: -2; position: absolute; width: 80%; height: auto; top:10%; left: 10%;">
@@ -559,7 +591,7 @@
         <a href="/movies/<%= recentMovies[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%= recentMovies[i].original_title%></h5></a>
     </div>
         <p style="font-weight: bold;">Releases on: <br> <%= recentMovies[i].release_date%></p>
-            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false"></a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 <button type="button" class="btn btn-secondary btn-sm"  style="margin: 5px;" onclick="copy(<%= recentMovies[i].id%>)" id="id">Copy</button></div>
     </div>
 

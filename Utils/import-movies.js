@@ -78,7 +78,7 @@ const insertMovie = async function (movie) {
   let Casts = [];
   let Crews = [];
   let response = await fetch(
-    `https://api.themoviedb.org/3/movie/${movie.id}?append_to_response=credits%2Cvideos%2Creviews%2Cimages&language=en-US&include_image_language=en,null`,
+    `https://api.themoviedb.org/3/movie/${movie.id}?append_to_response=credits%2Ckeywords%2Cvideos%2Creviews%2Cimages&language=en-US&include_image_language=en,null`,
     options
   );
   let updatedMovie = await response.json();
@@ -284,6 +284,7 @@ async function resetCredit() {
 }
 
 async function upcoming() {
+  console.log("loading upcoming movies: \n");
   if (!fetch) {
     const module = await import("node-fetch");
     fetch = module.default;
@@ -297,8 +298,43 @@ async function upcoming() {
   let i = 1;
   console.log(upcomingMovies.length);
   for (const movie of upcomingMovies) {
-    await insertMovie(movie);
-    console.log(i + ": Inserted " + movie.original_title);
+    let dbMovie = await movies.findOne({ id: movie.id });
+    if (dbMovie) {
+      console.log(movie.original_title + " already exists in database");
+    } else {
+      await insertMovie(movie);
+      console.log(i + ": Inserted " + movie.original_title);
+    }
+    i++;
+  }
+  process.exit(1);
+}
+
+async function keywords() {
+  console.log("fetching keywords:");
+  if (!fetch) {
+    const module = await import("node-fetch");
+    fetch = module.default;
+  }
+  let movieList = await movies.find({}).toArray();
+  let i = 0;
+  for (const movie of movieList) {
+    let result = await fetch(
+      `https://api.themoviedb.org/3/movie/${movie.id}/keywords`,
+      options
+    );
+    result = await result.json();
+    await movies.updateOne(
+      { id: movie.id },
+      { $set: { keywords: result.keywords } }
+    );
+    console.log(
+      i +
+        ": Inserted " +
+        movie.original_title +
+        "; keywords: " +
+        result.keywords
+    );
     i++;
   }
   process.exit(1);
@@ -327,6 +363,10 @@ switch (process.argv[2]) {
 
   case "--upcoming":
     upcoming();
+    break;
+
+  case "--keywords":
+    keywords();
     break;
 
   default:
