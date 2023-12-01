@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<style>body {
+        margin: 0;
+        font-family: 'Roboto', sans-serif;
+        background-color: black; /* Dark background */
+        color: #7f9eb9; /* Light text */
+    }
+
+
+
+    .site-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #0a0a0a; /* Slightly lighter dark shade for header */
+        padding: 10px 20px;
+    }
+
+    .header-logo {
+        margin-right: 10px;
+    }
+
+    .header-logo a {
+        color: #7f9eb9;
+        text-decoration: none;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    .header-nav ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+    }
+
+    .header-nav ul li {
+        margin: 0 10px;
+    }
+
+    .hover {
+        position: relative;
+        color: #7f9eb9;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        display: inline-block; /* Ensure proper alignment */
+        padding: 5px; /* Add some padding */
+        top: 5px;
+    }
+
+    .hover:hover {
+        -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+        transition: 0.3s ease-in;
+    }
+
+
+    .hover::before {
+        content: '';
+        background: linear-gradient(to top, rgba(173, 216, 230, 0.10), rgba(173, 216, 230, 0));
+        position: absolute;
+        left: 0;
+        bottom: 3px;
+        width: 100%;
+        height: 2px;
+
+        transition: all .3s ease-in-out;
+    }
+
+    .hover:hover::before {
+        -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+        bottom: 0;
+        height: 100%;
+    }
+
+    .header-auth {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right:10px;
+    }
+
+    .header-auth a {
+        padding: 5px;
+        color: #7f9eb9;
+        text-decoration: none;
+        transition: color 0.3s, color 0.3s;
+    }
+
+    .header-auth a:hover {
+        color: lightblue;
+    }
+
+    .header-auth > a > span {
+        font-size: unset;
+    }
+
+    .site-header {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+
+    #form-div {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    .site-header > div {
+        flex: 1;
+    }
+
+    #form, #form-div {
+        width: 80%;
+        margin: auto;
+    }
+
+    #query {
+        padding-left: 10px;
+        color: lightblue;
+        border-radius:10px;
+        border: 1px solid lightblue;
+        background-color: transparent;
+        width: 80%;
+    }
+
+    .login-button {
+        background-color: transparent;
+    }
+
+    dl, ol, ul {
+        margin-top: unset;
+    }
+
+    .site-header > div {
+         flex: unset;
+    }
+    .dropdown-menu {
+        display: none; /* Hidden by default */
+        position: absolute;
+        background-color: #0f0f0f;
+        color: lightblue;
+        min-width: 160px;
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        z-index: 2;
+        padding: 0;
+    }
+
+    .dropdown-menu div {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    .dropdown-menu div:not(:last-child) {
+        margin-bottom: 5px;
+    }
+
+    .dropdown-menu div:hover {
+        background-color: #0c0a0a;
+    }
+
+    .dropdown-menu > div {
+        cursor: pointer;
+    }
+    .dropdown-menu > div > span{
+        font-weight: bold;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+
+    #resultsContainer {
+        width: 30%;
+    }
+
+
+
+    @media screen and (max-width: 1040px) {
+        body {
+            overflow-x: hidden;
+        }
+        .header-logo {
+            display: none;
+        }
+
+        #about, #services {
+            display: none;
+        }
+        #form, #form-div {
+            width: 100%;
+        }
+        #query {
+            width:80%;
+        }
+        #resultsContainer {
+            width: 65%;
+        }
+        .header-nav > ul{
+             margin: 0;
+        }
+        .header-nav > ul > li {
+            margin-left: 0;
+            margin-right: 5px;
+        }
+    }
+    @media screen and (max-width: 813px) {
+        .site-header {
+            flex-wrap: wrap;
+        }
+        body {
+            overflow-x: hidden;
+        }
+        .header-logo {
+            display: none;
+        }
+
+        #about, #services {
+            display: none;
+        }
+
+        .header-nav, .header-auth {
+            flex-basis: 50%; /* Each takes half the width of the container */
+        }
+
+        #form-div {
+            flex-wrap: wrap;
+            flex-basis: 100%;
+            order: 3; /* Move the second div to the end */
+        }
+        #resultsContainer {
+            width: 80%;
+        }
+    }
+</style>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(window).on("load", function() {
+        $('#query').on('input', function() {
+            console.log("inputted");
+            let searchTerm = $(this).val();
+
+            // Assuming fetchResults function fetches data and updates resultsContainer
+            fetchResults(searchTerm).then(() => {
+                if (searchTerm) {
+                    $('#resultsContainer').show(); // Show the dropdown
+                } else {
+                    $('#resultsContainer').hide(); // Hide the dropdown
+                }
+            });
+        });
+    })
+
+    // Close the dropdown if the user clicks outside of it
+    $(window).on('click', function(event) {
+        if (!$(event.target).closest('#searchInput').length) {
+            $('#resultsContainer').hide();
+        }
+    });
+
+    function displayResults(movies) {
+        let $resultsContainer = $('#resultsContainer');
+        $resultsContainer.empty(); // Clear previous results
+
+        if (movies.length === 0) {
+            $('<div>').append($('<span>').text(`No Movies Start With \"${$('#query').val()}\"`).addClass('noResults')).css({
+                cursor: "default"
+            })
+                .appendTo($resultsContainer)
+        }
+
+        movies.forEach(function(movie) {
+            $('<div>').append($('<img>', {
+                src: movie.poster_path,
+                alt: 'Poster of ' + movie.title,
+                class: 'movie-poster'
+            }).css({
+                width: '10%', // Set your desired width
+                height: 'auto'  // Set height to auto to maintain aspect ratio
+            }))
+                .append($('<span>').text(movie.original_title).addClass('movie-title'))
+                .appendTo($resultsContainer)
+                .on('click', function() {
+                    window.location.href = '/movies/' + movie.id;
+                });
+        });
+    }
+
+    function fetchResults(searchTerm) {
+        return $.ajax({
+            url: '/api/search', // Your API endpoint
+            type: 'POST',
+            data: { query: searchTerm }, // Data you want to send to the server
+            dataType: 'json', // Expected data type from server
+        }).done(function(data) {
+            // Handle the response data (list of movies)
+            displayResults(data.movies); // Assuming the server returns an object with a 'movies' array
+        }).fail(function(jqXHR, textStatus) {
+            // Handle any errors
+            console.error('Search failed: ' + textStatus);
+        });
+    }
+
+
+
+</script>
+
+<header class="site-header">
+    <div class="header-logo">
+        <a href="/"><img src="/img/MMDb logo cropped and keyed.png" width="150.66" height="53" loading="lazy" alt="logo"></a>
+    </div>
+    <div class="header-nav">
+        <ul>
+            <li><a href="/dashboard" class="hover">Home</a></li>
+            <li id="about"><a href="/about" class="hover">About</a></li>
+            <li id="services"><a href="#services" class="hover">Services</a></li>
+            <li><a href="#socials" class="hover">Contact</a></li>
+        </ul>
+    </div>
+    <div id="form-div">
+        <form role="search" id="form" action="/search" method="GET">
+            <input type="search" id="query" name="q" placeholder="Search..." aria-label="Search through site content">
+            <div id="resultsContainer" class="dropdown-menu"></div>
+            <button type="submit" id="searchButton" style="all: unset; margin-left: 10px; width: 44px; height: 44px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+            </button>
+        </form>
+    </div>
+    <div class="header-auth">
+        <% if (isAuthenticated) { %>
+            <a href="/profile" class="hover"><span><%= user.username%></span></a>
+            <a href="/profile"><img src="<%= user.profile !== 'null' ? user.profile : '/img/defaultProfile.jpg' %>" alt="profile" width="40px" height="40px" loading="lazy" /></a>
+            <a href="/signout" class="hover">Signout</a>
+    <% } else { %>
+            <a href="/login" class="login-button">Login</a>
+
+        <% } %>
+    </div>
+</header>
+
+</body>
+</html>
