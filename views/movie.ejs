@@ -206,6 +206,18 @@
             z-index: 0;
             padding: 10px;
         }
+        .watchlist-btn {
+            position:absolute;
+            background-color: gray;
+            opacity: 0.7;
+            border: none;
+            z-index: 3;
+            border-radius: 3px;
+            transition: transform .3s cubic-bezier(.4,0,.2,1);
+        }.watchlist-btn:hover {
+             background-color: lightgray;
+         }
+    /*  ----------------------------------------------------------------   */
     </style>
 </head>
 <script>let movie = <%- JSON.stringify(movie)%>;</script>

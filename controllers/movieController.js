@@ -41,7 +41,6 @@ function encodeGenres(movieGenres) {
 function mapGenres() {
   movies.forEach((movie) => {
     movie.genres = encodeGenres(movie.genres);
-    console.log(movie.genres);
   });
 }
 
@@ -75,16 +74,14 @@ async function recent(x) {
 
 function findSimilarMovies(targetMovieName) {
   const targetMovie = movies.find(
-    (movie) =>
-      movie.original_title.toLowerCase() === targetMovieName.toLowerCase()
+    (movie) => movie.original_title === targetMovieName
   );
-  console.log(targetMovie);
   if (!targetMovie) return [];
-  movies = movies.filter(
+  let $movies = movies.filter(
     (movie) =>
       movie.original_title.toLowerCase() !== targetMovieName.toLowerCase()
   );
-  const similarities = movies.map((movie) => {
+  const similarities = $movies.map((movie) => {
     const genreSimilarityScore = calculateSimilarityGenre(
       targetMovie.genres,
       movie.genres

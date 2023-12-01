@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "update": "node ./Utils/import-movies --upcoming"
+    "upcoming": "node ./Utils/import-movies --upcoming",
+    "update": "node ./Utils/import-movies --updatePop"
   },
   "author": "",
   "license": "ISC",
