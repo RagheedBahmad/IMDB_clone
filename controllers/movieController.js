@@ -80,6 +80,10 @@ function findSimilarMovies(targetMovieName) {
   );
   console.log(targetMovie);
   if (!targetMovie) return [];
+  movies = movies.filter(
+    (movie) =>
+      movie.original_title.toLowerCase() !== targetMovieName.toLowerCase()
+  );
   const similarities = movies.map((movie) => {
     const genreSimilarityScore = calculateSimilarityGenre(
       targetMovie.genres,

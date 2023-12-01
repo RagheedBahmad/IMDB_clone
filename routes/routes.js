@@ -83,7 +83,9 @@ router.post(
 router.get("/movies/:movie", authController.protect, async (req, res) => {
   let id = req.params.movie;
   let movie = await Movie.findOne({ id: id }).exec();
+  console.log("movie title: " + movie.original_title);
   let similarMovies = movieController.similar(movie.original_title);
+  console.log(similarMovies);
   res.render("movie", {
     movie,
     similarMovies,
@@ -91,11 +93,6 @@ router.get("/movies/:movie", authController.protect, async (req, res) => {
     watchlist: req.user?.watchlist ? req.user.watchlist : null,
     isAuthenticated: !!req.user,
   });
-  if (req.user) {
-    res.render("movie", { movie, user: req.user, isAuthenticated: true });
-  } else {
-    res.render("movie", { movie, isAuthenticated: false });
-  }
 });
 
 async function verify(token) {
