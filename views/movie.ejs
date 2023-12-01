@@ -178,7 +178,7 @@
             background-color: #45a049;
         }
 
-         /*I added these for the similar movies tab*/
+         /*--------I added these for the similar movies tab and footer--------------------------------*/
         #similarMovies {
             margin: 30px auto auto;
             padding-bottom: 50px;
@@ -252,7 +252,7 @@
           </ul>
         </nav>
       
-        <div style="height: 500px;" class="tabs">
+        <div class="tabs">
           <div class="active" id="info">
 
             <h2>Movie Info</h2>
@@ -319,8 +319,10 @@
                 </div>
             </div>
         </div>
-    </div>      
+    </div>
+        <%- include('partials/footer') %>
 </div>
+
 </body>
 <script>
     $(document).ready(function() {
