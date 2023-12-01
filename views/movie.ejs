@@ -157,7 +157,7 @@
             font-weight: bold;
         }
 
-        form input,
+        form input:not(#query),
         form textarea {
             width: 100%;
             padding: 8px;
@@ -178,6 +178,34 @@
             background-color: #45a049;
         }
 
+         /*I added these for the similar movies tab*/
+        #similarMovies {
+            margin: 30px auto auto;
+            padding-bottom: 50px;
+            width: 80%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        #similarMovies > div:hover {
+            transform: scale(1.1);
+        }
+        #similarMovies > div {
+            transition: transform 0.2s ease-in-out;
+            flex-basis : calc(30% - 10px); /* Two cards per row, adjust for margin */
+            margin: 20px;
+        }
+        #similarMovies > div > div > a {
+            text-decoration: none;
+        }
+        .card {
+            display: flex;
+            width: 25%;
+            background-color: #0a0a0a;
+            z-index: 0;
+            padding: 10px;
+        }
     </style>
 </head>
 <script>let movie = <%- JSON.stringify(movie)%>;</script>
@@ -208,7 +236,7 @@
           <ul class="justify-content-evenly">
             <li class="active"><a href="#info">Info</a></li>
             <li><a href="#reviews">Reviews</a></li>
-            <li><a href="#other">Other</a></li>
+            <li><a href="#other">Similar</a></li>
           </ul>
         </nav>
       
@@ -262,7 +290,21 @@
             </div>
         
             <div id="other" style="display: none;">
-                <h2>Other Content</h2>
+                <div id="similarMovies">
+                    <%for (let i = 0; i < similarMovies.length; i++) {%>
+                        <div class="card">
+                            <% if(isAuthenticated) {%><button class="watch watchlist-btn" data-movie="<%= similarMovies[i].id%>">+</button> <%}%>
+                            <a href="/movies/<%= similarMovies[i].id%>"><img class="card-img-top" src="<%= (similarMovies[i].poster_path)%>" alt="Card image cap"  style="z-index: 1;"></a>
+                            <img class="card-img-top" src="<%= (similarMovies[i].poster_path)%>" alt="Card image cap" style="filter:blur(50px); z-index: -2; position: absolute; width: 80%; height: auto; top:10%; left: 10%;">
+                            <div class="card-body">
+                                <a href="/movies/<%= similarMovies[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%= similarMovies[i].original_title%></h5></a>
+                                <a href="/movies/<%= similarMovies[i].id%>"><p class="card-text" style="color: #7f9eb9"><%= similarMovies[i].tagline%></p></a>
+                            </div>
+                            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                                <button type="button" class="btn btn-secondary btn-sm"  style="margin: 5px;" onclick="copy(<%= similarMovies[i].id %>)" id="id">Copy</button></div>
+                        </div>
+                    <% } %>
+                </div>
             </div>
         </div>
     </div>      

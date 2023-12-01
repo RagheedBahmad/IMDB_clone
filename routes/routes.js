@@ -10,6 +10,7 @@ const userController = require("./../controllers/userController");
 const path = require("path");
 const { google } = require("googleapis");
 const passport = require("passport");
+const { body, validationResult } = require("express-validator");
 let top10Movies;
 async function getPopular() {
   top10Movies = await movieController.top(10);
@@ -36,14 +37,16 @@ const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 router.get("/privacy", (req, res) => {
   res.render("privacyPolicy");
 });
-router.get("/", async (req, res) => {
+router.get("/", authController.protect, async (req, res) => {
   let random3Movies = await movieController.random(3);
   let recentMovies = await movieController.recent(5);
   res.render("dashboard", {
     top10Movies,
     random3Movies,
     recentMovies,
-    isAuthenticated: false,
+    user: req.user ? req.user : null,
+    watchlist: req.user ? req.user.watchlist : null,
+    isAuthenticated: !!req.user,
   });
 });
 
@@ -80,6 +83,14 @@ router.post(
 router.get("/movies/:movie", authController.protect, async (req, res) => {
   let id = req.params.movie;
   let movie = await Movie.findOne({ id: id }).exec();
+  let similarMovies = movieController.similar(movie.original_title);
+  res.render("movie", {
+    movie,
+    similarMovies,
+    user: req.user ? req.user : null,
+    watchlist: req.user?.watchlist ? req.user.watchlist : null,
+    isAuthenticated: !!req.user,
+  });
   if (req.user) {
     res.render("movie", { movie, user: req.user, isAuthenticated: true });
   } else {
@@ -146,8 +157,37 @@ router.get("/profile/:user", authController.protect, async (req, res) => {
   res.render("user", { user: req.user });
 });
 
-// router.post("/search", movieController.search, (req, res) => {
-//   res.render();
-// });
+router.get(
+  "/search",
+  movieController.search,
+  authController.protect,
+  async (req, res) => {
+    console.log(res.similarMovies);
+    let randomMovies = await movieController.random(5);
+    res.render("search", {
+      movies: res.movies,
+      similarMovies: res.similarMovies,
+      randomMovies,
+      user: req.user ? req.user : null,
+      watchlist: req.user ? req.user.watchlist : null,
+      isAuthenticated: !!req.user,
+      searchQuery: req.query.q,
+    });
+  }
+);
+
+router.post(
+  "/api/search",
+  body("query").trim().escape(),
+  movieController.regexSearch,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    res.json({ movies: res.movies });
+  }
+);
 
 module.exports = router;

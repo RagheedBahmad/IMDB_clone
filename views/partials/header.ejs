@@ -22,6 +22,10 @@
         padding: 10px 20px;
     }
 
+    .header-logo {
+        margin-right: 10px;
+    }
+
     .header-logo a {
         color: #7f9eb9;
         text-decoration: none;
@@ -36,7 +40,7 @@
     }
 
     .header-nav ul li {
-        margin: 0 20px;
+        margin: 0 10px;
     }
 
     .hover {
@@ -91,14 +95,28 @@
         color: lightblue;
     }
 
-    #form-div {
-        display: flex;
-        flex-direction: row;
-        flex-grow: 2;
+    .header-auth > a > span {
+        font-size: unset;
     }
 
-    #form {
-        width: 100%;
+    .site-header {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+
+    #form-div {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    .site-header > div {
+        flex: 1;
+    }
+
+    #form, #form-div {
+        width: 80%;
+        margin: auto;
     }
 
     #query {
@@ -107,17 +125,61 @@
         border-radius:10px;
         border: 1px solid lightblue;
         background-color: transparent;
+        width: 80%;
     }
 
     .login-button {
         background-color: transparent;
     }
 
-    .signup-button {
-        background-color: #1f1f1f;
+    dl, ol, ul {
+        margin-top: unset;
     }
 
-    @media screen and (max-width: 1000px) {
+    .site-header > div {
+         flex: unset;
+    }
+    .dropdown-menu {
+        display: none; /* Hidden by default */
+        position: absolute;
+        background-color: #0f0f0f;
+        color: lightblue;
+        min-width: 160px;
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        z-index: 2;
+        padding: 0;
+    }
+
+    .dropdown-menu div {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    .dropdown-menu div:not(:last-child) {
+        margin-bottom: 5px;
+    }
+
+    .dropdown-menu div:hover {
+        background-color: #0c0a0a;
+    }
+
+    .dropdown-menu > div {
+        cursor: pointer;
+    }
+    .dropdown-menu > div > span{
+        font-weight: bold;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+
+    #resultsContainer {
+        width: 30%;
+    }
+
+
+
+    @media screen and (max-width: 1040px) {
         body {
             overflow-x: hidden;
         }
@@ -128,16 +190,27 @@
         #about, #services {
             display: none;
         }
-        #form {
+        #form, #form-div {
             width: 100%;
-            margin-left: 10px;
-            margin-right:10px
         }
         #query {
-            width:85%;
+            width:80%;
+        }
+        #resultsContainer {
+            width: 65%;
+        }
+        .header-nav > ul{
+             margin: 0;
+        }
+        .header-nav > ul > li {
+            margin-left: 0;
+            margin-right: 5px;
         }
     }
-    @media screen and (max-width: 640px) {
+    @media screen and (max-width: 813px) {
+        .site-header {
+            flex-wrap: wrap;
+        }
         body {
             overflow-x: hidden;
         }
@@ -147,13 +220,95 @@
 
         #about, #services {
             display: none;
+        }
+
+        .header-nav, .header-auth {
+            flex-basis: 50%; /* Each takes half the width of the container */
+        }
+
+        #form-div {
+            flex-wrap: wrap;
+            flex-basis: 100%;
+            order: 3; /* Move the second div to the end */
+        }
+        #resultsContainer {
+            width: 80%;
         }
     }
 </style>
 <body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+<script>
+    $(window).on("load", function() {
+        $('#query').on('input', function() {
+            console.log("inputted");
+            let searchTerm = $(this).val();
 
+            // Assuming fetchResults function fetches data and updates resultsContainer
+            fetchResults(searchTerm).then(() => {
+                if (searchTerm) {
+                    $('#resultsContainer').show(); // Show the dropdown
+                } else {
+                    $('#resultsContainer').hide(); // Hide the dropdown
+                }
+            });
+        });
+    })
+
+    // Close the dropdown if the user clicks outside of it
+    $(window).on('click', function(event) {
+        if (!$(event.target).closest('#searchInput').length) {
+            $('#resultsContainer').hide();
+        }
+    });
+
+    function displayResults(movies) {
+        let $resultsContainer = $('#resultsContainer');
+        $resultsContainer.empty(); // Clear previous results
+
+        if (movies.length === 0) {
+            $('<div>').append($('<span>').text(`No Movies Start With \"${$('#query').val()}\"`).addClass('noResults')).css({
+                cursor: "default"
+            })
+                .appendTo($resultsContainer)
+        }
+
+        movies.forEach(function(movie) {
+            $('<div>').append($('<img>', {
+                src: movie.poster_path,
+                alt: 'Poster of ' + movie.title,
+                class: 'movie-poster'
+            }).css({
+                width: '10%', // Set your desired width
+                height: 'auto'  // Set height to auto to maintain aspect ratio
+            }))
+                .append($('<span>').text(movie.original_title).addClass('movie-title'))
+                .appendTo($resultsContainer)
+                .on('click', function() {
+                    window.location.href = '/movies/' + movie.id;
+                });
+        });
+    }
+
+    function fetchResults(searchTerm) {
+        return $.ajax({
+            url: '/api/search', // Your API endpoint
+            type: 'POST',
+            data: { query: searchTerm }, // Data you want to send to the server
+            dataType: 'json', // Expected data type from server
+        }).done(function(data) {
+            // Handle the response data (list of movies)
+            displayResults(data.movies); // Assuming the server returns an object with a 'movies' array
+        }).fail(function(jqXHR, textStatus) {
+            // Handle any errors
+            console.error('Search failed: ' + textStatus);
+        });
+    }
+
+
+
+</script>
 
 <header class="site-header">
     <div class="header-logo">
@@ -168,9 +323,10 @@
         </ul>
     </div>
     <div id="form-div">
-        <form role="search" id="form" action="/search" method="post">
+        <form role="search" id="form" action="/search" method="GET">
             <input type="search" id="query" name="q" placeholder="Search..." aria-label="Search through site content">
-            <button id="searchButton" style="all: unset; margin-left: 10px; width: 44px; height: 44px;">
+            <div id="resultsContainer" class="dropdown-menu"></div>
+            <button type="submit" id="searchButton" style="all: unset; margin-left: 10px; width: 44px; height: 44px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                     <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                 </svg>
@@ -180,7 +336,7 @@
     <div class="header-auth">
         <% if (isAuthenticated) { %>
             <a href="/profile" class="hover"><span><%= user.username%></span></a>
-            <a href="/profile"><img src="<%= user.profile !== 'null' ? user.profile : '/img/defaultProfile.jpg' %>" alt="profile" width="60px" height="60px" loading="lazy" /></a>
+            <a href="/profile"><img src="<%= user.profile !== 'null' ? user.profile : '/img/defaultProfile.jpg' %>" alt="profile" width="40px" height="40px" loading="lazy" /></a>
             <a href="/signout" class="hover">Signout</a>
     <% } else { %>
             <a href="/login" class="login-button">Login</a>

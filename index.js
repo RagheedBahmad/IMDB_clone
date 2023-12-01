@@ -63,9 +63,11 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(async () => {
-    console.log("Connected to database.");
-    const server = app.listen(PORT, () => {
-      console.log(`App running on port ${PORT}`);
+    movieController.encodeGenres().then(() => {
+      console.log("Connected to database.");
+      const server = app.listen(PORT, () => {
+        console.log(`App running on port ${PORT}`);
+      });
     });
   })
   .catch((err) => {

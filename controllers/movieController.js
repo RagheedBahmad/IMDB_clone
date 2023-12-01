@@ -1,7 +1,6 @@
 const Movie = require("./../models/movieModel.js");
 const catchAsync = require("./../Utils/catchAsync");
 const math = require("mathjs");
-const natural = require("natural");
 const options = {
   method: "GET",
   headers: {
@@ -15,7 +14,11 @@ const fetch = (...args) =>
 let genres;
 let movies;
 async function fetchMovies() {
-  movies = await Movie.find({}, "id genres keywords").lean();
+  movies = await Movie.find(
+    {},
+    "original_title id genres keywords poster_path tagline"
+  ).lean();
+  await fetchGenres();
 }
 
 async function fetchGenres() {
@@ -26,6 +29,7 @@ async function fetchGenres() {
     )
   ).json();
   genres = genres.genres.map((genre) => genre.name);
+  mapGenres();
 }
 
 function encodeGenres(movieGenres) {
@@ -36,16 +40,10 @@ function encodeGenres(movieGenres) {
 
 function mapGenres() {
   movies.forEach((movie) => {
-    console.log(movie.keywords);
     movie.genres = encodeGenres(movie.genres);
+    console.log(movie.genres);
   });
 }
-
-fetchMovies().then(() => {
-  fetchGenres().then(() => {
-    mapGenres();
-  });
-});
 
 async function top(x) {
   return await Movie.find(
@@ -75,24 +73,33 @@ async function recent(x) {
   ]).exec();
 }
 
-function findSimilarMovies(targetMovieID, movies) {
-  const targetMovie = movies.find((movie) => (movie.id = targetMovieID));
+function findSimilarMovies(targetMovieName) {
+  const targetMovie = movies.find(
+    (movie) =>
+      movie.original_title.toLowerCase() === targetMovieName.toLowerCase()
+  );
   console.log(targetMovie);
   if (!targetMovie) return [];
   const similarities = movies.map((movie) => {
-    const genreSimilarityScore =
-      calculateSimilarityGenre(/* vectors of targetMovie and movie */);
-    const keywordSimilarityScore = calculateSimilarityKeyword();
+    const genreSimilarityScore = calculateSimilarityGenre(
+      targetMovie.genres,
+      movie.genres
+    );
+    const keywordSimilarityScore = calculateSimilarityKeyword(
+      targetMovie.keywords,
+      movie.keywords
+    );
     return {
-      title: movie.title,
+      title: movie.original_title,
       score: genreSimilarityScore + keywordSimilarityScore,
+      poster_path: movie.poster_path,
+      id: movie.id,
+      tagline: movie.tagline,
     };
   });
-
-  // Sort by similarity score
   similarities.sort((a, b) => b.score - a.score);
 
-  return similarities.splice(0, 10);
+  return similarities.splice(1, 5);
 }
 
 function calculateSimilarityGenre(vector1, vector2) {
@@ -105,12 +112,37 @@ function calculateSimilarityGenre(vector1, vector2) {
 
 function calculateSimilarityKeyword(targetMovie, movie) {
   return (
-    targetMovie.keywords.filter((keyword) =>
-      movie.keywords.name.includes(keyword.name)
-    ) / math.max(targetMovie.keywords.length, movie.keywords.length)
+    targetMovie.filter((keyword) => {
+      movie.some((obj) => obj.name === keyword.name);
+    }) / math.max(targetMovie.length, movie.length)
   );
 }
+
+exports.search = catchAsync(async (req, res, next) => {
+  let movie = req.query.q;
+  res.movies = await Movie.find({
+    original_title: { $regex: movie, $options: "i" },
+  }).sort({ popularity: -1 });
+  res.similarMovies = findSimilarMovies(movie);
+  next();
+});
+
+exports.regexSearch = catchAsync(async (req, res, next) => {
+  let escapedTerm = req.body.query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+  let regex = new RegExp(`^${escapedTerm}`, "i");
+
+  res.movies = await Movie.find(
+    { original_title: regex },
+    "original_title poster_path id"
+  )
+    .sort({ popularity: -1 })
+    .limit(3)
+    .exec();
+  next();
+});
 
 module.exports.random = random;
 module.exports.top = top;
 module.exports.recent = recent;
+module.exports.similar = findSimilarMovies;
+module.exports.encodeGenres = fetchMovies;
