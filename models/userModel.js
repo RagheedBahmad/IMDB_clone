@@ -66,7 +66,15 @@ const userSchema = new mongoose.Schema({
       rating: { type: Number, required: true, max: 5 },
     },
   ],
-  watchlist: [Number],
+  watchlist: [
+    {
+      //id poster_path tagline original_title
+      id: Number,
+      poster_path: String,
+      tagline: String,
+      original_title: String,
+    },
+  ],
 });
 
 userSchema.pre("save", async function (next) {

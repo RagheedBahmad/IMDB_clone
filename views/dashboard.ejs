@@ -166,22 +166,23 @@
         justify-content: space-between;
     }
 
-    #recent {
+    .card-style {
         display:flex;
+        flex-wrap: wrap;
         flex-direction: row;
         justify-content: center;
     }
 
-    #recent > div {
+    .card-style > div {
         width: 15%;
         margin: 10px;
     }
 
-    #recent > div, #randomMovies > div {
+    .card-style > div, #randomMovies > div {
         transition: transform 0.2s ease-in-out;
     }
 
-    #recent > div:hover, #randomMovies > div:hover {
+    .card-style > div:hover, #randomMovies > div:hover {
         transform: scale(1.1);
     }
 
@@ -343,12 +344,12 @@
             width:90%;
         }
 
-        #recent {
+        .card-style {
             justify-content: space-around;
             flex-wrap: wrap;
         }
 
-        #recent > div {
+        .card-style > div {
             flex-basis : calc(30% - 10px); /* Two cards per row, adjust for margin */
             margin: 20px;
         }
@@ -377,19 +378,19 @@
             min-height: 400px;
         }
 
-        #recent {
+        .card-style {
             margin-top: 40px;
             flex-direction: column;
             justify-content: center;
         }
 
-        #recent > div {
+        .card-style > div {
             flex-basis: calc(70% - 10px); /* Two cards per row, adjust for margin */
             width: 65%;
             margin: auto auto 30px;
         }
 
-        #recent > div:hover, #randomMovies > div:hover {
+        .card-style > div:hover, #randomMovies > div:hover {
             transform: scale(1.08);
         }
 
@@ -427,6 +428,7 @@
     <%}%>
 </script>
 <%- include('partials/header') %>
+<script type="text/javascript" src="/JS/watchlist.js"></script>
 <script>
     function displayInfo(event, slick, currentSlide) {
         let currentImage = slick.$slides.get(currentSlide).querySelector('img');
@@ -435,8 +437,8 @@
         $("#movie-title").text("#" + (i*1 + 1)  + " " + top10Movies[i].original_title)
         $("#movie-overview").text(top10Movies[i].overview)
         $("#movie-blur").attr("src", top10Movies[i].poster_path)
-        watchlistbtn.data("movie", top10Movies[i].id)
-        if (typeof watchlist !== 'undefined' && watchlist.includes(top10Movies[i].id)) {
+        watchlistbtn.attr("data-movie", top10Movies[i].id);
+        if (typeof watchlist !== 'undefined' && watchlist.some(movie => movie.id === top10Movies[i].id)) {
             watchlistbtn.html("Remove from Watchlist")
             watchlistbtn.addClass("remove")
             watchlistbtn.removeClass("watch")
@@ -451,14 +453,15 @@
     }
 
     $(window).on("load", () => {
+        console.log(watchlist)
         let movieInfo = $("#movie-info")
         let imageTrack = $(".image-track");
         let watchlistbtn = $(".watchListhover");
         $("#movie-title").text(`#1 ${top10Movies[0].original_title}`)
         $("#movie-overview").text(top10Movies[0].overview)
         $("#movie-blur").attr("src", top10Movies[0].poster_path)
-        watchlistbtn.data("movie", top10Movies[0].id)
-        if (typeof watchlist !== 'undefined' && watchlist.includes(top10Movies[0].id)) {
+        watchlistbtn.attr("data-movie", top10Movies[0].id)
+        if (typeof watchlist !== 'undefined' && watchlist.some(movie => movie.id === top10Movies[0].id)) {
             watchlistbtn.html("Remove from Watchlist")
             watchlistbtn.addClass("remove")
             watchlistbtn.removeClass("watch")
@@ -467,79 +470,23 @@
         }
         movieInfo.addClass('slide-in-right');
         watchlistbtn.addClass('slide-in-right');
-        imageTrack.on("beforeChange", function(event, slick, currentSlide) {
+        imageTrack.on("beforeChange", function (event, slick, currentSlide) {
             movieInfo.removeClass('slide-in-right');
             watchlistbtn.removeClass('slide-in-right');
             watchlistbtn.addClass('slide-out-bck-center');
             movieInfo.addClass('slide-out-bck-center');
         });
-        imageTrack.on('afterChange', function(event, slick, currentSlide) {
-        movieInfo.removeClass('slide-out-bck-center');
-        watchlistbtn.removeClass('slide-out-bck-center');
-        displayInfo(event, slick, currentSlide)
-        watchlistbtn.addClass('slide-in-right');
-        movieInfo.addClass('slide-in-right');
-        });
-        $('.watchlist-btn').each(function() {
-            if (watchlist.includes($(this).data("movie") * 1)) {
-                $(this).html("&cross;")
-                $(this).removeClass("watch")
-                $(this).addClass("remove")
-            }
-        });
-        $(document).on("click", ".remove", function(event) {
-            event.stopPropagation();
-            let button = $(this);
-            button.prop("disabled", true);
-            let movieID = button.data('movie') * 1;
-            $.ajax({
-                url: '/remove-watchlist',
-                type: 'POST',
-                data: { user, movieID },
-                success: function(response) {
-                    console.log("removed movie from watchlist")
-                    button.removeClass("remove");
-                    button.addClass("watch");
-                    let text = button.hasClass("watchListhover")? "Add To Watchlist" : "+";
-                    button.html(text)
-                    watchlist = watchlist.filter(id => id !== movieID)
-                    button.prop("disabled", false);
-                },
-                error: function() {
-                    console.log("Error removing movie from watchlist")
-                    button.prop("disabled", false);
-                }
-            });
-        })
-        $(document).on("click", ".watch", function(event) {
-            event.stopPropagation();
-            let button = $(this);
-            button.prop("disabled", true);
-            let movieID = button.data('movie');
-            movieID = movieID * 1;
-
-            // Perform the AJAX request
-            $.ajax({
-                url: '/watchlist',
-                type: 'POST',
-                data: { user, movieID },
-                success: function(response) {
-                    console.log("added movie to watchlist")
-                    let text = button.hasClass("watchListhover")? "Remove From Watchlist" : "&cross;";
-                    button.html(text)
-                    button.addClass("remove")
-                    button.removeClass("watch")
-                    watchlist.push(movieID);
-                    button.prop("disabled", false);
-                },
-                error: function() {
-                    console.log("Error adding movie to watchlist")
-                    button.prop("disabled", false);
-                }
-            });
+        imageTrack.on('afterChange', function (event, slick, currentSlide) {
+            movieInfo.removeClass('slide-out-bck-center');
+            watchlistbtn.removeClass('slide-out-bck-center');
+            displayInfo(event, slick, currentSlide)
+            watchlistbtn.addClass('slide-in-right');
+            movieInfo.addClass('slide-in-right');
         });
     })
+
 </script>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <body>
 <div style="text-align: center; margin-top: 10px; margin-bottom: 10px;"><h2>Top Movies</h2></div>
 <div id="head-container">
@@ -581,7 +528,7 @@
 </div>
 <hr>
 <div style="text-align: center; margin-top: 10px; margin-bottom: 10px;"><h2>Upcoming Movies</h2></div>
-<div id="recent">
+<div id="recent" class="card-style">
     <%for (let i = 0; i < 5; i++) {%>
     <div class="card">
         <% if(isAuthenticated) {%><button class="watch watchlist-btn" data-movie="<%= recentMovies[i].id %>">+</button> <%}%>
@@ -598,7 +545,29 @@
         <%}%>
     </div>
 <hr>
+<% if (isAuthenticated) {%>
+    <h2 style="text-align: center; margin-top: 10px; margin-bottom: 10px;">Your Watchlist</h2>
+    <div id="watchlist" class="card-style">
+    <% if (watchlist.length === 0) {%>
+            <p id="watchlistP"  style="text-align: center; margin-top: 10px; margin-bottom: 10px;">You have no movies in your Watchlist. Add some and they will appear here!</p>
+    <% } else { %>
 
+    <%for (let i = 0; i < watchlist.length; i++) {%>
+        <div class="card" id="movie-<%= watchlist[i].id%>">
+            <button class="watch watchlist-btn" data-movie=<%= watchlist[i].id%>>+</button>
+            <a href="/movies/<%= watchlist[i].id%>"><img class="card-img-top" src="<%= (watchlist[i].poster_path)%>" alt="Card image cap"  style="z-index: 1;"></a>
+            <img class="card-img-top" src="<%= (watchlist[i].poster_path)%>" alt="Card image cap" style="filter:blur(50px); z-index: -2; position: absolute; width: 80%; height: auto; top:10%; left: 10%;">
+            <div class="card-body">
+                <a href="/movies/<%= watchlist[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%= watchlist[i].original_title%></h5></a>
+                <a href="/movies/<%= watchlist[i].id%>"><p class="card-text" style="color: #7f9eb9"><%= watchlist[i].tagline%></p></a>
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                <button type="button" class="btn btn-secondary btn-sm"  style="margin: 5px;" onclick="copy(<%= watchlist[i].id%>)" id="id">Copy</button></div>
+        </div>
+    <%}%>
+    <% } %>
+</div>
+<% } %>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>

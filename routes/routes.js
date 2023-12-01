@@ -83,14 +83,13 @@ router.post(
 router.get("/movies/:movie", authController.protect, async (req, res) => {
   let id = req.params.movie;
   let movie = await Movie.findOne({ id: id }).exec();
-  console.log("movie title: " + movie.original_title);
   let similarMovies = movieController.similar(movie.original_title);
   console.log(similarMovies);
   res.render("movie", {
     movie,
     similarMovies,
     user: req.user ? req.user : null,
-    watchlist: req.user?.watchlist ? req.user.watchlist : null,
+    watchlist: req.user ? req.user.watchlist : null,
     isAuthenticated: !!req.user,
   });
 });
