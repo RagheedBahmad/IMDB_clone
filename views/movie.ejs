@@ -1,0 +1,455 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@100;200;400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/JS/watchlist.js"></script>
+    <style>
+        body{
+            font-family: 'Barlow',sans-serif;
+            background-color: black;
+            color: white !important;
+            -webkit-font-smoothing: antialiased;
+        }
+        #fade{
+            background: linear-gradient(0deg,black, 50%, rgba(0,0,0,0.1));
+            position: absolute;
+            z-index: 2;
+            width: 100%;
+            height: 500px ;
+        }
+        #trailer{
+            /* background-image: url("<%= movie.backdrop_path %>");
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center; */
+
+            background-color: rgb(60, 5, 52) ;
+        }
+        * {
+        box-sizing: border-box;
+        }
+
+        .body-2 nav {
+        position: relative;
+        padding-bottom: 12px;
+        }
+        .body-2 nav .line {
+        height: 2px;
+        position: absolute;
+        bottom: 0;
+        margin: 10px 0 0 0;
+        /* background: #ff1847; */
+        background: #7f9eb9;
+        }
+        .body-2 nav ul {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        display: flex;
+        }
+        .body-2 nav ul li {
+        margin: 0 40px 0 0;
+        opacity: 0.4;
+        transition: all 0.4s ease;
+        }
+        .body-2 nav ul li:hover {
+        opacity: 0.7;
+        }
+        .body-2 nav ul li.active {
+        opacity: 1;
+        }
+        .body-2 nav ul li:last-child {
+        margin-right: 0;
+        }
+        .body-2 nav ul li a {
+        text-decoration: none;
+        color: #fff;
+        text-transform: uppercase;
+        display: block;
+        font-weight: 400;
+        letter-spacing: 0.2em;
+        font-size: 20px;
+        }
+
+        /* body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        } */
+        iframe {
+            position: relative;
+            z-index: 1;
+            transform: translate(0, -20%);
+            width: 100%;
+            height: 500px;
+            pointer-events: none;
+        }
+        #trailer{
+            position: relative;
+        }
+        .vid-back {
+            overflow: hidden;
+            width: 100%;
+            height: 500px;
+        }
+        @media (min-aspect-ratio: 16/9) {
+        iframe {
+            /* height = 100 * (9 / 16) = 56.25 */
+            height: 56.25vw;
+        }
+        }
+        @media (max-aspect-ratio: 16/9) {
+        iframe {
+            /* width = 100 / (9 / 16) = 177.777777 */
+            width: 177.78vh;
+        }
+        }
+
+        .review-list {
+            list-style: none;
+            padding: 0;
+            font-weight: 200;
+        }
+
+        .review-list li {
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .review-list h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .review-list .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .review-list .user-info img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .review-list p {
+            margin: 5px 0;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        form input:not(#query),
+        form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        form button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #45a049;
+        }
+
+         /*--------I added these for the similar movies tab and footer--------------------------------*/
+        #similarMovies {
+            margin: 30px auto auto;
+            padding-bottom: 50px;
+            width: 80%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        #similarMovies > div:hover {
+            transform: scale(1.1);
+        }
+        #similarMovies > div {
+            transition: transform 0.2s ease-in-out;
+            flex-basis : calc(30% - 10px); /* Two cards per row, adjust for margin */
+            margin: 20px;
+        }
+        #similarMovies > div > div > a {
+            text-decoration: none;
+        }
+        .card {
+            display: flex;
+            width: 25%;
+            background-color: #0a0a0a;
+            z-index: 0;
+            padding: 10px;
+        }
+        .watchlist-btn {
+            position:absolute;
+            background-color: gray;
+            opacity: 0.7;
+            border: none;
+            z-index: 3;
+            border-radius: 3px;
+            transition: transform .3s cubic-bezier(.4,0,.2,1);
+        }.watchlist-btn:hover {
+             background-color: lightgray;
+         }
+        .watchListhover {
+            background-color: transparent;
+            border: none;
+            position: relative;
+            color: #7f9eb9;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: inline-block; /* Ensure proper alignment */
+            padding: 5px; /* Add some padding */
+        }
+        .watchListhover:hover {
+            -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+            transition: 0.3s ease-in;
+        }
+        .watchListhover::before {
+            content: '';
+            background: linear-gradient(to top, rgba(173, 216, 230, 0.10), rgba(173, 216, 230, 0));
+            position: absolute;
+            left: 0;
+            bottom: 3px;
+            width: 100%;
+            height: 2px;
+
+            transition: all .3s ease-in-out;
+        }
+        .watchListhover:hover::before {
+            -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+            bottom: 0;
+            height: 100%;
+        }
+    /*  ----------------------------------------------------------------   */
+    </style>
+</head>
+<script>let movie = <%- JSON.stringify(movie)%>;
+    <% if(isAuthenticated) {%>
+    let user = <%- JSON.stringify(user) %>;
+    let watchlist = <%- JSON.stringify(watchlist) %>
+    <%}%></script>
+<%- include('partials/header') %>
+<body>
+    <div id="head-container">
+    <div id="trailer" style="height: 500px;">
+        <div id="fade" style=" padding: 100px;">
+            <div class="d-flex flex-row">
+                <div>
+                    <img  style="height: 350px;" src="<%= movie.poster_path %>" alt="<%= movie.original_title %>">
+                </div>
+                <div class="my-auto mx-3" style="border-left: 1px solid white; height: 300px;"></div>
+                <div class="my-auto fs-6" style="width: 550px;">
+                    <div style="font-weight: 100;" ><%= movie.release_date.toDateString().split(' ').slice(1).join(' ') %></div>
+                    <div style=" font-weight: 500;" class="fs-1 mb-5 "><%= movie.original_title %></div>
+                    
+                    <div style="font-weight: 200;" ><%= movie.overview %></div>
+                </div>
+            </div>
+        </div>
+        <div class="vid-back">
+            <iframe id="vid" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="body-2">
+        <nav>
+          <ul class="justify-content-evenly">
+            <li class="active"><a href="#info">Info</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#other">Similar</a></li>
+          </ul>
+        </nav>
+      
+        <div class="tabs">
+          <div class="active" id="info">
+
+            <h2>Movie Info</h2>
+            <p><strong>Title:</strong> <%= movie.original_title %></p>
+            <p><strong>Release Date:</strong> <%= new Date(movie.release_date).toLocaleDateString() %></p>
+              <% if(isAuthenticated) {%><button class="watch watchListhover" data-movie="<%= movie.id%>">Add To Watchlist</button> <%}%>
+
+          </div>
+        
+      
+            <div id="reviews" style="display: none;">
+            
+            <% if (movie.reviews && movie.reviews.results.length > 0) { %>
+                <ul class="review-list">
+                <% movie.reviews.results.forEach(review => { %>
+                    <li>
+                    <div class="user-info">
+                        <img src="<%= review.author_details.avatar_path %>" alt="<%= review.author_details.name || 'User Avatar' %>">
+                        <h3><%= review.author %></h3>
+                    </div>
+                    <p>Rating: <%= review.author_details.rating %></p>
+                    <p><%= review.content %></p>
+                    <p>Added on: <%= new Date(review.created_at).toLocaleDateString() %></p>
+                    </li>
+                <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No reviews available for this movie.</p>
+            <% } %>
+        
+            <% if (isAuthenticated) { %>
+                <h3>Add Your Review</h3>
+                <form action="/movies/<%= movie.id %>/reviews" method="POST">
+                <label for="rating">Rating:</label>
+                <input type="number" name="rating" min="1" max="5" required>
+        
+                <label for="title">Short Title:</label>
+                <input type="text" name="title" required>
+        
+                <label for="content">Review:</label>
+                <textarea name="content" rows="4" maxlength="500" required></textarea>
+        
+                <button type="submit">Submit Review</button>
+                </form>
+            <% } else { %>
+                <p><a href="/login" class="login-button">Login</a> to add a review.</p>
+            <% } %>
+            </div>
+        
+            <div id="other" style="display: none;">
+                <div id="similarMovies">
+                    <%for (let i = 0; i < similarMovies.length; i++) {%>
+                        <div class="card">
+                            <% if(isAuthenticated) {%><button class="watch watchlist-btn" data-movie="<%= similarMovies[i].id%>">+</button> <%}%>
+                            <a href="/movies/<%= similarMovies[i].id%>"><img class="card-img-top" src="<%= (similarMovies[i].poster_path)%>" alt="Card image cap"  style="z-index: 1;"></a>
+                            <img class="card-img-top" src="<%= (similarMovies[i].poster_path)%>" alt="Card image cap" style="filter:blur(50px); z-index: -2; position: absolute; width: 80%; height: auto; top:10%; left: 10%;">
+                            <div class="card-body">
+                                <a href="/movies/<%= similarMovies[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%- similarMovies[i].title%></h5></a>
+                                <a href="/movies/<%= similarMovies[i].id%>"><p class="card-text" style="color: #7f9eb9"><%= similarMovies[i].tagline%></p></a>
+                            </div>
+                            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                                <button type="button" class="btn btn-secondary btn-sm"  style="margin: 5px;" onclick="copy(<%= similarMovies[i].id %>)" id="id">Copy</button></div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+        <%- include('partials/footer') %>
+</div>
+
+</body>
+<script>
+    $(document).ready(function() {
+
+        var trailerKey = getTrailerKey(movie.videos.results);
+
+        var youtubeBaseUrl = 'https://www.youtube.com/embed/';
+        var youtubeUrl = youtubeBaseUrl + trailerKey + '?autoplay=1'+ "&mute=1" +"&start=10";
+
+        $('#vid').attr('src', youtubeUrl)
+
+        function getTrailerKey(videos) {
+            for (var i = 0; i < videos.length; i++) {
+                if (videos[i].type === 'Trailer') {
+                    return videos[i].key;
+                }
+            }
+
+            return 'DEFAULT_VIDEO_KEY';
+        }
+
+        var nav = $('nav');
+        var line = $('<div />').addClass('line');
+
+        line.appendTo(nav);
+
+        var active = nav.find('.active');
+        var pos = 0;
+        var wid = 0;
+
+        if(active.length) {
+        pos = active.position().left;
+        wid = active.width();
+        line.css({
+            left: pos,
+            width: wid
+        });
+        }
+
+        nav.find('ul li a').click(function(e) {
+        e.preventDefault();
+        if(!$(this).parent().hasClass('active') && !nav.hasClass('animate')) {
+            
+            nav.addClass('animate');
+
+            var _this = $(this);
+            nav.find('ul li').removeClass('active');
+
+            var position = _this.parent().position();
+            var width = _this.parent().width();
+
+            if(position.left >= pos) {
+            line.animate({
+                width: ((position.left - pos) + width)
+            }, 300, function() {
+                line.animate({
+                width: width,
+                left: position.left
+                }, 150, function() {
+                nav.removeClass('animate');
+                });
+                _this.parent().addClass('active');
+            });
+            } else {
+            line.animate({
+                left: position.left,
+                width: ((pos - position.left) + wid)
+            }, 300, function() {
+                line.animate({
+                width: width
+                }, 150, function() {
+                nav.removeClass('animate');
+                });
+                _this.parent().addClass('active');
+            });
+            }
+
+            pos = position.left;
+            wid = width;
+        }
+        });
+
+        $('nav ul li a').click(function(e) {
+            e.preventDefault(); 
+
+            var targetId = $(this).attr('href');
+            $('.tabs > div').hide();
+            $('nav ul li').removeClass('active');
+            $(this).parent().addClass('active');
+            $(targetId).show();
+        });
+    });
+</script>
+</html>

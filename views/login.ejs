@@ -1,0 +1,988 @@
+<!-- upload.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--    <link rel="apple-touch-icon" sizes="152x152" href="img/apple-touch-icon.png">-->
+<!--    <link rel="icon" type="image/png" sizes="32x32" href="./../public/img/favicon-32x32.png">-->
+<!--    <link rel="icon" type="image/png" sizes="16x16" href="./../public/img/favicon-16x16.png">-->
+<!--    <link rel="manifest" href="img/site.webmanifest">-->
+<!--    <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">-->
+<!--    <meta name="msapplication-TileColor" content="#2b5797">-->
+    <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id" content="660822408267-3841276aurp61khq91arj2k7k5j1ptsq.apps.googleusercontent.com">
+
+    <title>MMDb</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        html {
+            height: auto;
+        }
+
+        *, *:before, *:after {
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            overflow: hidden;
+            position: relative;
+            min-height: 100%;
+            max-width: 100%;
+            width:100%;
+        }
+
+        /* For Webkit browsers */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* For Firefox */
+        body {
+            scrollbar-width: none;
+        }
+
+        /* For IE */
+        -ms-overflow-style: none;
+
+        .container {
+            min-height:100%;
+            position: relative;
+        }
+
+        h1 {
+            padding-top:60px;
+            text-align: center;
+            color: lightgrey;
+            font-size: 5em;
+            position: sticky;
+            margin: 0;
+            background-color: transparent;
+            top: -60px;
+        }
+
+        img {
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-drag: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            position: absolute;
+            max-width: 20%;
+            height: auto;
+            z-index: -100;
+            opacity: 50%;
+        }
+
+        #img1 {
+            top: 70px;
+            left: 70px;
+        }
+        #img2 {
+            top: 150px;
+            left: 1100px;
+        }
+        #img3 {
+            top: 400px;
+            left: 800px;
+        }
+        #img4 {
+            top: 500px;
+            left: 250px;
+        }
+        #img5 {
+            top: -100px;
+            left: 600px;
+        }
+        .loading {
+            position: relative;
+        }
+
+        form {
+            padding: 0;
+            margin: 0;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+            flex-direction: column;
+        }
+        .file-input {
+            visibility: hidden;
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        a, .custom-file-input{
+            background-color: transparent;
+            border-radius: 10%;
+            position: relative;
+            display: inline-block;
+            padding: 3px 6px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #7f9eb9;
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
+            transition: 0.5s;
+            overflow: hidden;
+            margin-left: 20px;
+            margin-right: 20px;
+            cursor: pointer;
+            width: auto;
+        }
+        #google-auth {
+            margin-bottom: 20px
+        }
+        a:hover, .custom-file-input:hover {
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
+            transition: 0.5s;
+            background-color: #7f9eb9;
+            color: #050801;
+            -webkit-box-shadow: 0 0 5px #7f9eb9,
+            0 0 10px #7f9eb9,
+            0 0 20px #7f9eb9,
+            0 0 30px #7f9eb9;
+            box-shadow: 0 0 5px #7f9eb9,
+            0 0 10px #7f9eb9,
+            0 0 20px #7f9eb9,
+            0 0 30px #7f9eb9;
+            -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+        }
+
+        .g_id_signin {
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
+            transition: 0.5s;
+        }
+        .g_id_signin:hover{
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
+            transition: 0.5s;
+            background-color: #7f9eb9;
+            color: #050801;
+            -webkit-box-shadow: 0 -5px 6px 0 rgba(0, 90, 255, 1),
+            -5px 6px 0 rgba(213, 205, 0, 1),
+            0 5px 6px 0 rgba(255, 0, 0, 1),
+            5px 0 6px 0 rgba(22, 255, 0, 1);
+            box-shadow: 0 -5px 6px 0 rgba(0, 90, 255, 1),
+            -5px 0 6px 0 rgba(213, 205, 0, 1),
+            0 5px 6px 0 rgba(255, 0, 0, 1),
+            5px 0 6px 0 rgba(22, 255, 0, 1);
+            -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+        }
+        [disabled] {
+            opacity: .6;
+            cursor: default;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            width: auto;
+        }
+
+        #buttons{
+            text-align: center;
+            margin-top:5%;
+        }
+
+        .login {
+            padding: 25px;
+        }
+
+        .auth{
+            display:-webkit-box;
+            display:-ms-flexbox;
+            display:flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            padding-top: 30px;
+        }
+        .authLink {
+            padding:10px;
+            width: -webkit-fit-content;
+            width: -moz-fit-content;
+            width: fit-content;
+        }
+
+        .hidden {
+            opacity:0;
+            cursor: default;
+            pointer-events: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .cred {
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            text-align: center;
+            -webkit-transform-origin: -150px;
+            -ms-transform-origin: -150px;
+            transform-origin: -150px;
+        }
+
+        #signupCred {
+            z-index:-2;
+            display: flex;
+            align-items: center;
+        }
+
+        label, input {
+            margin: 10px;
+        }
+
+        .rememberMe {
+            display:-webkit-box;
+            display:-ms-flexbox;
+            display:flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+
+        input, p {
+            font-size: 16px;
+            border: none;
+            background: none;
+            border-radius: 10%;
+            position: relative;
+            display: inline-block;
+            padding: 3px 6px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #7f9eb9;
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
+            transition: 0.5s;
+            overflow: hidden;
+            margin-left: 20px;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
+            transition: 0.5s;
+            background-color: #7f9eb9;
+            color: #050801;
+            -webkit-box-shadow: 0 0 5px #7f9eb9,
+            0 0 10px #7f9eb9,
+            0 0 20px #7f9eb9,
+            0 0 30px #7f9eb9;
+            box-shadow: 0 0 5px #7f9eb9,
+            0 0 10px #7f9eb9,
+            0 0 20px #7f9eb9,
+            0 0 30px #7f9eb9;
+            -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+        }
+        input[type="text"], input[type="password"], input[type="email"] {
+            border: solid 1px white;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        input[type="checkbox"] {
+            margin: 0;
+        }
+        #or {
+            padding: 2px;
+            margin:0;
+            cursor: default;
+        }
+
+        .back {
+            display:-webkit-box;
+            display:-ms-flexbox;
+            display:flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+        }
+
+        @-webkit-keyframes slide-out-bottom {
+            0% {
+                -webkit-transform: translateY(0);
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateY(100px);
+                transform: translateY(100px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slide-out-bottom {
+            0% {
+                -webkit-transform: translateY(0);
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateY(100px);
+                transform: translateY(100px);
+                opacity: 0;
+            }
+        }
+        @-webkit-keyframes slide-in-bottom {
+            0% {
+                -webkit-transform: translateY(100px);
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateY(0);
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slide-in-bottom {
+            0% {
+                -webkit-transform: translateY(100px);
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateY(0);
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @-webkit-keyframes slide-out-left {
+            0% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateX(-100px);
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+        }
+        @keyframes slide-out-left {
+            0% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateX(-100px);
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+        }
+        @-webkit-keyframes slide-in-left {
+            0% {
+                -webkit-transform: translateX(-100px);
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slide-in-left {
+            0% {
+                -webkit-transform: translateX(-100px);
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @-webkit-keyframes slide-in-left-slow {
+            0% {
+                -webkit-transform: translateX(-100px);
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 0.5;
+            }
+        }
+        @keyframes slide-in-left-slow {
+            0% {
+                -webkit-transform: translateX(-100px);
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 0.5;
+            }
+        }
+        @-webkit-keyframes slide-out-right {
+            0% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateX(100px);
+                transform: translateX(100px);
+                opacity: 0;
+            }
+        }
+        @keyframes slide-out-right {
+            0% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateX(100px);
+                transform: translateX(100px);
+                opacity: 0;
+            }
+        }
+        @-webkit-keyframes slide-in-right {
+            0% {
+                -webkit-transform: translateX(100px);
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slide-in-right {
+            0% {
+                -webkit-transform: translateX(100px);
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @-webkit-keyframes slide-in-top {
+            0% {
+                -webkit-transform: translateY(-225px);
+                transform: translateY(-225px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateY(-150px);
+                transform: translateY(-150px);
+                opacity: 1;
+            }
+        }
+        @keyframes slide-in-top {
+            0% {
+                -webkit-transform: translateY(-225px);
+                transform: translateY(-225px);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: translateY(-150px);
+                transform: translateY(-150px);
+                opacity: 1;
+            }
+        }
+        @-webkit-keyframes slide-out-top {
+            0% {
+                -webkit-transform: translateY(-150px);
+                transform: translateY(-150px);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateY(-225px);
+                transform: translateY(-225px);
+                opacity: 0;
+            }
+        }
+        @keyframes slide-out-top {
+            0% {
+                -webkit-transform: translateY(-150px);
+                transform: translateY(-150px);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateY(-225px);
+                transform: translateY(-225px);
+                opacity: 0;
+            }
+        }
+        @-webkit-keyframes shake-horizontal {
+            0%,
+            100% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+            }
+            10%,
+            30%,
+            50%,
+            70% {
+                -webkit-transform: translateX(-10px);
+                transform: translateX(-10px);
+            }
+            20%,
+            40%,
+            60% {
+                -webkit-transform: translateX(10px);
+                transform: translateX(10px);
+            }
+            80% {
+                -webkit-transform: translateX(8px);
+                transform: translateX(8px);
+            }
+            90% {
+                -webkit-transform: translateX(-8px);
+                transform: translateX(-8px);
+            }
+        }
+        @keyframes shake-horizontal {
+            0%,
+            100% {
+                -webkit-transform: translateX(0);
+                transform: translateX(0);
+            }
+            10%,
+            30%,
+            50%,
+            70% {
+                -webkit-transform: translateX(-10px);
+                transform: translateX(-10px);
+            }
+            20%,
+            40%,
+            60% {
+                -webkit-transform: translateX(10px);
+                transform: translateX(10px);
+            }
+            80% {
+                -webkit-transform: translateX(8px);
+                transform: translateX(8px);
+            }
+            90% {
+                -webkit-transform: translateX(-8px);
+                transform: translateX(-8px);
+            }
+        }
+
+        .slide-out-bottom {
+            -webkit-animation: slide-out-bottom 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
+            animation: slide-out-bottom 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
+            cursor: default;
+            pointer-events: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .slide-in-bottom {
+            -webkit-animation: slide-in-bottom 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
+            animation: slide-in-bottom 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
+            cursor: pointer;
+            pointer-events: auto;
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
+        }
+        .slide-out-left {
+            -webkit-animation: slide-out-left 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+            animation: slide-out-left 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+            cursor: default;
+            pointer-events: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .slide-in-left {
+            -webkit-animation: slide-in-left 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+            animation: slide-in-left 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+            cursor: pointer;
+            pointer-events: auto;
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
+        }
+        .slide-in-left-slow {
+            -webkit-animation: slide-in-left-slow 2s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+            animation: slide-in-left-slow 2s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+            cursor: pointer;
+            pointer-events: auto;
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
+        }
+        .slide-out-right {
+            -webkit-animation: slide-out-right 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+            animation: slide-out-right 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+            cursor: default;
+            pointer-events: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .slide-in-right {
+            -webkit-animation: slide-in-right 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+            animation: slide-in-right 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+            cursor: pointer;
+            pointer-events: auto;
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
+        }
+        .slide-in-top {
+            -webkit-animation: slide-in-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+            animation: slide-in-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+        }
+        .slide-out-top {
+            -webkit-animation: slide-out-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+            animation: slide-out-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+        }
+        .shake-horizontal {
+            -webkit-animation: shake-horizontal 30s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite both;
+            animation: shake-horizontal 30s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite both;
+        }
+
+
+        @media only screen and (max-width: 600px) {
+            body, html {
+                overflow-x: hidden;
+                height:100%;
+            }
+            h1 {
+                font-size: 2em;
+                padding-top:20px;
+                margin-bottom: 100px;
+                top:20px;
+            }
+            img {
+                max-width: 25%;
+                min-width: 20%;
+                height: auto;
+                display:-webkit-box;
+                display:-ms-flexbox;
+                display:flex;
+                opacity: 0.4;
+            }
+            #img1 {
+                top: 70px;
+                left: 10px;
+            }
+            #img2 {
+                top: 150px;
+                left: 210px;
+            }
+            #img3 {
+                top: 300px;
+                left: 30px;
+            }
+            #img4 {
+                top: 400px;
+                left: 210px;
+            }
+            #img5 {
+                top: 550px;
+                left: 60px;
+            }
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+<script>
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+
+    let loginForm = `<form action="/login" method="post" id="loginCred">
+            <label><input type="text" placeholder="Email" name="email" id="email" required></label>
+            <label><input type="password" placeholder="Password" name="password" required></label>
+            <label class="rememberMe"><input type="checkbox" value="lsRememberMe" id="rememberMe"><p>Remember me</p></label>
+            <label><a onclick="forgotPassword()">Forgot Password?</a></label>
+            <div class="back">
+            <a onclick="animateReturn()"> &lt;Go Back</a>
+            <label><input type="submit" value="Log in" onclick="lsRememberMe()"></label>
+            </div>
+<div><img src="/img/Infinity-1s-94px.png" id="loginLoadingImage" style="display: none;" class="loading"></div>
+<div id="Lerror-message" style="color: red;"></div>
+        </form>`;
+
+    let signupForm = `<form action="/signup" method="post" id="signupCred" enctype="multipart/form-data">
+            <label><input type="text" placeholder="Username" name="username" required></label>
+            <label><input type="email" placeholder="Email" name="email" required></label>
+            <label><input type="password" placeholder="Password" name="password" required></label>
+            <label><input type="password" placeholder="Confirm Password" name="passwordConfirm" required></label>
+            <div><label class="custom-file-input">Upload Profile Picture<input type="file" placeholder="profile" id="profile" name="profile" accept="image/*"></label></div>
+            <div class="back">
+                <a onclick="animateReturn()"> &lt;Go Back</a>
+                <label><input type="submit" value="Sign up"></label>
+            </div>
+<div><img src="/img/Infinity-1s-94px.png" id="signupLoadingImage" style="display: none; min-height: 94px; min-width: 94px;" class="loading"></div>
+<div id="Serror-message" style="color: red;"></div>
+        </form>`;
+
+    let forgotPasswordForm = `<form action="/forgot-password" method="post" id="forgotPasswordCred">
+            <label><input type="email" placeholder="Email" name="email" required></label>
+                <div class="back">
+                <a onclick="animateReturnForgot()"> &lt;Go Back</a>
+                <label><input type="submit" value="Reset Password"></label>
+            </div>
+            <div id="error-message" style="color: red;"></div>
+            <div id="success-message" style="color: blue;"></div>
+        </form>`
+
+    // function checkLoginState() {
+    //     FB.getLoginStatus(function(response) {
+    //         statusChangeCallback(response);
+    //     });
+    // }
+
+    $(window).on("load", () => {
+        $("#template").empty()
+        let posters = <%- JSON.stringify(posters)%>
+            $.each(posters, function(index, url) {
+                $("<img>", {
+                    id: `img${index + 1}`,
+                    src: url.poster_path,
+                    // loading: "lazy",
+                    alt: `${url.id}`
+                }).appendTo('body');
+            });
+        setTimeout(() => {
+            $.each(["img1", "img2", "img3", "img4", "img5"], (index, value) => {
+                $(`#${value}`).removeClass("slide-in-left-slow").addClass("shake-horizontal")
+            })
+        }, 1000)
+    })
+
+    function handleCredentialResponse(response) {
+        $('#homePageLoadingImage').show();
+        // Send the ID token to your server with a fetch request
+        $.ajax({
+            url: '/auth/google',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ token: response.credential }),
+            success: function(res) {
+                window.location.href = "/dashboard"
+            },
+            error: function(err) {
+                $('#homePageLoadingImage').hide();
+                $('#Herror-message').text(err.responseJSON.message);
+            }
+        });
+        setTimeout(function(){
+            $(window).scrollTop(0);
+        }, 400);
+    }
+
+    function checkResponseStatus(response) {
+        if (!response.ok) $('#error-message').text(response.message);
+    }
+
+    const rmCheck = $("#rememberMe")
+    const email = $("#email")
+    if (localStorage.checkbox && localStorage.checkbox !== "") {
+        rmCheck.prop('checked', true);
+        email.val(localStorage.username);
+    } else {
+        rmCheck.prop('checked', false);
+        email.val("");
+    }
+
+    function lsRememberMe() {
+        let rmCheck = $('#template').find("#rememberMe");
+        let email = $('#template').find("#email");
+        if (rmCheck.is(':checked') && email.val() !== "") {
+            console.log("should work");
+            localStorage.username = email.val();
+            // Store 'true' or 'false' as a string because localStorage can only store strings
+            localStorage.checkbox = rmCheck.is(':checked').toString();
+        } else {
+            localStorage.username = "";
+            // Store 'false' as a string for consistency
+            localStorage.checkbox = "false";
+        }
+    }
+
+    function login() {
+        // lsRememberMe();
+        $('html, body').animate({ scrollTop: 100 }, 1500);
+        $("#template").empty().append(loginForm)
+        let rmCheck = $('#template').find("#rememberMe");
+        let email = $('#template').find("#email");
+
+        if (localStorage.checkbox === "true") {
+            rmCheck.prop('checked', true);
+            email.val(localStorage.username);
+        } else {
+            rmCheck.prop('checked', false);
+            email.val("");
+        }
+        $("#loginCred").on("submit", function(event) {
+            $('#loginLoadingImage').show();
+            event.preventDefault();
+            const formData = $(this).serialize();
+            $.ajax({
+                url: '/login',
+                type: 'POST',
+                data: formData,
+                success: function(res, status, xhr) {
+                    window.location.href = "/dashboard";
+                },
+                error: function(err) {
+                    $('#loginLoadingImage').hide();
+                    $('#Lerror-message').text(err.responseJSON.message);
+                }
+            });
+        })
+        animate();
+    }
+
+    function signup() {
+        $("#Serror-message").text("")
+        $('html, body').animate({ scrollTop: 200 }, 1500);
+        $("#template").empty().append(signupForm);
+        $("#signupCred").on("submit", function(event) {
+            $('#signupLoadingImage').show();
+            event.preventDefault();
+            const formData = new FormData(this);
+            $.ajax({
+                url: '/signup',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(res) {
+                    window.location.href = "/dashboard";
+                },
+                error: function(response) {
+                    $('#signupLoadingImage').hide();
+                    $("#Serror-message").text(response.responseJSON.message);
+                }
+            });
+        })
+        animate();
+    }
+
+    function forgotPassword() {
+        $("#template").empty().append(forgotPasswordForm);
+        $("#forgotPasswordCred").on("submit", function(event) {
+            event.preventDefault();
+            const formData = $(this).serialize();
+            $.ajax({
+                url: '/forgot-password',
+                type: 'POST',
+                data: formData,
+                success: function(res) {
+                    $("#success-message").text(res.message)
+                },
+                error: function(response) {
+                    // Handle error
+                    // Display the error message from the response on your HTML page
+                    $('#error-message').text(response.message);
+                }
+            });
+        })
+    }
+
+    function animateReturnForgot() {
+        $("#template").empty().append(loginForm);
+    }
+
+    function animate() {
+        $("#google-auth").removeClass("slide-in-bottom").addClass("slide-out-bottom")
+        $("#facebook-auth").removeClass("slide-in-bottom").addClass("slide-out-bottom")
+        $("#breaker").removeClass("slide-in-bottom").addClass("slide-out-bottom")
+        $("#login").removeClass("slide-in-left").addClass("slide-out-left")
+        $("#signup").removeClass("slide-in-right").addClass("slide-out-right")
+        $("#Herror-message").empty()
+        $("#template").removeClass("slide-out-top").addClass("slide-in-top").removeClass("hidden")
+    }
+    function animateReturn() {
+        $('html, body').animate({ scrollTop: 0 }, 1500);
+        $("#google-auth").removeClass("slide-out-bottom").addClass("slide-in-bottom")
+        $("#facebook-auth").removeClass("slide-out-bottom").addClass("slide-in-bottom")
+        $("#breaker").removeClass("slide-out-bottom").addClass("slide-in-bottom")
+        $("#login").removeClass("slide-out-left").addClass("slide-in-left")
+        $("#signup").removeClass("slide-out-right").addClass("slide-in-right")
+        $("#Herror-message").empty()
+        $("#template").removeClass("slide-in-top").addClass("slide-out-top").addClass("hidden")
+    }
+</script>
+<div class="container">
+    <h1>Welcome to MMDb</h1>
+    <div id="buttons">
+        <div class="login">
+                <a onclick="login()" id="login">Login</a>
+                <a onclick="signup()" id="signup">Signup</a>
+        </div>
+        <div id="breaker">
+        <hr style="width: 33%; padding: 0">
+        <p id="or">or</p>
+        </div>
+    <div class="auth">
+        <div id="g_id_onload"
+             data-client_id="<%= googleClientId%>"
+             data-callback="handleCredentialResponse"
+            data-auto_prompt="false">
+        </div>
+        <div id="google-auth"
+             class="g_id_signin"
+             data-type="standard"
+             data-size="large"
+             data-theme="filled_black"
+             data-text="sign_in_with"
+             data-shape="rectangular"
+             data-logo_alignment="left">
+        </div>
+        <div id="Herror-message" style="color: red; margin-top: 10px;"></div>
+        <img src="/img/Infinity-1s-94px.png" id="homePageLoadingImage" style="display: none;" class="loading">
+    </div>
+    </div>
+    <div class="hidden cred" id="template">
+    </div>
+    </div>
+</body>
+</html>
