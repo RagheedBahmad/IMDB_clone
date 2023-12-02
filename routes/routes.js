@@ -7,6 +7,7 @@ const Movie = require("./../models/movieModel.js");
 const Actor = require("./../models/actorModel.js");
 const authController = require("./../controllers/authController");
 const movieController = require("./../controllers/movieController");
+const actorController = require('./../controllers/actorController');
 const userController = require("./../controllers/userController");
 const path = require("path");
 const { google } = require("googleapis");
@@ -85,9 +86,20 @@ router.get("/movies/:movie", authController.protect, async (req, res) => {
   let id = req.params.movie;
   let movie = await Movie.findOne({ id: id }).exec();
   let similarMovies = movieController.similar(movie.original_title);
-  const actorIds = movie.credits.cast.map(actor => actor.id);
+  const actorIds = movie.credits.cast.map(actor => actor.id).slice(0, 10);
+  const actorsData = await Actor.find({ id: { $in: actorIds }}).exec();
 
-  const actors = await Actor.find({ id: { $in: actorIds } }).exec();
+  // const actors = actorIds.map(actorId => actorss.find(actor => actor.id === actorId));
+
+  const actors = actorIds.map(actorId => {
+    const actorData = actorsData.find(actor => actor.id === actorId);
+    const characterName = movie.credits.cast.find(actor => actor.id === actorId)?.character || 'Unknown Character';
+
+    return {
+      ...actorData.toObject(),
+      character: characterName,
+    };
+  });
 
   res.render("movie", {
     movie,
@@ -98,6 +110,7 @@ router.get("/movies/:movie", authController.protect, async (req, res) => {
     isAuthenticated: !!req.user,
   });
 });
+router.get('/actors/:id', authController.protect, actorController.getActorDetails);
 
 async function verify(token) {
   const ticket = await client.verifyIdToken({

@@ -179,8 +179,8 @@
             background-color: #45a049;
         }
 
-          /*--------I added these for the similar movies tab and footer--------------------------------*/
-          #similarMovies {
+        /*--------I added these for the similar movies tab and footer--------------------------------*/
+        #similarMovies {
             margin: 30px auto auto;
             padding-bottom: 50px;
             width: 80%;
@@ -222,7 +222,7 @@
             background-color: transparent;
             border: none;
             position: relative;
-            color: #7f9eb9;
+            color: white ;
             text-decoration: none;
             transition: color 0.3s ease;
             display: inline-block; /* Ensure proper alignment */
@@ -256,6 +256,9 @@
         .actor-card:hover {
             transform: scale(1.1);
         }
+        #watchlistContainer{
+            margin-left: 10%;
+        }
 
     </style>
 </head>
@@ -280,6 +283,11 @@
                     
                     <div style="font-weight: 200;" ><%= movie.overview %></div>
                 </div>
+                <div id="watchlistContainer" class="my-auto text-center">
+                    <button class=" watchListhover">Trailers and More</button> <br>
+                    <hr>
+                    <% if(isAuthenticated) {%><button class="watch watchListhover" data-movie="<%= movie.id%>">Add To Watchlist</button> <%}%>
+                </div>
             </div>
         </div>
         <div class="vid-back">
@@ -295,40 +303,27 @@
           </ul>
         </nav>
       
-        <div style="height: 500px;" class="tabs">
+        <div class="tabs">
 
             <div class="active" id="info">
 
                 <h2>Movie Info</h2>
                 <p><strong>Title:</strong> <%= movie.original_title %></p>
                 <p><strong>Release Date:</strong> <%= new Date(movie.release_date).toLocaleDateString() %></p>
-                <% if(isAuthenticated) {%><button class="watch watchListhover" data-movie="<%= movie.id%>">Add To Watchlist</button> <%}%>
-                <div id="actorCarousel" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <% for (let i = 0; i < actors.length; i+=8) { %>
-                            <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
-                                <div class="d-flex justify-content-around">
-                                    <% for (let j = i; j < i + 8 && j < actors.length; j++) { %>
-                                        <div class="actor-card d-flex flex-column align-items-center">
-                                            <img class="d-block w-75 rounded mb-2" src="<%= actors[j].profile_path %>" alt="<%= actors[j].name %>">
-                                            <div class="text-center">
-                                                <p class="mb-0"><strong>Name:</strong> <%= actors[j].name %></p>
-                                                <!-- Add other actor details as needed -->
-                                            </div>
-                                        </div>
-                                    <% } %>
+                
+                <div class="d-flex justify-content-around">
+                    <% for (let i = 0; i < actors.length && i < 10; i++) { %>
+                        <a href="/actors/<%= actors[i].id %>" class="text-white text-decoration-none">
+                            <div class="actor-card d-flex flex-column align-items-center">
+                                <img class="d-block w-75 rounded mb-2" src="<%= actors[i].profile_path %>" alt="<%= actors[i].name %>">
+                                <div class="text-center">
+                                    <p class="mb-0" style="font-weight: 100; font-size: 0.8em;">
+                                        <strong style="font-size: 1em;"><%= actors[i].name %></strong> <br> <%= actors[i].character %>
+                                    </p>
                                 </div>
                             </div>
-                        <% } %>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#actorCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#actorCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
+                        </a>
+                    <% } %>
                 </div>
                 
             </div>     
@@ -392,12 +387,22 @@
             </div>
         </div>
     </div>
-        <%- include('partials/footer') %>
+        
 </div>
 
 </body>
+<%- include('partials/footer') %>
 <script>
     $(document).ready(function() {
+        $('#watchlistContainer button:first').on('click', function () {
+            $('#fade').fadeOut(1000);
+            $('.vid-back').fadeIn();
+            var youtubeBaseUrl = 'https://www.youtube.com/embed/';
+            var trailerKey = getTrailerKey(movie.videos.results);
+            var youtubeUrl = youtubeBaseUrl + trailerKey + '?autoplay=1&mute=0&start=10&loop=1&controls=1'; // Set controls=1
+
+            $('#vid').attr('src', youtubeUrl);
+        });
 
         var trailerKey = getTrailerKey(movie.videos.results);
 
