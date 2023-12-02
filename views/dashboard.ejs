@@ -448,10 +448,6 @@
 
     }
 
-    function copy(id) {
-        navigator.clipboard.writeText(`${window.location.origin}/movies/${id}`);
-    }
-
     $(window).on("load", () => {
         console.log(watchlist)
         let movieInfo = $("#movie-info")

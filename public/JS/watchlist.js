@@ -106,3 +106,7 @@ function crossButtons(movie) {
     $(this).prop("disabled", false);
   });
 }
+
+function copy(id) {
+  navigator.clipboard.writeText(`${window.location.origin}/movies/${id}`);
+}
