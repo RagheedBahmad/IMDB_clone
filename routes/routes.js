@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const User = require("./../models/userModel.js");
 const Movie = require("./../models/movieModel.js");
+const Actor = require("./../models/actorModel.js");
 const authController = require("./../controllers/authController");
 const movieController = require("./../controllers/movieController");
 const userController = require("./../controllers/userController");
@@ -25,7 +26,7 @@ const oauth2Client = new google.auth.OAuth2(
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./public/img/profiles");
+    cb(null, "./public/img/profiles"); // Ensure this path exists
   },
   filename: function (req, file, cb) {
     let filename = req.body.username + path.extname(file.originalname);
@@ -84,9 +85,13 @@ router.get("/movies/:movie", authController.protect, async (req, res) => {
   let id = req.params.movie;
   let movie = await Movie.findOne({ id: id }).exec();
   let similarMovies = movieController.similar(movie.original_title);
-  console.log(similarMovies);
+  const actorIds = movie.credits.cast.map(actor => actor.id);
+
+  const actors = await Actor.find({ id: { $in: actorIds } }).exec();
+
   res.render("movie", {
     movie,
+    actors,
     similarMovies,
     user: req.user ? req.user : null,
     watchlist: req.user ? req.user.watchlist : null,

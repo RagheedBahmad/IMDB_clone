@@ -179,8 +179,8 @@
             background-color: #45a049;
         }
 
-         /*--------I added these for the similar movies tab and footer--------------------------------*/
-        #similarMovies {
+          /*--------I added these for the similar movies tab and footer--------------------------------*/
+          #similarMovies {
             margin: 30px auto auto;
             padding-bottom: 50px;
             width: 80%;
@@ -248,7 +248,15 @@
             bottom: 0;
             height: 100%;
         }
-    /*  ----------------------------------------------------------------   */
+         /*  ----------------------------------------------------------------   */
+        .actor-card {
+            transition: transform 0.3s;
+        }
+
+        .actor-card:hover {
+            transform: scale(1.1);
+        }
+
     </style>
 </head>
 <script>let movie = <%- JSON.stringify(movie)%>;
@@ -287,16 +295,44 @@
           </ul>
         </nav>
       
-        <div class="tabs">
-          <div class="active" id="info">
+        <div style="height: 500px;" class="tabs">
 
-            <h2>Movie Info</h2>
-            <p><strong>Title:</strong> <%= movie.original_title %></p>
-            <p><strong>Release Date:</strong> <%= new Date(movie.release_date).toLocaleDateString() %></p>
-              <% if(isAuthenticated) {%><button class="watch watchListhover" data-movie="<%= movie.id%>">Add To Watchlist</button> <%}%>
+            <div class="active" id="info">
 
-          </div>
-        
+                <h2>Movie Info</h2>
+                <p><strong>Title:</strong> <%= movie.original_title %></p>
+                <p><strong>Release Date:</strong> <%= new Date(movie.release_date).toLocaleDateString() %></p>
+                <% if(isAuthenticated) {%><button class="watch watchListhover" data-movie="<%= movie.id%>">Add To Watchlist</button> <%}%>
+                <div id="actorCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <% for (let i = 0; i < actors.length; i+=8) { %>
+                            <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+                                <div class="d-flex justify-content-around">
+                                    <% for (let j = i; j < i + 8 && j < actors.length; j++) { %>
+                                        <div class="actor-card d-flex flex-column align-items-center">
+                                            <img class="d-block w-75 rounded mb-2" src="<%= actors[j].profile_path %>" alt="<%= actors[j].name %>">
+                                            <div class="text-center">
+                                                <p class="mb-0"><strong>Name:</strong> <%= actors[j].name %></p>
+                                                <!-- Add other actor details as needed -->
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#actorCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#actorCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+                
+            </div>     
+                  
       
             <div id="reviews" style="display: none;">
             
@@ -366,7 +402,7 @@
         var trailerKey = getTrailerKey(movie.videos.results);
 
         var youtubeBaseUrl = 'https://www.youtube.com/embed/';
-        var youtubeUrl = youtubeBaseUrl + trailerKey + '?autoplay=1'+ "&mute=1" +"&start=10";
+        var youtubeUrl = youtubeBaseUrl + trailerKey + '?autoplay=1'+ "&mute=1" +"&start=10" +"&loop=1"+"&controls=0";
 
         $('#vid').attr('src', youtubeUrl)
 

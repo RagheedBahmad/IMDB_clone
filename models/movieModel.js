@@ -12,9 +12,31 @@ const movieSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  genre_ids: [
+  credits: {
+    cast: [
+      {
+        id: {
+          type: Number,
+        },
+        character: {
+          type: String,
+        },
+      },
+    ],
+    crew: [
+      {
+        type: Number,
+      },
+    ],
+  },
+  genres: [
     {
-      type: Number,
+      id:{
+        type: Number,
+      },
+      name: {
+        type: String,
+      },
     },
   ],
   id: {
