@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= actor.name %> Details</title>
-    <!-- Include your stylesheets and scripts here -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -19,7 +18,7 @@
         }
     
         body {
-            color: #7f9eb9;
+            color: white;
             height: 100vh;
             width: 100vw;
             background-color: black;
@@ -58,14 +57,7 @@
             align-items: center;
             min-height: 300px;
         }
-    
-        #image-carousel {
-            width: 50%; /* Width of the visible area */
-            height: 250px; /* Height of the visible area */
-            overflow: hidden;
-            margin-right: 0;
-            transform: translate(20px, 10%);
-        }
+
     
         .image-track {
             width:90%;
@@ -111,7 +103,7 @@
             background-color: transparent;
             border: none;
             position: relative;
-            color: #7f9eb9;
+            color: white !important;
             text-decoration: none;
             transition: color 0.3s ease;
             display: inline-block; /* Ensure proper alignment */
@@ -334,10 +326,6 @@
                 align-items: center;
             }
     
-            #image-carousel {
-                width:70%;
-                min-height:250px;
-            }
             #movie-info {
                 margin-top: 15px;
                 width:90%;
@@ -393,11 +381,6 @@
                 transform: scale(1.08);
             }
     
-            #image-carousel {
-                width:100%;
-                min-height: unset;
-                height: unset;
-            }
     
             .image-track {
                 width:60%;
@@ -421,16 +404,17 @@
     </style>
     <%- include('partials/header') %>
 <body>
-    <div id="fade" style=" padding: 100px;">
+    <div id="fade" style=" padding: 100px; color: white;">
         <div class="d-flex flex-row">
             <div>
-                <img style="height: 350px;" src="<%= actor.profile_path %>" alt="<%= actor.name %>">
+                <img style="height: 350px;" src="<%= "https://image.tmdb.org/t/p/w500"+ actor.profile_path %>" alt="<%= actor.name %>">
             </div>
-            <div class="my-auto mx-3" style="border-left: 1px solid white; height: 300px;"></div>
+            <div class="mx-3" style="border-left: 1px solid white; height: 350px;"></div>
             <div class="my-auto fs-6" style="width: 550px;">
                 <h1><%= actor.name %></h1>
                 <p><%= actor.gender %></p>
                 <p><%= actor.known_for_department %></p>
+                <p style="width: 900px; font-weight: 200;"><%= actor.biography %></p>
             </div>
         </div>
     </div>
@@ -442,7 +426,7 @@
                 <a href="/movies/<%= movies[i].id%>"><img class="card-img-top" src="<%= (movies[i].poster_path)%>" alt="Card image cap"  style="z-index: 1;"></a>
         <img class="card-img-top" src="<%= (movies[i].poster_path)%>" alt="Card image cap" style="filter:blur(50px); z-index: -2; position: absolute; width: 80%; height: auto; top:10%; left: 10%;">
         <div class="card-body">
-            <a href="/movies/<%= movies[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%= movies[i].original_title%></h5></a>
+            <a href="/movies/<%= movies[i].id%>"><h5 class="card-title"  style="color: white"><%= movies[i].original_title%></h5></a>
         </div>
                 <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false"></a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                     <button type="button" class="btn btn-secondary btn-sm"  style="margin: 5px;" onclick="copy(<%= movies[i].id%>)" id="id">Copy</button></div>

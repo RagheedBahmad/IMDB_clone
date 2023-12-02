@@ -44,6 +44,10 @@ const actorSchema = new mongoose.Schema({
       required: true,
     },
   ],
+  biography: {
+    type: String,
+    trim: true,
+  },
 });
 
 const Actor = mongoose.model("Actor", actorSchema, "Actors");

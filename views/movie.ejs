@@ -25,11 +25,6 @@
             height: 500px ;
         }
         #trailer{
-            /* background-image: url("<%= movie.backdrop_path %>");
-            background-repeat: no-repeat;
-            background-size: contain;
-            background-position: center; */
-
             background-color: rgb(60, 5, 52) ;
         }
         * {
@@ -271,10 +266,12 @@
 <body>
     <div id="head-container">
     <div id="trailer" style="height: 500px;">
+        <img style="position: absolute; height: 500px; width: 100%; filter: blur(50px);" src="<%= movie.poster_path %>"  alt="<%= movie.original_title %>">
         <div id="fade" style=" padding: 100px;">
             <div class="d-flex flex-row">
                 <div>
-                    <img  style="height: 350px;" src="<%= movie.poster_path %>" alt="<%= movie.original_title %>">
+                    <img src="<%= movie.poster_path %>" alt="<%= movie.original_title %>"  style="z-index: 1; height: 350px;">
+                    <img src="<%= movie.poster_path %>" alt="<%= movie.original_title %>" style="filter:blur(50px); z-index: -2; position: absolute; height: 340px; width: 240px;  left: 95px; bottom: 6%;">
                 </div>
                 <div class="my-auto mx-3" style="border-left: 1px solid white; height: 300px;"></div>
                 <div class="my-auto fs-6" style="width: 550px;">
@@ -305,17 +302,19 @@
       
         <div class="tabs">
 
-            <div class="active" id="info">
+            <div class="active mx-5" id="info">
 
                 <h2>Movie Info</h2>
                 <p><strong>Title:</strong> <%= movie.original_title %></p>
-                <p><strong>Release Date:</strong> <%= new Date(movie.release_date).toLocaleDateString() %></p>
-                
+                <p class="mb-5"><strong>Release Date:</strong> <%= new Date(movie.release_date).toLocaleDateString() %></p>
+
+                <h3 class="text-center" style="font-weight: 200;">Cast</h3>
+                <hr class="mb-5 mx-auto" style="width: 400px;">
                 <div class="d-flex justify-content-around">
                     <% for (let i = 0; i < actors.length && i < 10; i++) { %>
                         <a href="/actors/<%= actors[i].id %>" class="text-white text-decoration-none">
                             <div class="actor-card d-flex flex-column align-items-center">
-                                <img class="d-block w-75 rounded mb-2" src="<%= actors[i].profile_path %>" alt="<%= actors[i].name %>">
+                                <img class="d-block w-75 rounded mb-2" src="<%= "https://image.tmdb.org/t/p/w500/"+ actors[i].profile_path %>" alt="<%= actors[i].name %>">
                                 <div class="text-center">
                                     <p class="mb-0" style="font-weight: 100; font-size: 0.8em;">
                                         <strong style="font-size: 1em;"><%= actors[i].name %></strong> <br> <%= actors[i].character %>
@@ -325,22 +324,23 @@
                         </a>
                     <% } %>
                 </div>
+                <hr class="mt-5 mx-auto" style="width: 400px;">
                 
             </div>     
                   
       
-            <div id="reviews" style="display: none;">
+            <div id="reviews" class="mx-5 mt-2" style="display: none;">
             
             <% if (movie.reviews && movie.reviews.results.length > 0) { %>
                 <ul class="review-list">
                 <% movie.reviews.results.forEach(review => { %>
                     <li>
                     <div class="user-info">
-                        <img src="<%= review.author_details.avatar_path %>" alt="<%= review.author_details.name || 'User Avatar' %>">
+                        <img src="<%= review.author_details.avatar_path || '/img/download.png' %>" alt="<%= review.author_details.name %>">
                         <h3><%= review.author %></h3>
                     </div>
                     <p>Rating: <%= review.author_details.rating %></p>
-                    <p><%= review.content %></p>
+                    <p style="font-weight: 100;" ><%= review.content %></p>
                     <p>Added on: <%= new Date(review.created_at).toLocaleDateString() %></p>
                     </li>
                 <% }); %>
@@ -368,7 +368,7 @@
             <% } %>
             </div>
         
-            <div id="other" style="display: none;">
+            <div id="other" class="mx-5" style="display: none;">
                 <div id="similarMovies">
                     <%for (let i = 0; i < similarMovies.length; i++) {%>
                         <div class="card">
@@ -399,16 +399,17 @@
             $('.vid-back').fadeIn();
             var youtubeBaseUrl = 'https://www.youtube.com/embed/';
             var trailerKey = getTrailerKey(movie.videos.results);
-            var youtubeUrl = youtubeBaseUrl + trailerKey + '?autoplay=1&mute=0&start=10&loop=1&controls=1'; // Set controls=1
+            var youtubeUrl = youtubeBaseUrl + trailerKey + '?autoplay=1&mute=0';
 
             $('#vid').attr('src', youtubeUrl);
+            $('iframe').css('pointer-events','all');
         });
 
         var trailerKey = getTrailerKey(movie.videos.results);
 
         var youtubeBaseUrl = 'https://www.youtube.com/embed/';
-        var youtubeUrl = youtubeBaseUrl + trailerKey + '?autoplay=1'+ "&mute=1" +"&start=10" +"&loop=1"+"&controls=0";
-
+        var youtubeUrl = youtubeBaseUrl + trailerKey + '?autoplay=1'+ "&mute=1" +"&start=10" +"&loop=1"+"&controls=0"+"&playlist="+trailerKey;
+0
         $('#vid').attr('src', youtubeUrl)
 
         function getTrailerKey(videos) {

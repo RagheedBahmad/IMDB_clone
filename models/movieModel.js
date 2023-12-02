@@ -127,6 +127,16 @@ const movieSchema = new mongoose.Schema({
     ],
     // ... other review-related fields ...
   },
+  keywords:[
+    {
+      id:{
+        type: Number,
+      },
+      name: {
+        type: String,
+      },
+    },
+  ],
 });
 
 const Movie = mongoose.model("Movie", movieSchema, "Movies");

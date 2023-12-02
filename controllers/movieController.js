@@ -112,11 +112,17 @@ function calculateSimilarityGenre(vector1, vector2) {
 }
 
 function calculateSimilarityKeyword(targetMovie, movie) {
-  return (
-    targetMovie.filter((keyword) => {
-      movie.some((obj) => obj.name === keyword.name);
-    }) / math.max(targetMovie.length, movie.length)
-  );
+  if (!Array.isArray(movie)) {
+    // Handle the case where movie is not an array
+    console.error('Error: movie is not an array');
+    return 0; 
+  }
+
+  const commonKeywords = targetMovie.filter((keyword) => {
+    return movie.some((obj) => obj.name === keyword.name);
+  });
+
+  return commonKeywords.length / Math.max(targetMovie.length, movie.length);
 }
 
 exports.search = catchAsync(async (req, res, next) => {
