@@ -7,14 +7,14 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: black;
+            color: #7f9eb9;
             margin: 0;
             padding: 0;
         }
     
         .profile-container {
-            background: #ffffff;
+            background: #0a0a0a;
             margin: 20px auto;
             width: 80%;
             padding: 20px;
@@ -30,7 +30,7 @@
     
         .user-info h2 {
             margin: 0 0 10px 0;
-            color: #000;
+            color: #7f9eb9;
             font-size: 24px;
         }
     
@@ -50,7 +50,7 @@
             font-size: 16px;
         }
     
-        .user-info a {
+        a {
             color: #0073cf;
             text-decoration: none;
         }
@@ -65,14 +65,14 @@
     
         .section h3 {
             margin: 0 0 10px 0;
-            color: #000;
+            color: #7f9eb9;
             font-size: 20px;
         }
     
         .section p {
             margin: 0;
             line-height: 1.6;
-            color: #666;
+            color:#7f9eb9;
             font-size: 16px;
         }
     
@@ -81,7 +81,7 @@
         }
     
         .update-profile-form {
-            background: #ffffff;
+            background: #0a0a0a;
             padding: 20px;
             border-radius: 4px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -90,7 +90,7 @@
         }
     
         .update-profile-form h3 {
-            color: #000;
+            color: #7f9eb9;
             margin-bottom: 15px;
         }
     
@@ -111,6 +111,7 @@
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            background-color: gray;
         }
     
         .update-profile-form input[type="submit"] {
@@ -119,16 +120,8 @@
             cursor: pointer;
         }
 
-    body {
-        font-family: 'Arial', sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-        margin: 0;
-        padding: 0;
-    }
-
     .profile-container {
-        background: #ffffff;
+        background: #0a0a0a;
         margin: 20px auto;
         width: 80%;
         padding: 20px;
@@ -144,7 +137,7 @@
 
     .user-info h2 {
         margin: 0 0 10px 0;
-        color: #000;
+        color: #7f9eb9;
         font-size: 24px;
     }
 
@@ -160,7 +153,7 @@
     .user-info p {
         margin: 0;
         line-height: 1.6;
-        color: #666;
+        color: #7f9eb9;
         font-size: 16px;
     }
 
@@ -175,18 +168,20 @@
 
     .section {
         margin-bottom: 20px;
+        display:flex;
+        flex-direction: column;
     }
 
     .section h3 {
         margin: 0 0 10px 0;
-        color: #000;
+        color: #7f9eb9;
         font-size: 20px;
     }
 
     .section p {
         margin: 0;
         line-height: 1.6;
-        color: #666;
+        color: #7f9eb9;
         font-size: 16px;
     }
 
@@ -195,7 +190,7 @@
     }
 
     .update-profile-form {
-        background: #ffffff;
+        background: #0a0a0a;
         padding: 20px;
         border-radius: 4px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -204,7 +199,7 @@
     }
 
     .update-profile-form h3 {
-        color: #000;
+        color: #7f9eb9;
         margin-bottom: 15px;
     }
 
@@ -228,12 +223,13 @@
     }
 
     .update-profile-form input[type="submit"] {
-        background-color: #f5c518;
-        color: black;
+        background-color: black;
+        color: #7f9eb9;
         cursor: pointer;
     }
     </style>
 </head>
+<%- include('partials/header') %>
 <body>
     <div class="profile-container">
         <div class="user-info">
@@ -254,9 +250,9 @@
         </div>
 
         <div class="section watchlist">
-            <h3>Top Picks</h3>
+            <h3>WatchList</h3>
             <% user.watchlist.forEach(movie => { %>
-                <p><%= movie.original_title %> (<%= movie.tagline %>)</p>
+                <a href="/movies/<%= movie.id%>"><%= movie.original_title %> (<%= movie.tagline %>)</a>
             <% }); %>
         </div>
 
@@ -269,18 +265,19 @@
     </div>
     <div class="update-profile-form">
         <h3>Edit Profile</h3>
-        <form action="/update-profile" method="post">
+        <form id="updateProfile" action="/update-profile" method="post">
             <label for="gender">Gender:</label>
-            <input type="text" id="gender" name="gender" value="<%= user.gender %>">
+            <input type="text" id="gender" name="gender">
             
             <label for="dob">Date of Birth:</label>
-            <input type="date" id="dob" name="dob" value="<%= user.dateOfBirth ? user.dateOfBirth.toISOString().split('T')[0] : '' %>">
+            <input type="date" id="dob" name="dob">
             
             <label for="country">Country:</label>
-            <input type="text" id="country" name="country" value="<%= user.country %>">
+            <input type="text" id="country" name="country">
             
             <input type="submit" value="Update Profile">
         </form>
     </div>
 </body>
+<%- include('partials/footer') %>
 </html>

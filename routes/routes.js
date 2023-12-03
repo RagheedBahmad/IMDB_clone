@@ -103,6 +103,7 @@ router.post(
 router.get("/movies/:movie", authController.protect, async (req, res) => {
   let id = req.params.movie;
   let movie = await Movie.findOne({ id: id }).exec();
+  console.log(movie);
   let similarMovies = movieController.similar(movie.original_title);
   const actorIds = movie.credits.cast.map((actor) => actor.id).slice(0, 10);
   const actorsData = await Actor.find({ id: { $in: actorIds } }).exec();
@@ -122,7 +123,7 @@ router.get("/movies/:movie", authController.protect, async (req, res) => {
   });
 
   res.render("movie", {
-    movie,
+    movie: movie,
     actors,
     similarMovies,
     reviews: req.user ? req.user.reviews : null,
@@ -238,7 +239,10 @@ router.get("/forgot-password/:token", authController.validateEmailToken);
 router.post("/resetPassword", authController.resetPassword);
 
 router.get("/profile", authController.protect, async (req, res) => {
-  res.render("user", { user: req.user });
+  res.render("user", {
+    user: req.user,
+    isAuthenticated: !!req.user,
+  });
 });
 
 router.get(
@@ -273,7 +277,13 @@ router.post(
   }
 );
 
-
-router.post("/update-profile", authController.protect, userController.updateUserProfile);
+router.post(
+  "/update-profile",
+  authController.protect,
+  userController.updateUserProfile,
+  (req, res) => {
+    res.redirect("/profile");
+  }
+);
 
 module.exports = router;

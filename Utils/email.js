@@ -7,8 +7,8 @@ const sendEmail = async (options) => {
     port: 587,
     secure: false, // use SSL
     auth: {
-      user: process.env.SMTP_KEY, // Your email
-      pass: process.env.SMTP_SECRET, // Your SMTP key from SendinBlue
+      user: process.env.SMTP_KEY,
+      pass: process.env.SMTP_SECRET,
     },
   });
 

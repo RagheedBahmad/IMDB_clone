@@ -295,11 +295,14 @@
 
     </style>
 </head>
-<script>let movie = <%- JSON.stringify(movie)%>;
+<script>
+    let movie = <%- JSON.stringify(movie)%>;
+    console.log(movie);
     <% if(isAuthenticated) {%>
     let user = <%- JSON.stringify(user) %>;
     let watchlist = <%- JSON.stringify(watchlist) %>
-    <%}%></script>
+    <%}%>
+</script>
 <%- include('partials/header') %>
 <body>
     <div id="head-container">
@@ -407,7 +410,6 @@
       
             <div id="reviews" class="mx-5 mt-2" style="display: none;">
                 <h3 class="m-5"><%= movie.reviews.results.length + " Reviews" %> </h3>
-                <% if (movie.reviews && movie.reviews.results.length > 0) { %>
                     <ul class="review-list">
                       <% movie.reviews.results.forEach(review => { %>
                         <li>
@@ -436,10 +438,9 @@
                         </li>
                       <% }); %>
                     </ul>
-                  <% } else if (user.reviews && user.reviews.length > 0) { %>
                     <!-- Display only user reviews if no movie reviews available -->
                     <ul class="review-list">
-                      <% user.reviews.forEach(userReview => { %>
+                      <% user?.reviews?.forEach(userReview => { %>
                         <li>
                           <div class="user-info">
                             <img src="/img/user-avatar.png" alt="<%= user.username %>">
@@ -451,9 +452,6 @@
                         </li>
                       <% }); %>
                     </ul>
-                  <% } else { %>
-                    <p>No reviews available for this movie.</p>
-                  <% } %>
                   
         
             <% if (isAuthenticated) { %>
