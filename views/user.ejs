@@ -2,9 +2,285 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+    
+        .profile-container {
+            background: #ffffff;
+            margin: 20px auto;
+            width: 80%;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+    
+        .user-info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+    
+        .user-info h2 {
+            margin: 0 0 10px 0;
+            color: #000;
+            font-size: 24px;
+        }
+    
+        .user-info img {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            margin-right: 20px;
+            float: left;
+            border: 3px solid #f5c518;
+        }
+    
+        .user-info p {
+            margin: 0;
+            line-height: 1.6;
+            color: #666;
+            font-size: 16px;
+        }
+    
+        .user-info a {
+            color: #0073cf;
+            text-decoration: none;
+        }
+    
+        .user-info a:hover {
+            text-decoration: underline;
+        }
+    
+        .section {
+            margin-bottom: 20px;
+        }
+    
+        .section h3 {
+            margin: 0 0 10px 0;
+            color: #000;
+            font-size: 20px;
+        }
+    
+        .section p {
+            margin: 0;
+            line-height: 1.6;
+            color: #666;
+            font-size: 16px;
+        }
+    
+        .clear {
+            clear: both;
+        }
+    
+        .update-profile-form {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            width: 80%;
+        }
+    
+        .update-profile-form h3 {
+            color: #000;
+            margin-bottom: 15px;
+        }
+    
+        .update-profile-form form {
+            display: flex;
+            flex-direction: column;
+        }
+    
+        .update-profile-form label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+    
+        .update-profile-form input[type="text"],
+        .update-profile-form input[type="date"],
+        .update-profile-form input[type="submit"] {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    
+        .update-profile-form input[type="submit"] {
+            background-color: #f5c518;
+            color: black;
+            cursor: pointer;
+        }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    .profile-container {
+        background: #ffffff;
+        margin: 20px auto;
+        width: 80%;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+    }
+
+    .user-info {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+    .user-info h2 {
+        margin: 0 0 10px 0;
+        color: #000;
+        font-size: 24px;
+    }
+
+    .user-info img {
+        width: 120px;
+        height: 120px;
+        border-radius: 60px;
+        margin-right: 20px;
+        float: left;
+        border: 3px solid #f5c518;
+    }
+
+    .user-info p {
+        margin: 0;
+        line-height: 1.6;
+        color: #666;
+        font-size: 16px;
+    }
+
+    .user-info a {
+        color: #0073cf;
+        text-decoration: none;
+    }
+
+    .user-info a:hover {
+        text-decoration: underline;
+    }
+
+    .section {
+        margin-bottom: 20px;
+    }
+
+    .section h3 {
+        margin: 0 0 10px 0;
+        color: #000;
+        font-size: 20px;
+    }
+
+    .section p {
+        margin: 0;
+        line-height: 1.6;
+        color: #666;
+        font-size: 16px;
+    }
+
+    .clear {
+        clear: both;
+    }
+
+    .update-profile-form {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin: 20px auto;
+        width: 80%;
+    }
+
+    .update-profile-form h3 {
+        color: #000;
+        margin-bottom: 15px;
+    }
+
+    .update-profile-form form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .update-profile-form label {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .update-profile-form input[type="text"],
+    .update-profile-form input[type="date"],
+    .update-profile-form input[type="submit"] {
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .update-profile-form input[type="submit"] {
+        background-color: #f5c518;
+        color: black;
+        cursor: pointer;
+    }
+    </style>
 </head>
 <body>
+    <div class="profile-container">
+        <div class="user-info">
+            <img src="<%= user.profile %>" alt="User Image">
+            <h2><%= user.username %></h2>
+            <p>Gender: <%= user.gender %></p>
+            <p>Date of Birth: <%= new Date(user.dateOfBirth).toLocaleDateString() %></p>
+            <p>Country: <%= user.country %></p>
+            <p>Joined on: <%= new Date(user.dateWhenJoined).toLocaleDateString() %></p>
+            <p>Email: <%= user.email %></p>
+            <div class="clear"></div>
+        </div>
+        <div class="section ratings">
+            <h3>User Ratings</h3>
+            <% user.reviews.forEach(review => { %>
+                <p>Movie ID: <%= review.movieID %>, Rating: <%= review.rating %>/5</p>
+            <% }); %>
+        </div>
 
+        <div class="section watchlist">
+            <h3>Top Picks</h3>
+            <% user.watchlist.forEach(movie => { %>
+                <p><%= movie.original_title %> (<%= movie.tagline %>)</p>
+            <% }); %>
+        </div>
+
+        <div class="section reviews">
+            <h3>Recent Reviews</h3>
+            <% user.reviews.slice(0, 5).forEach(review => { %>
+                <p><%= review.review %></p>
+            <% }); %>
+        </div>
+    </div>
+    <div class="update-profile-form">
+        <h3>Edit Profile</h3>
+        <form action="/update-profile" method="post">
+            <label for="gender">Gender:</label>
+            <input type="text" id="gender" name="gender" value="<%= user.gender %>">
+            
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" value="<%= user.dateOfBirth ? user.dateOfBirth.toISOString().split('T')[0] : '' %>">
+            
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" value="<%= user.country %>">
+            
+            <input type="submit" value="Update Profile">
+        </form>
+    </div>
 </body>
 </html>

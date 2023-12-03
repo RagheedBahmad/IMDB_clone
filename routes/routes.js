@@ -237,7 +237,7 @@ router.get("/forgot-password/:token", authController.validateEmailToken);
 
 router.post("/resetPassword", authController.resetPassword);
 
-router.get("/profile/:user", authController.protect, async (req, res) => {
+router.get("/profile", authController.protect, async (req, res) => {
   res.render("user", { user: req.user });
 });
 
@@ -272,5 +272,8 @@ router.post(
     res.json({ movies: res.movies });
   }
 );
+
+
+router.post("/update-profile", authController.protect, userController.updateUserProfile);
 
 module.exports = router;
