@@ -25,7 +25,6 @@ exports.removeWatchlist = catchAsync(async (req, res, next) => {
 });
 
 exports.updateUserProfile = catchAsync(async (req, res, next) => {
-  console.log(req.body);
   const { dob, gender, country } = req.body;
   const userId = req.user.id; // Assuming req.user contains the logged-in user's info
 
