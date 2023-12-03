@@ -405,13 +405,13 @@
                   
       
             <div id="reviews" class="mx-5 mt-2" style="display: none;">
-            
+                <h3 class="m-5"><%= movie.reviews.results.length + " Reviews" %> </h3>
                 <% if (movie.reviews && movie.reviews.results.length > 0) { %>
                     <ul class="review-list">
                       <% movie.reviews.results.forEach(review => { %>
                         <li>
                           <div class="user-info">
-                            <img src="<%= review.author_details.avatar_path || '/img/download.png' %>" alt="<%= review.author_details.name %>">
+                            <img src="<%= review.author_details.avatar_path !== null ? 'https://image.tmdb.org/t/p/w500'+review.author_details.avatar_path : '/img/defaultProfile.jpg' %>" alt="<%= review.author_details.name %>">
                             <h3><%= review.author %></h3>
                           </div>
                           <p>Rating: <%= review.author_details.rating %></p>
@@ -425,7 +425,7 @@
                         <li>
                           <div class="user-info">
                             <!-- You can customize the user's avatar and name as needed -->
-                            <img src="/img/user-avatar.png" alt="<%= user.username %>">
+                            <img src="<%= user.profile !== 'null' ? user.profile : '/img/defaultProfile.jpg' %>"  alt="<%= user.username %>">
                             <h3><%= user.username %></h3>
                           </div>
                           <p>Rating: <%= userReview.rating %></p>

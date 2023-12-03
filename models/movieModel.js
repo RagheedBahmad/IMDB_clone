@@ -124,7 +124,6 @@ const movieSchema = new mongoose.Schema({
           },
           avatar_path: {
             type: String,
-            get: v => base_Url+v,
           },
           rating: {
             type: Number,
