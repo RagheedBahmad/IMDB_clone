@@ -61,7 +61,8 @@ const userSchema = new mongoose.Schema({
   dateWhenJoined: { type: Date, required: true },
   reviews: [
     {
-      movieID: { type: Number, required: true },
+      movieId: { type: Number, required: true },
+      title: { type: String, required: true},
       review: { type: String, required: true },
       rating: { type: Number, required: true, max: 5 },
     },
