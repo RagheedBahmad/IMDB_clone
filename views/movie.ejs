@@ -406,43 +406,78 @@
                   
       
             <div id="reviews" class="mx-5 mt-2" style="display: none;">
-            
-            <% if (movie.reviews && movie.reviews.results.length > 0) { %>
-                <ul class="review-list">
-                <% movie.reviews.results.forEach(review => { %>
-                    <li>
-                    <div class="user-info">
-                        <img src="<%= review.author_details.avatar_path || '/img/download.png' %>" alt="<%= review.author_details.name %>">
-                        <h3><%= review.author %></h3>
-                    </div>
-                    <p>Rating: <%= review.author_details.rating %></p>
-                    <p style="font-weight: 100;" ><%= review.content %></p>
-                    <p>Added on: <%= new Date(review.created_at).toLocaleDateString() %></p>
-                    </li>
-                <% }); %>
-                </ul>
-            <% } else { %>
-                <p>No reviews available for this movie.</p>
-            <% } %>
+                <h3 class="m-5"><%= movie.reviews.results.length + " Reviews" %> </h3>
+                <% if (movie.reviews && movie.reviews.results.length > 0) { %>
+                    <ul class="review-list">
+                      <% movie.reviews.results.forEach(review => { %>
+                        <li>
+                          <div class="user-info">
+                            <img src="<%= review.author_details.avatar_path !== null ? 'https://image.tmdb.org/t/p/w500'+review.author_details.avatar_path : '/img/defaultProfile.jpg' %>" alt="<%= review.author_details.name %>">
+                            <h3><%= review.author %></h3>
+                          </div>
+                          <p>Rating: <%= review.author_details.rating %></p>
+                          <p style="font-weight: 100;"><%= review.content %></p>
+                          <p>Added on: <%= new Date(review.created_at).toLocaleDateString() %></p>
+                        </li>
+                      <% }); %>
+                  
+                      <!-- Display user reviews -->
+                      <% user.reviews.forEach(userReview => { %>
+                        <li>
+                          <div class="user-info">
+                            <!-- You can customize the user's avatar and name as needed -->
+                            <img src="<%= user.profile !== 'null' ? user.profile : '/img/defaultProfile.jpg' %>"  alt="<%= user.username %>">
+                            <h3><%= user.username %></h3>
+                          </div>
+                          <p>Rating: <%= userReview.rating %></p>
+                          <p style="font-weight: 100;"><%= userReview.review %></p>
+                          <!-- You may want to display the date the user review was added -->
+                          <p>Added on: <%= new Date(userReview.createdAt).toLocaleDateString() %></p>
+                        </li>
+                      <% }); %>
+                    </ul>
+                  <% } else if (user.reviews && user.reviews.length > 0) { %>
+                    <!-- Display only user reviews if no movie reviews available -->
+                    <ul class="review-list">
+                      <% user.reviews.forEach(userReview => { %>
+                        <li>
+                          <div class="user-info">
+                            <img src="/img/user-avatar.png" alt="<%= user.username %>">
+                            <h3><%= user.username %></h3>
+                          </div>
+                          <p>Rating: <%= userReview.rating %></p>
+                          <p style="font-weight: 100;"><%= userReview.review %></p>
+                          <p>Added on: <%= new Date(userReview.createdAt).toLocaleDateString() %></p>
+                        </li>
+                      <% }); %>
+                    </ul>
+                  <% } else { %>
+                    <p>No reviews available for this movie.</p>
+                  <% } %>
+                  
         
             <% if (isAuthenticated) { %>
                 <h3>Add Your Review</h3>
                 <form action="/movies/<%= movie.id %>/reviews" method="POST">
-                <label for="rating">Rating:</label>
-                <input type="number" name="rating" min="1" max="5" required>
-        
-                <label for="title">Short Title:</label>
-                <input type="text" name="title" required>
-        
-                <label for="content">Review:</label>
-                <textarea name="content" rows="4" maxlength="500" required></textarea>
-        
-                <button type="submit">Submit Review</button>
+                  <input type="hidden" name="movieId" value="<%= movie.id %>">
+              
+                  <label for="rating">Rating:</label>
+                  <input type="number" name="rating" min="1" max="5" required>
+              
+                  <label for="title">Short Title:</label>
+                  <input type="text" name="title" required>
+              
+                  <label for="review">Review:</label>
+                  <textarea name="review" rows="4" maxlength="500" required></textarea>
+              
+                  <button type="submit">Submit Review</button>
                 </form>
-            <% } else { %>
+              <% } else { %>
                 <p><a href="/login" class="login-button">Login</a> to add a review.</p>
-            <% } %>
+              <% } %>
             </div>
+              
+              
         
             <div id="other" class="mx-5" style="display: none;">
                 <div id="similarMovies">
