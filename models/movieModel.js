@@ -58,6 +58,9 @@ const movieSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  budget:{
+    type: Number,
+  },
   popularity: {
     type: Number,
   },
@@ -73,6 +76,13 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
+  },
+  tagline: {
+    type: String,
+    trim: true,
+  },
+  runtime:{
+    type: Number,
   },
   video: {
     type: Boolean,
