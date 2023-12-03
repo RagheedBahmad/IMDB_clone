@@ -125,6 +125,7 @@ router.get("/movies/:movie", authController.protect, async (req, res) => {
     movie,
     actors,
     similarMovies,
+    reviews: req.user ? req.user.reviews : null,
     user: req.user ? req.user : null,
     watchlist: req.user ? req.user.watchlist : null,
     isAuthenticated: !!req.user,
@@ -136,48 +137,50 @@ router.get(
   actorController.getActorDetails
 );
 
-router.post('/movies/:movieId/reviews', authController.protect, async (req, res) => {
-  try {
-    // Access authenticated user
-    const user = req.user;
+router.post(
+  "/movies/:movieId/reviews",
+  authController.protect,
+  async (req, res) => {
+    try {
+      // Access authenticated user
+      const user = req.user;
 
-    // Check if user is authenticated
-    if (!user) {
-      return res.redirect('/login');
+      // Check if user is authenticated
+      if (!user) {
+        return res.redirect("/login");
+      }
+
+      const { title, review, rating } = req.body;
+
+      const movieId = req.params.movieId;
+
+      // Find the movie based on the movieId
+      const movie = await Movie.findOne({ id: movieId }).exec();
+
+      // Check if the movie exists
+      if (!movie) {
+        return res.status(404).json({ message: "Movie not found" });
+      }
+
+      const newReview = {
+        movieId,
+        title,
+        review,
+        rating,
+      };
+
+      await User.updateOne(
+        { email: user.email },
+        { $addToSet: { reviews: newReview } }
+      );
+
+      res.redirect(`/movies/${movieId}`);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Internal Server Error" });
     }
-
-    const {title, review, rating } = req.body;
-
-    const movieId = req.params.movieId;
-
-    // Find the movie based on the movieId
-    const movie = await Movie.findOne(
-      { id: movieId },
-    ).exec();
-
-    // Check if the movie exists
-    if (!movie) {
-      return res.status(404).json({ message: 'Movie not found' });
-    }
-
-    const newReview = {
-      movieId,
-      title,
-      review,
-      rating,
-    };
-
-    await User.updateOne(
-      { email: user.email },
-      { $addToSet: { reviews: newReview } }
-    );
-
-    res.redirect(`/movies/${movieId}`);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Internal Server Error' });
   }
-});
+);
 
 async function verify(token) {
   const ticket = await client.verifyIdToken({

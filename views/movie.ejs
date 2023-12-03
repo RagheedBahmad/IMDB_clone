@@ -422,7 +422,7 @@
                       <% }); %>
                   
                       <!-- Display user reviews -->
-                      <% user.reviews.forEach(userReview => { %>
+                      <% if(user && user.reviews.length !== 0) user.reviews.forEach(userReview => { %>
                         <li>
                           <div class="user-info">
                             <!-- You can customize the user's avatar and name as needed -->
