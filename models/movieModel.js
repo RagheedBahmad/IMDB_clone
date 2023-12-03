@@ -88,6 +88,18 @@ const movieSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  videos:{
+    results:[
+      {
+        type :{
+          type: String,
+        },
+        key:{
+          type: String,
+        }
+      },
+    ],
+  },
   vote_average: {
     type: Number,
   },
