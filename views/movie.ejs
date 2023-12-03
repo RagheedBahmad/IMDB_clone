@@ -25,7 +25,7 @@
             height: 500px ;
         }
         #trailer{
-            background-color: rgb(60, 5, 52) ;
+            background-color: black ;
         }
         * {
         box-sizing: border-box;
@@ -276,6 +276,21 @@
             z-index: -1;
         } */
 
+        /* #vid {
+            height: 400px;
+        } */
+        .thumb-card {
+            transition: transform 0.3s;
+        }
+
+        .thumb-card:hover {
+            transform: scale(1.1);
+        }
+        .thumb-card img {
+            max-width: 250px; /* Maintain the aspect ratio */
+            height: auto; /* Maintain the aspect ratio */
+        }
+        
 
     </style>
 </head>
@@ -287,7 +302,7 @@
 <%- include('partials/header') %>
 <body>
     <div id="head-container">
-    <div id="trailer" style="height: 500px;">
+    <div id="trailer" style="height: 550px;">
         <img style="position: absolute; height: 500px; width: 100%; filter: blur(55px); transform: translate(0px, 20px);" src="<%= movie.poster_path %>"  alt="<%= movie.original_title %>">
         <div id="fade" style=" padding: 100px;">
             <div class="d-flex flex-row">
@@ -315,8 +330,34 @@
                 </div>
             </div>
         </div>
-        <div class="vid-back">
+        <div class="vid-back position-relative">
             <iframe id="vid" src="" frameborder="0" allowfullscreen></iframe>
+            <div  id="actorCarousel" class="carousel slide position-absolute" style="bottom: 40px; width: 100%;" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <% for (let i = 0; i < movie.videos.results.length; i+=8) { %>
+                        <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+                            <div class="d-flex justify-content-evenly">
+                                <% for (let j = i; j < i + 8 && j < movie.videos.results.length; j++) { %>
+                                    <div class="thumb-card d-flex flex-column align-items-center">
+                                        <a href="#" onclick="changeVideo('<%= movie.videos.results[j].key %>')">
+                                            <img class="d-block w-75 rounded mb-2" src="<%= "http://img.youtube.com/vi/" + movie.videos.results[j].key + "/0.jpg" %>" alt="<%= movie.videos.results[j].key %>">
+                                        </a>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#actorCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#actorCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>     
+
         </div>
     </div>
     <div class="body-2">
@@ -426,8 +467,14 @@
 
 </body>
 <%- include('partials/footer') %>
+
 <script>
+    function changeVideo(url) {
+        console.log(url);
+        $('#vid').attr('src', "https://www.youtube.com/embed/" +url);
+    }
     $(document).ready(function() {
+        
         $('#watchlistContainer button:first').on('click', function () {
             $('#fade').fadeOut(1000);
             $('.vid-back').fadeIn();
@@ -437,13 +484,19 @@
 
             $('#vid').attr('src', youtubeUrl);
             $('iframe').css('pointer-events','all');
+            $('#trailer').css('height', '800');
+            $('.vid-back').css('height', '800');
+            $('#vid').css('height', '600px');
+            $('#vid').css('width', '1000px');
+            $('#vid').css('top', '130px');
+            $('#vid').css('left', '240px');
+
         });
 
         var trailerKey = getTrailerKey(movie.videos.results);
 
         var youtubeBaseUrl = 'https://www.youtube.com/embed/';
         var youtubeUrl = youtubeBaseUrl + trailerKey + '?autoplay=1'+ "&mute=1" +"&start=10" +"&loop=1"+"&controls=0"+"&playlist="+trailerKey;
-0
         $('#vid').attr('src', youtubeUrl)
 
         function getTrailerKey(videos) {
