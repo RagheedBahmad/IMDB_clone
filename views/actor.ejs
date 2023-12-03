@@ -400,25 +400,57 @@
                 margin: auto auto 20px;
             }
         }
+        #bio::-webkit-scrollbar{
+            width: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        #fade2{
+            background: linear-gradient(0deg,black, 1%, rgba(0,0,0,0.1));
+            position: absolute;
+            z-index: 2;
+            width: 897px;
+            height: 250px ;
+            pointer-events: none ;
+            bottom: 0px;
+            left: 260px;
+            
+        }
+        body{
+            -webkit-font-smoothing: antialiased;
+        }
+
     
     </style>
     <%- include('partials/header') %>
 <body>
-    <div id="fade" style=" padding: 100px; color: white;">
-        <div class="d-flex flex-row">
+    <div class="ps-5 pe-5 pt-5" id="fade" style=" color: white;">
+        <div class="d-flex flex-row" style="position: relative;">
             <div>
                 <img style="height: 350px;" src="<%= "https://image.tmdb.org/t/p/w500"+ actor.profile_path %>" alt="<%= actor.name %>">
             </div>
             <div class="mx-3" style="border-left: 1px solid white; height: 350px;"></div>
             <div class="my-auto fs-6" style="width: 550px;">
-                <h1><%= actor.name %></h1>
-                <p><%= actor.gender %></p>
-                <p><%= actor.known_for_department %></p>
-                <p style="width: 900px; font-weight: 200;"><%= actor.biography %></p>
+                <h1 class="mb-0"><%= actor.name %></h1>
+                <p class="mb-0" style="font-weight: 100;">
+                    <strong>Born:</strong>
+                    <% if (actor.birthday) { %>
+                        <%= actor.birthday.toDateString().split(' ').slice(1).join(' ') %>
+                    <% } else { %>
+                        Not available
+                    <% } %>
+                </p>
+                <p class="mb-0" style="font-weight: 100;"><%= actor.gender == 1 ? 'Female' : 'Male' %></p>
+                <p class="mb-4" style="font-weight: 100;"><%= actor.known_for_department %></p>
+                <div id="bio" style="width: 900px; font-weight: 200; max-height: 220px; overflow-y: auto;">
+                    <%= actor.biography %>
+                </div>
             </div>
+            <div id="fade2"></div>
         </div>
+        
     </div>
-
+    <h3 class="text-center mt-4 text-white" style="font-weight: 300;">Movies</h3>
+    <hr class="mb-5 mx-auto " style="width: 400px;">
     <div id="recent" class="card-style">
         <%for (let i = 0; i < movies.length; i++) {%>
         <div class="card">

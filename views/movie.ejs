@@ -254,6 +254,28 @@
         #watchlistContainer{
             margin-left: 10%;
         }
+        .card2{
+            background-color: rgba(255,255,255,0.04);
+            border-radius: 4px;
+        }
+        .hello {
+            position: relative;
+        }
+
+        /* .hello::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("<%= movie.poster_path %>");
+            background-repeat: no-repeat;
+            background-size: 200vw 100%;
+            filter: blur(40px);
+            z-index: -1;
+        } */
+
 
     </style>
 </head>
@@ -266,7 +288,7 @@
 <body>
     <div id="head-container">
     <div id="trailer" style="height: 500px;">
-        <img style="position: absolute; height: 500px; width: 100%; filter: blur(50px);" src="<%= movie.poster_path %>"  alt="<%= movie.original_title %>">
+        <img style="position: absolute; height: 500px; width: 100%; filter: blur(55px); transform: translate(0px, 20px);" src="<%= movie.poster_path %>"  alt="<%= movie.original_title %>">
         <div id="fade" style=" padding: 100px;">
             <div class="d-flex flex-row">
                 <div>
@@ -276,7 +298,13 @@
                 <div class="my-auto mx-3" style="border-left: 1px solid white; height: 300px;"></div>
                 <div class="my-auto fs-6" style="width: 550px;">
                     <div style="font-weight: 100;" ><%= movie.release_date.toDateString().split(' ').slice(1).join(' ') %></div>
-                    <div style=" font-weight: 500;" class="fs-1 mb-5 "><%= movie.original_title %></div>
+                    <div style=" font-weight: 500;" class="fs-1 "><%= movie.original_title %></div>
+
+                    <div style="font-weight: 100;" class="mb-5">
+                        <% for (let i = 0; i < movie.genres.length; i++) { %>
+                            <%= movie.genres[i].name %><%= i < movie.genres.length - 1 ? ' -' : '' %>
+                        <% } %>
+                    </div>
                     
                     <div style="font-weight: 200;" ><%= movie.overview %></div>
                 </div>
@@ -293,7 +321,7 @@
     </div>
     <div class="body-2">
         <nav>
-          <ul class="justify-content-evenly">
+          <ul class="justify-content-evenly ms-5">
             <li class="active"><a href="#info">Info</a></li>
             <li><a href="#reviews">Reviews</a></li>
             <li><a href="#other">Similar</a></li>
@@ -302,13 +330,19 @@
       
         <div class="tabs">
 
-            <div class="active mx-5" id="info">
+            <div class="active mt-5" id="info">
 
-                <h2>Movie Info</h2>
-                <p><strong>Title:</strong> <%= movie.original_title %></p>
-                <p class="mb-5"><strong>Release Date:</strong> <%= new Date(movie.release_date).toLocaleDateString() %></p>
+                <h2 style="font-weight: 300;" class="mb-0 text-center"><%= movie.original_title %></h2>
+                <h3 style="font-weight: 100;" class="mt-0 mb-5 text-center fs-5 fst-italic"><%= movie.tagline %></h3>
+                <div class="hello">
+                    <div class="d-flex justify-content-around text-center" style=" font-weight: 200;">
+                        <p class="mb-5 card2 px-5 py-3" ><strong>Release Date:</strong> <br> <%= new Date(movie.release_date).toLocaleDateString() %></p>
+                        <p class="mb-5 card2 px-5 py-3" ><strong>Budget:</strong> <br><%= movie.budget.toLocaleString('en-US', { style: 'currency', currency: 'USD' , minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></p>
+                        <p class="mb-5 card2 px-5 py-3" ><strong>Runtime:</strong> <br> <%= movie.runtime %> minutes </p>
+                    </div>
+                </div>
 
-                <h3 class="text-center" style="font-weight: 200;">Cast</h3>
+                <h3 class="text-center mt-5" style="font-weight: 200;">Cast</h3>
                 <hr class="mb-5 mx-auto" style="width: 400px;">
                 <div class="d-flex justify-content-around">
                     <% for (let i = 0; i < actors.length && i < 10; i++) { %>
