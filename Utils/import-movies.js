@@ -17,6 +17,7 @@ client.connect();
 const database = client.db("IMDB-clone");
 const movies = database.collection("Movies");
 const actors = database.collection("Actors");
+const Actor = require("./../models/actorModel.js");
 const genres = database.collection("Genres");
 const crew = database.collection("Crew");
 const test = database.collection("test");
@@ -78,7 +79,7 @@ const insertMovie = async function (movie) {
   let Casts = [];
   let Crews = [];
   let response = await fetch(
-    `https://api.themoviedb.org/3/movie/${movie.id}?append_to_response=credits%2Ckeywords%2Cvideos%2Creviews%2Cimages&language=en-US&include_image_language=en,null`,
+    `https://api.themoviedb.org/3/movie/${movie.id}?append_to_response=credits%2Cvideos%2Creviews%2Cimages&language=en-US&include_image_language=en,null`,
     options
   );
   let updatedMovie = await response.json();
@@ -307,6 +308,7 @@ async function upcoming() {
     }
     i++;
   }
+  await keywords();
   process.exit(1);
 }
 
@@ -340,6 +342,33 @@ async function keywords() {
   process.exit(1);
 }
 
+async function updateActors(filter, options) {
+  if (!fetch) {
+    const module = await import("node-fetch");
+    fetch = module.default;
+  }
+  let i = 0;
+  let actorList = await actors
+    .find({}, { projection: { id: 1, _id: 0 } })
+    .toArray();
+  for (const actor of actorList) {
+    const baseImageUrl = "https://image.tmdb.org/t/p/w500";
+    console.log(actor);
+    let result = await fetch(
+      `https://api.themoviedb.org/3/person/${actor.id}?language=en-US&api_key=c39fc6c601741c8ea87c7feccc5662d1`,
+      options
+    );
+    result = await result.json();
+    console.log(result);
+    await actors.updateOne(
+      { id: actor.id },
+      { $set: result, $unset: { movie_credits: "" } }
+    );
+    console.log(i + ": Inserted " + result.name);
+    i++;
+  }
+}
+
 switch (process.argv[2]) {
   case "--import":
     importData(process.argv[3] ? process.argv[3] : 1);
@@ -367,6 +396,10 @@ switch (process.argv[2]) {
 
   case "--keywords":
     keywords();
+    break;
+
+  case "--updateActors":
+    updateActors();
     break;
 
   default:

@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script type="text/javascript" src="/JS/watchlist.js"></script>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <style>
         body{
             font-family: 'Barlow',sans-serif;
@@ -454,7 +455,7 @@
                                 <a href="/movies/<%= similarMovies[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%- similarMovies[i].title%></h5></a>
                                 <a href="/movies/<%= similarMovies[i].id%>"><p class="card-text" style="color: #7f9eb9"><%= similarMovies[i].tagline%></p></a>
                             </div>
-                            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/intent/tweet?text=Check%20out%20this%20movie%20on%20MMDb!%20&url=https://modest-glorious-gorilla.ngrok-free.app/movies/<%= similarMovies[i].id%>" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                                 <button type="button" class="btn btn-secondary btn-sm"  style="margin: 5px;" onclick="copy(<%= similarMovies[i].id %>)" id="id">Copy</button></div>
                         </div>
                     <% } %>

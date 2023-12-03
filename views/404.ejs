@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found</title>
+    <style>
+        html, body {
+            display:flex;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            font-size: 7em;
+            margin-bottom: 0.5em;
+        }
+        a {
+            color: #4fa9ff;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<%- include('partials/header') %>
+<body>
+<div class="container">
+    <h1>404</h1>
+    <p>The page you requested was not found</p>
+    <p style="font-size: 0.8em"><%= err%></p>
+    <a href="/">Go Home</a>
+</div>
+</body>
+<%- include('partials/footer') %>
+</html>

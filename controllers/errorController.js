@@ -1,4 +1,5 @@
 const AppError = require("./../utils/appError");
+const authController = require("./../controllers/authController");
 
 // const handleCastErrorDB = (err) => {
 //   const message = `Invalid ${err.path}: ${err.value}..`;
@@ -59,6 +60,7 @@ const AppError = require("./../utils/appError");
 
 module.exports = (err, req, res, next) => {
   console.log(err);
+  console.log(err.message);
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
@@ -69,7 +71,6 @@ module.exports = (err, req, res, next) => {
   // if (err._message === "Validation failed") err = handleValidationErrorDB(err);
   // if (err.name === "JsonWebTokenError") err = handleJWTError();
   // if (err.message === "Token invalid or expired") err = handleJWTExpiredError();
-  if (err.statusCode === 404) res.render("404");
   res.status(err.statusCode).json({
     code: err.code,
     status: err.status,

@@ -15,8 +15,7 @@ const xss = require("xss-clean");
 const path = require("path");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const passport = require("passport");
-let top5Movies;
+const authController = require("./controllers/authController");
 
 const corsOptions = {
   origin: "http://localhost:3000", // This should match the URL of your front-end app
@@ -45,8 +44,13 @@ app.use(express.static(path.join(__dirname, "public")));
 // Use the router middleware
 app.use("/", routes);
 
-app.all("*", (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server.`, 404));
+app.all("*", authController.protect, (req, res, next) => {
+  res.render("404", {
+    err: `Can't find ${req.originalUrl} on this server.`,
+    user: req.user ? req.user : null,
+    watchlist: req.user ? req.user.watchlist : null,
+    isAuthenticated: !!req.user,
+  });
 });
 
 app.use(globalErrorHandler);

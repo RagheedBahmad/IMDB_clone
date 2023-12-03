@@ -7,7 +7,7 @@ const Movie = require("./../models/movieModel.js");
 const Actor = require("./../models/actorModel.js");
 const authController = require("./../controllers/authController");
 const movieController = require("./../controllers/movieController");
-const actorController = require('./../controllers/actorController');
+const actorController = require("./../controllers/actorController");
 const userController = require("./../controllers/userController");
 const path = require("path");
 const { google } = require("googleapis");
@@ -36,8 +36,26 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 } });
 
-router.get("/privacy", (req, res) => {
-  res.render("privacyPolicy");
+router.get("/privacy", authController.protect, (req, res) => {
+  res.render("privacyPolicy", {
+    user: req.user ? req.user : null,
+    watchlist: req.user ? req.user.watchlist : null,
+    isAuthenticated: !!req.user,
+  });
+});
+router.get("/conditions", authController.protect, (req, res) => {
+  res.render("conditions", {
+    user: req.user ? req.user : null,
+    watchlist: req.user ? req.user.watchlist : null,
+    isAuthenticated: !!req.user,
+  });
+});
+router.get("/press", authController.protect, (req, res) => {
+  res.render("press", {
+    user: req.user ? req.user : null,
+    watchlist: req.user ? req.user.watchlist : null,
+    isAuthenticated: !!req.user,
+  });
 });
 router.get("/", authController.protect, async (req, res) => {
   let random3Movies = await movieController.random(3);
@@ -86,14 +104,16 @@ router.get("/movies/:movie", authController.protect, async (req, res) => {
   let id = req.params.movie;
   let movie = await Movie.findOne({ id: id }).exec();
   let similarMovies = movieController.similar(movie.original_title);
-  const actorIds = movie.credits.cast.map(actor => actor.id).slice(0, 10);
-  const actorsData = await Actor.find({ id: { $in: actorIds }}).exec();
+  const actorIds = movie.credits.cast.map((actor) => actor.id).slice(0, 10);
+  const actorsData = await Actor.find({ id: { $in: actorIds } }).exec();
 
   // const actors = actorIds.map(actorId => actorss.find(actor => actor.id === actorId));
 
-  const actors = actorIds.map(actorId => {
-    const actorData = actorsData.find(actor => actor.id === actorId);
-    const characterName = movie.credits.cast.find(actor => actor.id === actorId)?.character || 'Unknown Character';
+  const actors = actorIds.map((actorId) => {
+    const actorData = actorsData.find((actor) => actor.id === actorId);
+    const characterName =
+      movie.credits.cast.find((actor) => actor.id === actorId)?.character ||
+      "Unknown Character";
 
     return {
       ...actorData.toObject(),
@@ -110,7 +130,11 @@ router.get("/movies/:movie", authController.protect, async (req, res) => {
     isAuthenticated: !!req.user,
   });
 });
-router.get('/actors/:id', authController.protect, actorController.getActorDetails);
+router.get(
+  "/actors/:id",
+  authController.protect,
+  actorController.getActorDetails
+);
 
 async function verify(token) {
   const ticket = await client.verifyIdToken({
@@ -176,7 +200,6 @@ router.get(
   movieController.search,
   authController.protect,
   async (req, res) => {
-    console.log(res.similarMovies);
     let randomMovies = await movieController.random(5);
     res.render("search", {
       movies: res.movies,

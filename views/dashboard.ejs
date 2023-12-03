@@ -427,9 +427,10 @@
         let watchlist = <%- JSON.stringify(watchlist) %>
     <%}%>
 </script>
-<%- include('partials/header') %>
 <script type="text/javascript" src="/JS/watchlist.js"></script>
+<%- include('partials/header') %>
 <script>
+
     function displayInfo(event, slick, currentSlide) {
         let currentImage = slick.$slides.get(currentSlide).querySelector('img');
         let watchlistbtn = $(".watchListhover");
@@ -449,7 +450,6 @@
     }
 
     $(window).on("load", () => {
-        console.log(watchlist)
         let movieInfo = $("#movie-info")
         let imageTrack = $(".image-track");
         let watchlistbtn = $(".watchListhover");
@@ -517,7 +517,7 @@
                 <a href="/movies/<%= random3Movies[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%= random3Movies[i].original_title%></h5></a>
                 <a href="/movies/<%= random3Movies[i].id%>"><p class="card-text" style="color: #7f9eb9"><%= random3Movies[i].tagline%></p></a>
             </div>
-            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/intent/tweet?text=Check%20out%20this%20movie%20on%20MMDb!%20&url=https://modest-glorious-gorilla.ngrok-free.app/movies/<%= random3Movies[i].id%>" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 <button type="button" class="btn btn-secondary btn-sm"  style="margin: 5px;" onclick="copy(<%= random3Movies[i].id%>)" id="id">Copy</button></div>
         </div>
     <%}%>
@@ -534,7 +534,7 @@
         <a href="/movies/<%= recentMovies[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%= recentMovies[i].original_title%></h5></a>
     </div>
         <p style="font-weight: bold;">Releases on: <br> <%= recentMovies[i].release_date%></p>
-            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false"></a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/intent/tweet?text=Check%20out%20this%20movie%20on%20MMDb!%20&url=https://modest-glorious-gorilla.ngrok-free.app/movies/<%= recentMovies[i].id%>" class="twitter-share-button" data-show-count="false"></a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 <button type="button" class="btn btn-secondary btn-sm"  style="margin: 5px;" onclick="copy(<%= recentMovies[i].id%>)" id="id">Copy</button></div>
     </div>
 
@@ -557,13 +557,17 @@
                 <a href="/movies/<%= watchlist[i].id%>"><h5 class="card-title"  style="color: #7f9eb9"><%= watchlist[i].original_title%></h5></a>
                 <a href="/movies/<%= watchlist[i].id%>"><p class="card-text" style="color: #7f9eb9"><%= watchlist[i].tagline%></p></a>
             </div>
-            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            <div style="display: flex; justify-content: center; align-items: center;"><a href="https://twitter.com/intent/tweet?text=Check%20out%20this%20movie%20on%20MMDb!%20&url=https://modest-glorious-gorilla.ngrok-free.app/movies/<%= watchlist[i].id%>" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 <button type="button" class="btn btn-secondary btn-sm"  style="margin: 5px;" onclick="copy(<%= watchlist[i].id%>)" id="id">Copy</button></div>
         </div>
     <%}%>
-    <% } %>
-</div>
+    </div>
 <% } %>
+<% } else { %>
+    <h2 style="text-align: center; margin-top: 10px; margin-bottom: 10px;">Sign In To Have a Watchlist</h2>
+    <% } %>
+</div> <!-- do not remove this closing div tag, it fixes stuff for some reason -->
+</body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
@@ -605,6 +609,5 @@
         });
     });
 </script>
-</body>
-<%- include('partials/footer') %>
 </html>
+<%- include('partials/footer') %>

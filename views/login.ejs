@@ -2,15 +2,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!--    <link rel="apple-touch-icon" sizes="152x152" href="img/apple-touch-icon.png">-->
-<!--    <link rel="icon" type="image/png" sizes="32x32" href="./../public/img/favicon-32x32.png">-->
-<!--    <link rel="icon" type="image/png" sizes="16x16" href="./../public/img/favicon-16x16.png">-->
-<!--    <link rel="manifest" href="img/site.webmanifest">-->
-<!--    <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">-->
-<!--    <meta name="msapplication-TileColor" content="#2b5797">-->
+    <!--    <link rel="apple-touch-icon" sizes="152x152" href="img/apple-touch-icon.png">-->
+    <!--    <link rel="icon" type="image/png" sizes="32x32" href="./../public/img/favicon-32x32.png">-->
+    <!--    <link rel="icon" type="image/png" sizes="16x16" href="./../public/img/favicon-16x16.png">-->
+    <!--    <link rel="manifest" href="img/site.webmanifest">-->
+    <!--    <link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#5bbad5">-->
+    <!--    <meta name="msapplication-TileColor" content="#2b5797">-->
     <meta name="theme-color" content="#ffffff">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-signin-client_id" content="660822408267-3841276aurp61khq91arj2k7k5j1ptsq.apps.googleusercontent.com">
+    <meta name="google-signin-client_id"
+          content="660822408267-3841276aurp61khq91arj2k7k5j1ptsq.apps.googleusercontent.com">
 
     <title>MMDb</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -33,7 +34,7 @@
             position: relative;
             min-height: 100%;
             max-width: 100%;
-            width:100%;
+            width: 100%;
         }
 
         /* For Webkit browsers */
@@ -47,15 +48,17 @@
         }
 
         /* For IE */
-        -ms-overflow-style: none;
+        -ms-overflow-style: none
+
+        ;
 
         .container {
-            min-height:100%;
+            min-height: 100%;
             position: relative;
         }
 
         h1 {
-            padding-top:60px;
+            padding-top: 60px;
             text-align: center;
             color: lightgrey;
             font-size: 5em;
@@ -82,22 +85,27 @@
             top: 70px;
             left: 70px;
         }
+
         #img2 {
             top: 150px;
             left: 1100px;
         }
+
         #img3 {
             top: 400px;
             left: 800px;
         }
+
         #img4 {
             top: 500px;
             left: 250px;
         }
+
         #img5 {
             top: -100px;
             left: 600px;
         }
+
         .loading {
             position: relative;
         }
@@ -113,6 +121,7 @@
             -ms-flex-direction: column;
             flex-direction: column;
         }
+
         .file-input {
             visibility: hidden;
             position: absolute;
@@ -125,7 +134,7 @@
             border: 0;
         }
 
-        a, .custom-file-input{
+        a, .custom-file-input {
             background-color: transparent;
             border-radius: 10%;
             position: relative;
@@ -143,9 +152,11 @@
             cursor: pointer;
             width: auto;
         }
+
         #google-auth {
             margin-bottom: 20px
         }
+
         a:hover, .custom-file-input:hover {
             -webkit-transition: 0.5s;
             -o-transition: 0.5s;
@@ -168,7 +179,8 @@
             -o-transition: 0.5s;
             transition: 0.5s;
         }
-        .g_id_signin:hover{
+
+        .g_id_signin:hover {
             -webkit-transition: 0.5s;
             -o-transition: 0.5s;
             transition: 0.5s;
@@ -184,6 +196,7 @@
             5px 0 6px 0 rgba(22, 255, 0, 1);
             -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
         }
+
         [disabled] {
             opacity: .6;
             cursor: default;
@@ -196,19 +209,19 @@
             width: auto;
         }
 
-        #buttons{
+        #buttons {
             text-align: center;
-            margin-top:5%;
+            margin-top: 5%;
         }
 
         .login {
             padding: 25px;
         }
 
-        .auth{
-            display:-webkit-box;
-            display:-ms-flexbox;
-            display:flex;
+        .auth {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
             -webkit-box-orient: vertical;
             -webkit-box-direction: normal;
             -ms-flex-direction: column;
@@ -218,15 +231,16 @@
             align-items: center;
             padding-top: 30px;
         }
+
         .authLink {
-            padding:10px;
+            padding: 10px;
             width: -webkit-fit-content;
             width: -moz-fit-content;
             width: fit-content;
         }
 
         .hidden {
-            opacity:0;
+            opacity: 0;
             cursor: default;
             pointer-events: none;
             -webkit-user-select: none;
@@ -246,7 +260,7 @@
         }
 
         #signupCred {
-            z-index:-2;
+            z-index: -2;
             display: flex;
             align-items: center;
         }
@@ -256,9 +270,9 @@
         }
 
         .rememberMe {
-            display:-webkit-box;
-            display:-ms-flexbox;
-            display:flex;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
             -webkit-box-pack: center;
             -ms-flex-pack: center;
             justify-content: center;
@@ -283,6 +297,7 @@
             margin-right: 20px;
             cursor: pointer;
         }
+
         input[type="submit"]:hover {
             -webkit-transition: 0.5s;
             -o-transition: 0.5s;
@@ -299,25 +314,29 @@
             0 0 30px #7f9eb9;
             -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
         }
+
         input[type="text"], input[type="password"], input[type="email"] {
             border: solid 1px white;
         }
+
         input[type="file"] {
             display: none;
         }
+
         input[type="checkbox"] {
             margin: 0;
         }
+
         #or {
             padding: 2px;
-            margin:0;
+            margin: 0;
             cursor: default;
         }
 
         .back {
-            display:-webkit-box;
-            display:-ms-flexbox;
-            display:flex;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
             -webkit-box-pack: center;
             -ms-flex-pack: center;
             justify-content: center;
@@ -351,6 +370,7 @@
                 opacity: 0;
             }
         }
+
         @-webkit-keyframes slide-in-bottom {
             0% {
                 -webkit-transform: translateY(100px);
@@ -363,6 +383,7 @@
                 opacity: 1;
             }
         }
+
         @keyframes slide-in-bottom {
             0% {
                 -webkit-transform: translateY(100px);
@@ -375,6 +396,7 @@
                 opacity: 1;
             }
         }
+
         @-webkit-keyframes slide-out-left {
             0% {
                 -webkit-transform: translateX(0);
@@ -387,6 +409,7 @@
                 opacity: 0;
             }
         }
+
         @keyframes slide-out-left {
             0% {
                 -webkit-transform: translateX(0);
@@ -399,6 +422,7 @@
                 opacity: 0;
             }
         }
+
         @-webkit-keyframes slide-in-left {
             0% {
                 -webkit-transform: translateX(-100px);
@@ -411,6 +435,7 @@
                 opacity: 1;
             }
         }
+
         @keyframes slide-in-left {
             0% {
                 -webkit-transform: translateX(-100px);
@@ -423,6 +448,7 @@
                 opacity: 1;
             }
         }
+
         @-webkit-keyframes slide-in-left-slow {
             0% {
                 -webkit-transform: translateX(-100px);
@@ -435,6 +461,7 @@
                 opacity: 0.5;
             }
         }
+
         @keyframes slide-in-left-slow {
             0% {
                 -webkit-transform: translateX(-100px);
@@ -447,6 +474,7 @@
                 opacity: 0.5;
             }
         }
+
         @-webkit-keyframes slide-out-right {
             0% {
                 -webkit-transform: translateX(0);
@@ -459,6 +487,7 @@
                 opacity: 0;
             }
         }
+
         @keyframes slide-out-right {
             0% {
                 -webkit-transform: translateX(0);
@@ -471,6 +500,7 @@
                 opacity: 0;
             }
         }
+
         @-webkit-keyframes slide-in-right {
             0% {
                 -webkit-transform: translateX(100px);
@@ -483,6 +513,7 @@
                 opacity: 1;
             }
         }
+
         @keyframes slide-in-right {
             0% {
                 -webkit-transform: translateX(100px);
@@ -495,6 +526,7 @@
                 opacity: 1;
             }
         }
+
         @-webkit-keyframes slide-in-top {
             0% {
                 -webkit-transform: translateY(-225px);
@@ -507,6 +539,7 @@
                 opacity: 1;
             }
         }
+
         @keyframes slide-in-top {
             0% {
                 -webkit-transform: translateY(-225px);
@@ -519,6 +552,7 @@
                 opacity: 1;
             }
         }
+
         @-webkit-keyframes slide-out-top {
             0% {
                 -webkit-transform: translateY(-150px);
@@ -531,6 +565,7 @@
                 opacity: 0;
             }
         }
+
         @keyframes slide-out-top {
             0% {
                 -webkit-transform: translateY(-150px);
@@ -543,6 +578,7 @@
                 opacity: 0;
             }
         }
+
         @-webkit-keyframes shake-horizontal {
             0%,
             100% {
@@ -571,6 +607,7 @@
                 transform: translateX(-8px);
             }
         }
+
         @keyframes shake-horizontal {
             0%,
             100% {
@@ -610,6 +647,7 @@
             -ms-user-select: none;
             user-select: none;
         }
+
         .slide-in-bottom {
             -webkit-animation: slide-in-bottom 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
             animation: slide-in-bottom 1s cubic-bezier(0.165, 0.840, 0.440, 1.000) both;
@@ -620,6 +658,7 @@
             -ms-user-select: auto;
             user-select: auto;
         }
+
         .slide-out-left {
             -webkit-animation: slide-out-left 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             animation: slide-out-left 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
@@ -630,6 +669,7 @@
             -ms-user-select: none;
             user-select: none;
         }
+
         .slide-in-left {
             -webkit-animation: slide-in-left 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             animation: slide-in-left 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
@@ -640,6 +680,7 @@
             -ms-user-select: auto;
             user-select: auto;
         }
+
         .slide-in-left-slow {
             -webkit-animation: slide-in-left-slow 2s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             animation: slide-in-left-slow 2s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
@@ -650,6 +691,7 @@
             -ms-user-select: auto;
             user-select: auto;
         }
+
         .slide-out-right {
             -webkit-animation: slide-out-right 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             animation: slide-out-right 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
@@ -660,6 +702,7 @@
             -ms-user-select: none;
             user-select: none;
         }
+
         .slide-in-right {
             -webkit-animation: slide-in-right 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
             animation: slide-in-right 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
@@ -670,14 +713,17 @@
             -ms-user-select: auto;
             user-select: auto;
         }
+
         .slide-in-top {
             -webkit-animation: slide-in-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
             animation: slide-in-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
         }
+
         .slide-out-top {
             -webkit-animation: slide-out-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
             animation: slide-out-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
         }
+
         .shake-horizontal {
             -webkit-animation: shake-horizontal 30s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite both;
             animation: shake-horizontal 30s cubic-bezier(0.445, 0.050, 0.550, 0.950) infinite both;
@@ -687,39 +733,46 @@
         @media only screen and (max-width: 600px) {
             body, html {
                 overflow-x: hidden;
-                height:100%;
+                height: 100%;
             }
+
             h1 {
                 font-size: 2em;
-                padding-top:20px;
+                padding-top: 20px;
                 margin-bottom: 100px;
-                top:20px;
+                top: 20px;
             }
+
             img {
                 max-width: 25%;
                 min-width: 20%;
                 height: auto;
-                display:-webkit-box;
-                display:-ms-flexbox;
-                display:flex;
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
                 opacity: 0.4;
             }
+
             #img1 {
                 top: 70px;
                 left: 10px;
             }
+
             #img2 {
                 top: 150px;
                 left: 210px;
             }
+
             #img3 {
                 top: 300px;
                 left: 30px;
             }
+
             #img4 {
                 top: 400px;
                 left: 210px;
             }
+
             #img5 {
                 top: 550px;
                 left: 60px;
@@ -768,7 +821,7 @@
                 <a onclick="animateReturnForgot()"> &lt;Go Back</a>
                 <label><input type="submit" value="Reset Password"></label>
             </div>
-            <div id="error-message" style="color: red;"></div>
+            <div id="Ferror-message" style="color: red;"></div>
             <div id="success-message" style="color: blue;"></div>
         </form>`
 
@@ -780,8 +833,8 @@
 
     $(window).on("load", () => {
         $("#template").empty()
-        let posters = <%- JSON.stringify(posters)%>
-            $.each(posters, function(index, url) {
+        let posters = <%- JSON.stringify(posters) %>
+            $.each(posters, function (index, url) {
                 $("<img>", {
                     id: `img${index + 1}`,
                     src: url.poster_path,
@@ -803,16 +856,16 @@
             url: '/auth/google',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ token: response.credential }),
-            success: function(res) {
+            data: JSON.stringify({token: response.credential}),
+            success: function (res) {
                 window.location.href = "/dashboard"
             },
-            error: function(err) {
+            error: function (err) {
                 $('#homePageLoadingImage').hide();
                 $('#Herror-message').text(err.responseJSON.message);
             }
         });
-        setTimeout(function(){
+        setTimeout(function () {
             $(window).scrollTop(0);
         }, 400);
     }
@@ -848,7 +901,7 @@
 
     function login() {
         // lsRememberMe();
-        $('html, body').animate({ scrollTop: 100 }, 1500);
+        $('html, body').animate({scrollTop: 100}, 1500);
         $("#template").empty().append(loginForm)
         let rmCheck = $('#template').find("#rememberMe");
         let email = $('#template').find("#email");
@@ -860,7 +913,7 @@
             rmCheck.prop('checked', false);
             email.val("");
         }
-        $("#loginCred").on("submit", function(event) {
+        $("#loginCred").on("submit", function (event) {
             $('#loginLoadingImage').show();
             event.preventDefault();
             const formData = $(this).serialize();
@@ -868,10 +921,10 @@
                 url: '/login',
                 type: 'POST',
                 data: formData,
-                success: function(res, status, xhr) {
+                success: function (res, status, xhr) {
                     window.location.href = "/dashboard";
                 },
-                error: function(err) {
+                error: function (err) {
                     $('#loginLoadingImage').hide();
                     $('#Lerror-message').text(err.responseJSON.message);
                 }
@@ -882,9 +935,10 @@
 
     function signup() {
         $("#Serror-message").text("")
-        $('html, body').animate({ scrollTop: 200 }, 1500);
+        $('html, body').animate({scrollTop: 200}, 1500);
         $("#template").empty().append(signupForm);
-        $("#signupCred").on("submit", function(event) {
+        $("#signupCred").on("submit", function (event) {
+            $("#Serror-message").text("")
             $('#signupLoadingImage').show();
             event.preventDefault();
             const formData = new FormData(this);
@@ -894,10 +948,10 @@
                 data: formData,
                 contentType: false,
                 processData: false,
-                success: function(res) {
+                success: function (res) {
                     window.location.href = "/dashboard";
                 },
-                error: function(response) {
+                error: function (response) {
                     $('#signupLoadingImage').hide();
                     $("#Serror-message").text(response.responseJSON.message);
                 }
@@ -908,20 +962,21 @@
 
     function forgotPassword() {
         $("#template").empty().append(forgotPasswordForm);
-        $("#forgotPasswordCred").on("submit", function(event) {
+        $("#forgotPasswordCred").on("submit", function (event) {
+            $('#signupLoadingImage').show();
             event.preventDefault();
             const formData = $(this).serialize();
             $.ajax({
                 url: '/forgot-password',
                 type: 'POST',
                 data: formData,
-                success: function(res) {
+                success: function (res) {
                     $("#success-message").text(res.message)
                 },
-                error: function(response) {
-                    // Handle error
-                    // Display the error message from the response on your HTML page
-                    $('#error-message').text(response.message);
+                error: function (response) {
+                    console.log(response)
+                    $('#signupLoadingImage').hide();
+                    $("#Ferror-message").text(response.responseJSON.message);
                 }
             });
         })
@@ -933,17 +988,18 @@
 
     function animate() {
         $("#google-auth").removeClass("slide-in-bottom").addClass("slide-out-bottom")
-        $("#facebook-auth").removeClass("slide-in-bottom").addClass("slide-out-bottom")
+        $("#guest").removeClass("slide-in-bottom").addClass("slide-out-bottom")
         $("#breaker").removeClass("slide-in-bottom").addClass("slide-out-bottom")
         $("#login").removeClass("slide-in-left").addClass("slide-out-left")
         $("#signup").removeClass("slide-in-right").addClass("slide-out-right")
         $("#Herror-message").empty()
         $("#template").removeClass("slide-out-top").addClass("slide-in-top").removeClass("hidden")
     }
+
     function animateReturn() {
-        $('html, body').animate({ scrollTop: 0 }, 1500);
+        $('html, body').animate({scrollTop: 0}, 1500);
         $("#google-auth").removeClass("slide-out-bottom").addClass("slide-in-bottom")
-        $("#facebook-auth").removeClass("slide-out-bottom").addClass("slide-in-bottom")
+        $("#guest").removeClass("slide-out-bottom").addClass("slide-in-bottom")
         $("#breaker").removeClass("slide-out-bottom").addClass("slide-in-bottom")
         $("#login").removeClass("slide-out-left").addClass("slide-in-left")
         $("#signup").removeClass("slide-out-right").addClass("slide-in-right")
@@ -955,34 +1011,38 @@
     <h1>Welcome to MMDb</h1>
     <div id="buttons">
         <div class="login">
-                <a onclick="login()" id="login">Login</a>
-                <a onclick="signup()" id="signup">Signup</a>
+            <a onclick="login()" id="login">Login</a>
+            <a onclick="signup()" id="signup">Signup</a>
         </div>
         <div id="breaker">
-        <hr style="width: 33%; padding: 0">
-        <p id="or">or</p>
+            <hr style="width: 33%; padding: 0">
+            <p id="or">or</p>
         </div>
-    <div class="auth">
-        <div id="g_id_onload"
-             data-client_id="<%= googleClientId%>"
-             data-callback="handleCredentialResponse"
-            data-auto_prompt="false">
+        <div class="auth">
+            <div id="g_id_onload"
+                 data-client_id="<%= googleClientId %>"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+            <div id="google-auth"
+                 class="g_id_signin"
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="filled_black"
+                 data-text="sign_in_with"
+                 data-shape="rectangular"
+                 data-logo_alignment="left">
+            </div>
+            <div id="Herror-message" style="color: red; margin-top: 10px;"></div>
+            <img src="/img/Infinity-1s-94px.png" id="homePageLoadingImage" style="display: none;" class="loading">
         </div>
-        <div id="google-auth"
-             class="g_id_signin"
-             data-type="standard"
-             data-size="large"
-             data-theme="filled_black"
-             data-text="sign_in_with"
-             data-shape="rectangular"
-             data-logo_alignment="left">
+        <div style="display: flex; justify-content: center;" id="guest">
+            <a href="/">Continue As Guest</a>
         </div>
-        <div id="Herror-message" style="color: red; margin-top: 10px;"></div>
-        <img src="/img/Infinity-1s-94px.png" id="homePageLoadingImage" style="display: none;" class="loading">
-    </div>
     </div>
     <div class="hidden cred" id="template">
     </div>
-    </div>
+</div>
+
 </body>
 </html>

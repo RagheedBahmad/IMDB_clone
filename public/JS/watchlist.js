@@ -14,7 +14,7 @@ $(document).on("click", ".remove", function (event) {
   event.stopPropagation();
   let button = $(this);
   button.prop("disabled", true);
-  let movieID = button.data("movie") * 1;
+  let movieID = button.attr("data-movie") * 1;
   $.ajax({
     url: "/remove-watchlist",
     type: "POST",
@@ -41,8 +41,7 @@ $(document).on("click", ".watch", function (event) {
   event.stopPropagation();
   let button = $(this);
   button.prop("disabled", true);
-  let movieID = button.data("movie");
-  movieID = movieID * 1;
+  let movieID = button.attr("data-movie") * 1;
 
   // Perform the AJAX request
   $.ajax({
@@ -77,12 +76,14 @@ function addToWatchlist(movie) {
         <button type="button" class="btn btn-secondary btn-sm" style="margin: 5px;" onclick="copy('${movie.id}')" id="id">Copy</button>
     </div>
 </div>`;
+  $("#watchlistP").hide();
   $("#watchlist").append(div);
 }
 
 function removeFromWatchlist(movie) {
   console.log("removing " + movie);
   $(`#movie-${movie}`).remove();
+  if (watchlist.length === 0) $("#watchlistP").show();
 }
 
 function addButtons(movie) {
@@ -91,7 +92,7 @@ function addButtons(movie) {
     $(this).addClass("watch");
     let text = $(this).hasClass("watchListhover") ? "Add To Watchlist" : "+";
     $(this).html(text);
-    $(this).prop("disabled", false);
+    $(this).attr("disabled", false);
   });
 }
 
@@ -103,7 +104,7 @@ function crossButtons(movie) {
     $(this).html(text);
     $(this).addClass("remove");
     $(this).removeClass("watch");
-    $(this).prop("disabled", false);
+    $(this).attr("disabled", false);
   });
 }
 

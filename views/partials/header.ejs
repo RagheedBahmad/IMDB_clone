@@ -241,6 +241,12 @@
 
 <script>
     $(window).on("load", function() {
+        $('#homeButton').click(function(event) {
+            let currentPath = window.location.pathname;
+            if (currentPath === '/' || currentPath === '/dashboard') {
+                event.preventDefault();
+            }
+        });
         $('#query').on('input', function() {
             console.log("inputted");
             let searchTerm = $(this).val();
@@ -316,7 +322,7 @@
     </div>
     <div class="header-nav">
         <ul>
-            <li><a href="/dashboard" class="hover">Home</a></li>
+            <li><a id="homeButton" href="/dashboard" class="hover">Home</a></li>
             <li id="about"><a href="/about" class="hover">About</a></li>
             <li id="services"><a href="#services" class="hover">Services</a></li>
             <li><a href="#socials" class="hover">Contact</a></li>
