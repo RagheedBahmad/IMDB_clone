@@ -23,3 +23,20 @@ exports.removeWatchlist = catchAsync(async (req, res, next) => {
   );
   res.status(200).json({ message: "Success", movieID: req.body.movieID });
 });
+
+exports.updateUserProfile = catchAsync(async (req, res, next) => {
+  const { dob, gender, country } = req.body;
+  const userId = req.user.id; // Assuming req.user contains the logged-in user's info
+
+  // Update user profile
+  await User.findByIdAndUpdate(userId, {
+      dateOfBirth: dob,
+      gender: gender,
+      country: country
+  });
+
+  res.status(200).json({
+      status: 'success',
+      message: 'Profile updated successfully'
+  });
+});
