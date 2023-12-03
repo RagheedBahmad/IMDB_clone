@@ -48,6 +48,10 @@ const actorSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  birthday: {
+    type: Date,
+    required: true,
+  },
 });
 
 const Actor = mongoose.model("Actor", actorSchema, "Actors");
